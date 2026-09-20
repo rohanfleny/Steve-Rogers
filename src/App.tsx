@@ -537,6 +537,7 @@ export default function App() {
               onSelectDate={setSelectedDate}
               currentRecord={currentRecord}
               onToggleGoal={handleToggleGoal}
+              settings={setting}
               gateSubtitle={gateSubtitle}
               gateBadge={gateBadge}
               onNavigateToGate={() => setActiveTab('gate')}
