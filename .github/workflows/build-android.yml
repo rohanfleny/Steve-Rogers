@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Get the project
+      # 1. Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -26,10 +26,9 @@ jobs:
       - name: Install dependencies
         run: |
           npm install --include=optional
-          npm install 
-       @rolldown/binding-linux-x64-gnu
+          npm install @rolldown/binding-linux-x64-gnu
 
-      # 4. Build the web application
+      # 4. Build web application
       - name: Build web app
         run: npm run build
 
@@ -41,7 +40,7 @@ jobs:
       - name: Add Android platform
         run: npx cap add android
 
-      # 7. Copy web app into Android project
+      # 7. Sync web app to Android
       - name: Sync web app to Android
         run: npx cap sync android
 
