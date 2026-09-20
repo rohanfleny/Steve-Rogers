@@ -28,7 +28,9 @@ import { GateStoreState } from '../../types/gate';
 interface SettingsGoalsViewProps {
   settings: UserSettings;
   onUpdateSettings: (newSettings: UserSettings) => void;
+
   onExportJSON: () => string;
+
   onImportJSON: (
     jsonString: string
   ) => {
@@ -36,8 +38,11 @@ interface SettingsGoalsViewProps {
     error?: string;
     message?: string;
   };
+
   onResetAllData: () => void;
+
   gateStore?: GateStoreState;
+
   onUpdateActiveGateModule?: (
     subjectId: string,
     moduleId: string
@@ -52,7 +57,7 @@ interface GoalEditorConfig {
   icon: React.ReactNode;
 }
 
-const GOAL_CONFIGS: GoalEditorConfig[] = [
+const GOALS: GoalEditorConfig[] = [
   {
     id: 'gate',
     defaultTitle: 'GATE',
@@ -90,23 +95,27 @@ const GOAL_CONFIGS: GoalEditorConfig[] = [
   },
 ];
 
-function parseTargetNumber(
-  target: string,
+function parseTarget(
+  value: string,
   fallback: number
 ): number {
-  const match = target.match(/[\d.]+/);
+  if (!value) {
+    return fallback;
+  }
+
+  const match = value.match(/[\d.]+/);
 
   if (!match) {
     return fallback;
   }
 
-  const value = Number(match[0]);
+  const parsed = Number(match[0]);
 
-  if (!Number.isFinite(value) || value <= 0) {
+  if (!Number.isFinite(parsed) || parsed <= 0) {
     return fallback;
   }
 
-  return value;
+  return parsed;
 }
 
 function formatTarget(
@@ -117,7 +126,10 @@ function formatTarget(
     ? String(value)
     : String(Number(value.toFixed(1)));
 
-  return `${cleanValue} ${unit}${value === 1 ? '' : 's'}`;
+  const plural =
+    value === 1 ? '' : 's';
+
+  return `${cleanValue} ${unit}${plural}`;
 }
 
 export const SettingsGoalsView: React.FC<
@@ -131,14 +143,28 @@ export const SettingsGoalsView: React.FC<
   gateStore,
   onUpdateActiveGateModule,
 }) => {
+  /* --------------------------------
+     BASIC SETTINGS
+  -------------------------------- */
+
   const [name, setName] = useState(
     settings.name || 'Rohan'
   );
 
   const [sleepTarget, setSleepTarget] =
     useState<number>(
-      settings.sleepTargetHours
+      settings.sleepTargetHours || 7
     );
+
+  const [savedSuccess, setSavedSuccess] =
+    useState(false);
+
+  const [importStatus, setImportStatus] =
+    useState<string | null>(null);
+
+  /* --------------------------------
+     GOAL EDITOR
+  -------------------------------- */
 
   const [editingGoal, setEditingGoal] =
     useState<DailyGoalId | null>(null);
@@ -149,25 +175,18 @@ export const SettingsGoalsView: React.FC<
   const [editingTarget, setEditingTarget] =
     useState(1);
 
-  const [savedSuccess, setSavedSuccess] =
-    useState(false);
+  /* --------------------------------
+     GATE CONNECTION
+  -------------------------------- */
 
-  const [importStatus, setImportStatus] =
-    useState<string | null>(null);
-
-  /*
-   * --------------------------------------------------
-   * GATE ACTIVE CONNECTION
-   * --------------------------------------------------
-   */
-
-  const initialSubjectId =
-    gateStore?.activeConnection?.subjectId ||
-    gateStore?.subjects?.[0]?.id ||
-    '';
+  const firstSubjectId =
+    gateStore?.subjects?.[0]?.id || '';
 
   const [activeSubjId, setActiveSubjId] =
-    useState<string>(initialSubjectId);
+    useState<string>(
+      gateStore?.activeConnection?.subjectId ||
+        firstSubjectId
+    );
 
   const modulesForSubject =
     gateStore?.modules?.filter(
@@ -175,45 +194,38 @@ export const SettingsGoalsView: React.FC<
         module.subjectId === activeSubjId
     ) || [];
 
-  const initialModuleId =
-    gateStore?.activeConnection?.moduleId ||
-    modulesForSubject[0]?.id ||
-    '';
+  const firstModuleId =
+    modulesForSubject[0]?.id || '';
 
   const [activeModId, setActiveModId] =
-    useState<string>(initialModuleId);
+    useState<string>(
+      gateStore?.activeConnection?.moduleId ||
+        firstModuleId
+    );
 
-  /*
-   * --------------------------------------------------
-   * SYNC SETTINGS
-   * --------------------------------------------------
-   */
+  /* --------------------------------
+     SYNC SETTINGS
+  -------------------------------- */
 
   useEffect(() => {
     setName(settings.name || 'Rohan');
 
     setSleepTarget(
-      settings.sleepTargetHours
+      settings.sleepTargetHours || 7
     );
   }, [
     settings.name,
     settings.sleepTargetHours,
   ]);
 
-  /*
-   * --------------------------------------------------
-   * SYNC ACTIVE SUBJECT
-   * --------------------------------------------------
-   */
+  /* --------------------------------
+     SYNC ACTIVE GATE SUBJECT
+  -------------------------------- */
 
   useEffect(() => {
-    if (!gateStore) {
-      return;
-    }
-
     const subjectId =
-      gateStore.activeConnection?.subjectId ||
-      gateStore.subjects?.[0]?.id ||
+      gateStore?.activeConnection?.subjectId ||
+      gateStore?.subjects?.[0]?.id ||
       '';
 
     setActiveSubjId(subjectId);
@@ -222,26 +234,19 @@ export const SettingsGoalsView: React.FC<
     gateStore?.subjects,
   ]);
 
-  /*
-   * --------------------------------------------------
-   * SYNC ACTIVE MODULE
-   * --------------------------------------------------
-   */
+  /* --------------------------------
+     SYNC ACTIVE GATE MODULE
+  -------------------------------- */
 
   useEffect(() => {
-    if (!gateStore) {
-      return;
-    }
-
     const modules =
-      gateStore.modules?.filter(
+      gateStore?.modules?.filter(
         (module) =>
           module.subjectId === activeSubjId
       ) || [];
 
     const savedModuleId =
-      gateStore.activeConnection?.moduleId ||
-      '';
+      gateStore?.activeConnection?.moduleId;
 
     const savedModuleExists =
       modules.some(
@@ -250,7 +255,9 @@ export const SettingsGoalsView: React.FC<
       );
 
     if (savedModuleExists) {
-      setActiveModId(savedModuleId);
+      setActiveModId(
+        savedModuleId || ''
+      );
     } else {
       setActiveModId(
         modules[0]?.id || ''
@@ -262,17 +269,31 @@ export const SettingsGoalsView: React.FC<
     gateStore?.activeConnection?.moduleId,
   ]);
 
-  /*
-   * --------------------------------------------------
-   * SAVE GENERAL SETTINGS
-   * --------------------------------------------------
-   */
+  /* --------------------------------
+     SUCCESS MESSAGE
+  -------------------------------- */
 
-  const handleSavePreferences = () => {
+  const showSavedMessage = (
+    duration = 1800
+  ) => {
+    setSavedSuccess(true);
+
+    window.setTimeout(() => {
+      setSavedSuccess(false);
+    }, duration);
+  };
+
+  /* --------------------------------
+     SAVE GENERAL SETTINGS
+  -------------------------------- */
+
+  const savePreferences = () => {
     onUpdateSettings({
       ...settings,
-      name: name.trim() || 'Rohan',
-      sleepTargetHours: sleepTarget,
+      name:
+        name.trim() || 'Rohan',
+      sleepTargetHours:
+        sleepTarget,
     });
 
     if (
@@ -286,20 +307,14 @@ export const SettingsGoalsView: React.FC<
       );
     }
 
-    setSavedSuccess(true);
-
-    window.setTimeout(() => {
-      setSavedSuccess(false);
-    }, 2000);
+    showSavedMessage(2000);
   };
 
-  /*
-   * --------------------------------------------------
-   * GOAL EDITOR
-   * --------------------------------------------------
-   */
+  /* --------------------------------
+     GOAL EDITOR
+  -------------------------------- */
 
-  const openGoalEditor = (
+  const editGoal = (
     goal: GoalEditorConfig
   ) => {
     const currentTitle =
@@ -317,31 +332,32 @@ export const SettingsGoalsView: React.FC<
     setEditingGoal(goal.id);
 
     setEditingTitle(
-      currentTitle || goal.defaultTitle
+      currentTitle ||
+        goal.defaultTitle
     );
 
     setEditingTarget(
-      parseTargetNumber(
+      parseTarget(
         currentTarget,
         goal.defaultTarget
       )
     );
   };
 
-  const cancelGoalEditor = () => {
+  const cancelEdit = () => {
     setEditingGoal(null);
     setEditingTitle('');
     setEditingTarget(1);
   };
 
-  const saveGoalEditor = (
+  const saveGoal = (
     goal: GoalEditorConfig
   ) => {
     const cleanTitle =
       editingTitle.trim() ||
       goal.defaultTitle;
 
-    const safeTarget =
+    const cleanTarget =
       Number.isFinite(editingTarget) &&
       editingTarget > 0
         ? editingTarget
@@ -352,7 +368,7 @@ export const SettingsGoalsView: React.FC<
       [goal.id]: {
         title: cleanTitle,
         target: formatTarget(
-          safeTarget,
+          cleanTarget,
           goal.unit
         ),
       },
@@ -360,59 +376,42 @@ export const SettingsGoalsView: React.FC<
 
     onUpdateSettings({
       ...settings,
-      customGoals: updatedCustomGoals,
+      customGoals:
+        updatedCustomGoals,
     });
 
-    setEditingGoal(null);
-    setEditingTitle('');
-    setEditingTarget(1);
+    cancelEdit();
 
-    setSavedSuccess(true);
-
-    window.setTimeout(() => {
-      setSavedSuccess(false);
-    }, 1500);
+    showSavedMessage(1500);
   };
 
-  const increaseGoalTarget = (
-    goal: GoalEditorConfig
+  const changeTarget = (
+    goal: GoalEditorConfig,
+    direction: 1 | -1
   ) => {
     const step =
       goal.unit === 'Minutes'
         ? 5
         : 1;
 
-    setEditingTarget((current) =>
-      Math.min(
-        current + step,
-        999
-      )
+    setEditingTarget(
+      (current) =>
+        Math.max(
+          1,
+          Math.min(
+            999,
+            current +
+              direction * step
+          )
+        )
     );
   };
 
-  const decreaseGoalTarget = (
-    goal: GoalEditorConfig
-  ) => {
-    const step =
-      goal.unit === 'Minutes'
-        ? 5
-        : 1;
+  /* --------------------------------
+     GATE SUBJECT
+  -------------------------------- */
 
-    setEditingTarget((current) =>
-      Math.max(
-        current - step,
-        1
-      )
-    );
-  };
-
-  /*
-   * --------------------------------------------------
-   * GATE SUBJECT
-   * --------------------------------------------------
-   */
-
-  const handleSubjectChange = (
+  const changeSubject = (
     subjectId: string
   ) => {
     setActiveSubjId(subjectId);
@@ -420,33 +419,32 @@ export const SettingsGoalsView: React.FC<
     const modules =
       gateStore?.modules?.filter(
         (module) =>
-          module.subjectId === subjectId
+          module.subjectId ===
+          subjectId
       ) || [];
 
-    const firstModule =
+    const moduleId =
       modules[0]?.id || '';
 
-    setActiveModId(firstModule);
+    setActiveModId(moduleId);
 
     if (
       onUpdateActiveGateModule &&
       subjectId &&
-      firstModule
+      moduleId
     ) {
       onUpdateActiveGateModule(
         subjectId,
-        firstModule
+        moduleId
       );
     }
   };
 
-  /*
-   * --------------------------------------------------
-   * GATE MODULE
-   * --------------------------------------------------
-   */
+  /* --------------------------------
+     GATE MODULE
+  -------------------------------- */
 
-  const handleModuleChange = (
+  const changeModule = (
     moduleId: string
   ) => {
     setActiveModId(moduleId);
@@ -463,27 +461,64 @@ export const SettingsGoalsView: React.FC<
     }
   };
 
-  /*
-   * --------------------------------------------------
-   * BACKUP EXPORT
-   * --------------------------------------------------
-   */
+  /* --------------------------------
+     SLEEP TARGET
+  -------------------------------- */
 
-  const handleExportBackup = () => {
-    const json = onExportJSON();
-
-    const blob = new Blob(
-      [json],
-      {
-        type: 'application/json',
-      }
+  const decreaseSleep = () => {
+    setSleepTarget(
+      (current) =>
+        Math.max(
+          1,
+          Number(
+            (
+              current - 0.5
+            ).toFixed(1)
+          )
+        )
     );
+  };
+
+  const increaseSleep = () => {
+    setSleepTarget(
+      (current) =>
+        Math.min(
+          24,
+          Number(
+            (
+              current + 0.5
+            ).toFixed(1)
+          )
+        )
+    );
+  };
+
+  /* --------------------------------
+     EXPORT
+  -------------------------------- */
+
+  const exportBackup = () => {
+    const json =
+      onExportJSON();
+
+    const blob =
+      new Blob(
+        [json],
+        {
+          type:
+            'application/json',
+        }
+      );
 
     const url =
-      URL.createObjectURL(blob);
+      URL.createObjectURL(
+        blob
+      );
 
     const anchor =
-      document.createElement('a');
+      document.createElement(
+        'a'
+      );
 
     anchor.href = url;
 
@@ -492,22 +527,26 @@ export const SettingsGoalsView: React.FC<
         .toISOString()
         .slice(0, 10)}.json`;
 
-    document.body.appendChild(anchor);
+    document.body.appendChild(
+      anchor
+    );
 
     anchor.click();
 
-    document.body.removeChild(anchor);
+    document.body.removeChild(
+      anchor
+    );
 
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(
+      url
+    );
   };
 
-  /*
-   * --------------------------------------------------
-   * BACKUP IMPORT
-   * --------------------------------------------------
-   */
+  /* --------------------------------
+     IMPORT
+  -------------------------------- */
 
-  const handleImportBackup = (
+  const importBackup = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file =
@@ -517,14 +556,16 @@ export const SettingsGoalsView: React.FC<
       return;
     }
 
-    const reader = new FileReader();
+    const reader =
+      new FileReader();
 
     reader.onload = () => {
       const result =
         reader.result;
 
       if (
-        typeof result !== 'string'
+        typeof result !==
+        'string'
       ) {
         setImportStatus(
           'Unable to read backup file.'
@@ -547,9 +588,12 @@ export const SettingsGoalsView: React.FC<
         );
       }
 
-      window.setTimeout(() => {
-        setImportStatus(null);
-      }, 3500);
+      window.setTimeout(
+        () => {
+          setImportStatus(null);
+        },
+        3500
+      );
     };
 
     reader.onerror = () => {
@@ -563,13 +607,11 @@ export const SettingsGoalsView: React.FC<
     event.target.value = '';
   };
 
-  /*
-   * --------------------------------------------------
-   * RESET
-   * --------------------------------------------------
-   */
+  /* --------------------------------
+     RESET
+  -------------------------------- */
 
-  const handleResetAllData = () => {
+  const resetData = () => {
     const confirmed =
       window.confirm(
         'Are you sure you want to reset all app data? This cannot be undone.'
@@ -580,20 +622,38 @@ export const SettingsGoalsView: React.FC<
     }
   };
 
-  /*
-   * --------------------------------------------------
-   * RENDER
-   * --------------------------------------------------
-   */
+  /* --------------------------------
+     RENDER
+  -------------------------------- */
 
   return (
     <div
       id="settings-goals-view"
-      className="space-y-4 pb-6 font-handwriting text-[#1C1917]"
+      className="space-y-4 font-handwriting text-[#1C1917] pb-8"
     >
-      {/* ============================================
+      {/* ================================
+          SAVED MESSAGE
+      ================================= */}
+
+      {savedSuccess && (
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-[#1C1917] text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg">
+          Saved
+        </div>
+      )}
+
+      {/* ================================
+          IMPORT MESSAGE
+      ================================= */}
+
+      {importStatus && (
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-[#1C1917] text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg max-w-[90%] text-center">
+          {importStatus}
+        </div>
+      )}
+
+      {/* ================================
           PERSONAL PROFILE
-          ============================================ */}
+      ================================= */}
 
       <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm">
         <h3 className="text-base sm:text-lg font-bold font-fancy mb-3">
@@ -601,27 +661,27 @@ export const SettingsGoalsView: React.FC<
         </h3>
 
         <div className="flex items-center gap-3">
-          <label className="w-20 shrink-0 text-sm text-[#78716C]">
+          <label className="text-sm text-[#78716C] w-20 shrink-0">
             Your Name
           </label>
 
           <input
             type="text"
             value={name}
-            onChange={(event) => {
+            onChange={(event) =>
               setName(
                 event.target.value
-              );
-            }}
+              )
+            }
             placeholder="Rohan"
-            className="flex-1 bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base text-[#1C1917] focus:outline-none focus:border-[#1C1917]"
+            className="flex-1 min-w-0 bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base text-[#1C1917] focus:outline-none focus:border-[#1C1917]"
           />
         </div>
       </section>
 
-      {/* ============================================
+      {/* ================================
           DAILY GOALS
-          ============================================ */}
+      ================================= */}
 
       <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm">
         <div className="flex items-center justify-between mb-3">
@@ -635,7 +695,7 @@ export const SettingsGoalsView: React.FC<
         </div>
 
         <div>
-          {GOAL_CONFIGS.map(
+          {GOALS.map(
             (goal) => {
               const isEditing =
                 editingGoal ===
@@ -660,7 +720,7 @@ export const SettingsGoalsView: React.FC<
                 >
                   {!isEditing && (
                     <div className="flex items-center justify-between py-2">
-                      <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="flex items-center gap-2 min-w-0">
                         {goal.icon}
 
                         <span className="font-bold truncate">
@@ -670,16 +730,17 @@ export const SettingsGoalsView: React.FC<
 
                       <div className="flex items-center gap-2 shrink-0">
                         <span className="text-xs text-[#78716C]">
-                          {target} / day
+                          {target}{' '}
+                          / day
                         </span>
 
                         <button
                           type="button"
-                          onClick={() => {
-                            openGoalEditor(
+                          onClick={() =>
+                            editGoal(
                               goal
-                            );
-                          }}
+                            )
+                          }
                           className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-[#F1ECE1] active:bg-[#E8E1D4] cursor-pointer"
                           aria-label={`Edit ${title}`}
                         >
@@ -691,11 +752,13 @@ export const SettingsGoalsView: React.FC<
 
                   {isEditing && (
                     <div className="py-3 space-y-3">
+                      {/* EDIT HEADER */}
+
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 min-w-0">
                           {goal.icon}
 
-                          <span className="font-bold">
+                          <span className="font-bold truncate">
                             Edit {title}
                           </span>
                         </div>
@@ -703,16 +766,16 @@ export const SettingsGoalsView: React.FC<
                         <button
                           type="button"
                           onClick={
-                            cancelGoalEditor
+                            cancelEdit
                           }
                           className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[#F1ECE1] cursor-pointer"
                           aria-label="Close editor"
                         >
-                          <X className="w-4 h-4 text-[#78716C]" />
+                          <X className="w-4 h-4" />
                         </button>
                       </div>
 
-                      {/* GOAL NAME */}
+                      {/* NAME */}
 
                       <div>
                         <label className="block text-xs font-bold text-[#78716C] mb-1">
@@ -726,17 +789,18 @@ export const SettingsGoalsView: React.FC<
                           }
                           onChange={(
                             event
-                          ) => {
+                          ) =>
                             setEditingTitle(
-                              event.target
+                              event
+                                .target
                                 .value
-                            );
-                          }}
+                            )
+                          }
                           className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base text-[#1C1917] focus:outline-none focus:border-[#1C1917]"
                         />
                       </div>
 
-                      {/* DAILY TARGET */}
+                      {/* TARGET */}
 
                       <div>
                         <label className="block text-xs font-bold text-[#78716C] mb-1">
@@ -746,11 +810,12 @@ export const SettingsGoalsView: React.FC<
                         <div className="flex items-center gap-2">
                           <button
                             type="button"
-                            onClick={() => {
-                              decreaseGoalTarget(
-                                goal
-                              );
-                            }}
+                            onClick={() =>
+                              changeTarget(
+                                goal,
+                                -1
+                              )
+                            }
                             className="w-11 h-11 rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] flex items-center justify-center hover:bg-[#E8E1D4] active:bg-[#DDD5C7] cursor-pointer"
                             aria-label="Decrease target"
                           >
@@ -765,7 +830,9 @@ export const SettingsGoalsView: React.FC<
                             </span>
 
                             <span className="text-sm text-[#78716C]">
-                              {goal.unit}
+                              {
+                                goal.unit
+                              }
                               {editingTarget ===
                               1
                                 ? ''
@@ -776,11 +843,12 @@ export const SettingsGoalsView: React.FC<
 
                           <button
                             type="button"
-                            onClick={() => {
-                              increaseGoalTarget(
-                                goal
-                              );
-                            }}
+                            onClick={() =>
+                              changeTarget(
+                                goal,
+                                1
+                              )
+                            }
                             className="w-11 h-11 rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] flex items-center justify-center hover:bg-[#E8E1D4] active:bg-[#DDD5C7] cursor-pointer"
                             aria-label="Increase target"
                           >
@@ -789,30 +857,6 @@ export const SettingsGoalsView: React.FC<
                         </div>
                       </div>
 
-                      {/* SAVE / CANCEL */}
+                      {/* ACTIONS */}
 
                       <div className="flex gap-2">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            saveGoalEditor(
-                              goal
-                            );
-                          }}
-                          className="flex-1 rounded-xl bg-[#1C1917] text-white px-4 py-2.5 font-bold flex items-center justify-center gap-2 hover:bg-black cursor-pointer"
-                        >
-                          <Check className="w-4 h-4" />
-                          Save
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={
-                            cancelGoalEditor
-                          }
-                          className="rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] px-4 py-2.5 font-bold cursor-pointer"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
