@@ -860,3 +860,319 @@ export const SettingsGoalsView: React.FC<
                       {/* ACTIONS */}
 
                       <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            saveGoal(
+                              goal
+                            )
+                          }
+                          className="flex-1 rounded-xl bg-[#1C1917] text-white px-4 py-2.5 font-bold flex items-center justify-center gap-2 hover:bg-black cursor-pointer"
+                        >
+                          <Check className="w-4 h-4" />
+                          Save
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={
+                            cancelEdit
+                          }
+                          className="rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] px-4 py-2.5 font-bold cursor-pointer hover:bg-[#E8E1D4]"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            }
+          )}
+        </div>
+      </section>
+
+      {/* ================================
+          ACTIVE GATE CONNECTION
+      ================================= */}
+
+      {gateStore && (
+        <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-base sm:text-lg font-bold font-fancy">
+              Active GATE Subject & Module
+            </h3>
+
+            <GraduationCap className="w-5 h-5 text-[#78716C]" />
+          </div>
+
+          <p className="text-xs text-[#78716C] mb-3">
+            Choose the subject and module used for future daily GATE progress.
+          </p>
+
+          {/* SUBJECT */}
+
+          <div className="space-y-3">
+            <div>
+              <label className="block text-xs font-bold text-[#78716C] mb-1">
+                Current Subject
+              </label>
+
+              <select
+                value={activeSubjId}
+                onChange={(
+                  event
+                ) =>
+                  changeSubject(
+                    event.target
+                      .value
+                  )
+                }
+                className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base text-[#1C1917] focus:outline-none focus:border-[#1C1917]"
+              >
+                {gateStore.subjects
+                  .length ===
+                0 ? (
+                  <option value="">
+                    No subjects available
+                  </option>
+                ) : (
+                  gateStore.subjects.map(
+                    (subject) => (
+                      <option
+                        key={
+                          subject.id
+                        }
+                        value={
+                          subject.id
+                        }
+                      >
+                        {
+                          subject.title
+                        }
+                      </option>
+                    )
+                  )
+                )}
+              </select>
+            </div>
+
+            {/* MODULE */}
+
+            <div>
+              <label className="block text-xs font-bold text-[#78716C] mb-1">
+                Current Module
+              </label>
+
+              <select
+                value={activeModId}
+                disabled={
+                  modulesForSubject.length ===
+                  0
+                }
+                onChange={(
+                  event
+                ) =>
+                  changeModule(
+                    event.target
+                      .value
+                  )
+                }
+                className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base text-[#1C1917] focus:outline-none focus:border-[#1C1917] disabled:opacity-50"
+              >
+                {modulesForSubject.length ===
+                0 ? (
+                  <option value="">
+                    No modules available
+                  </option>
+                ) : (
+                  modulesForSubject.map(
+                    (module) => (
+                      <option
+                        key={
+                          module.id
+                        }
+                        value={
+                          module.id
+                        }
+                      >
+                        {
+                          module.title
+                        }
+                      </option>
+                    )
+                  )
+                )}
+              </select>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ================================
+          SLEEP GOAL
+      ================================= */}
+
+      <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm">
+        <h3 className="text-base sm:text-lg font-bold font-fancy mb-3">
+          Sleep Goal
+        </h3>
+
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <Bed className="w-4 h-4 text-[#78716C]" />
+
+            <span className="text-sm">
+              Target
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={
+                decreaseSleep
+              }
+              className="w-9 h-9 rounded-lg bg-[#F1ECE1] border border-[#DDD5C7] flex items-center justify-center hover:bg-[#E8E1D4] cursor-pointer"
+              aria-label="Decrease sleep target"
+            >
+              <Minus className="w-4 h-4" />
+            </button>
+
+            <div className="min-w-[90px] h-9 rounded-lg bg-[#F1ECE1] border border-[#DDD5C7] flex items-center justify-center px-3">
+              <span className="font-bold">
+                {sleepTarget}
+                h
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={
+                increaseSleep
+              }
+              className="w-9 h-9 rounded-lg bg-[#F1ECE1] border border-[#DDD5C7] flex items-center justify-center hover:bg-[#E8E1D4] cursor-pointer"
+              aria-label="Increase sleep target"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ================================
+          SAVE PREFERENCES
+      ================================= */}
+
+      <button
+        type="button"
+        onClick={
+          savePreferences
+        }
+        className="w-full rounded-2xl bg-[#1C1917] text-white py-3.5 font-bold text-base flex items-center justify-center gap-2 hover:bg-black active:scale-[0.99] transition-transform cursor-pointer"
+      >
+        <Check className="w-4 h-4" />
+        Save Preferences
+      </button>
+
+      {/* ================================
+          DATA MANAGEMENT
+      ================================= */}
+
+      <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm">
+        <h3 className="text-base sm:text-lg font-bold font-fancy mb-3">
+          Data Management
+        </h3>
+
+        <div className="space-y-2">
+          {/* EXPORT */}
+
+          <button
+            type="button"
+            onClick={
+              exportBackup
+            }
+            className="w-full flex items-center justify-between gap-3 bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-4 py-3 hover:bg-[#E8E1D4] cursor-pointer"
+          >
+            <div className="flex items-center gap-3">
+              <Download className="w-4 h-4" />
+
+              <div className="text-left">
+                <div className="font-bold text-sm">
+                  Export Backup
+                </div>
+
+                <div className="text-xs text-[#78716C]">
+                  Download your local data
+                </div>
+              </div>
+            </div>
+          </button>
+
+          {/* IMPORT */}
+
+          <label className="w-full flex items-center justify-between gap-3 bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-4 py-3 hover:bg-[#E8E1D4] cursor-pointer">
+            <div className="flex items-center gap-3">
+              <Upload className="w-4 h-4" />
+
+              <div>
+                <div className="font-bold text-sm">
+                  Restore Backup
+                </div>
+
+                <div className="text-xs text-[#78716C]">
+                  Import previously saved data
+                </div>
+              </div>
+            </div>
+
+            <input
+              type="file"
+              accept=".json,application/json"
+              onChange={
+                importBackup
+              }
+              className="hidden"
+            />
+          </label>
+
+          {/* RESET */}
+
+          <button
+            type="button"
+            onClick={
+              resetData
+            }
+            className="w-full flex items-center justify-between gap-3 bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-4 py-3 hover:bg-[#E8E1D4] cursor-pointer"
+          >
+            <div className="flex items-center gap-3">
+              <RotateCcw className="w-4 h-4" />
+
+              <div className="text-left">
+                <div className="font-bold text-sm">
+                  Reset All Data
+                </div>
+
+                <div className="text-xs text-[#78716C]">
+                  Permanently clear local progress
+                </div>
+              </div>
+            </div>
+          </button>
+        </div>
+      </section>
+
+      {/* ================================
+          QUOTE
+      ================================= */}
+
+      <div className="text-center px-6 py-4">
+        <p className="text-sm text-[#78716C] italic">
+          “Small progress every day becomes a big change.”
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default SettingsGoalsView;
