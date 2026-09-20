@@ -52,7 +52,7 @@ interface GoalEditorConfig {
   icon: React.ReactNode;
 }
 
-const GOALS: GoalEditorConfig[] = [
+const GOAL_CONFIGS: GoalEditorConfig[] = [
   {
     id: 'gate',
     defaultTitle: 'GATE',
@@ -90,55 +90,55 @@ const GOALS: GoalEditorConfig[] = [
   },
 ];
 
-function parseTarget(
-  value: string,
+function parseTargetNumber(
+  target: string,
   fallback: number
 ): number {
-  const match = value.match(/[\d.]+/);
+  const match = target.match(/[\d.]+/);
 
   if (!match) {
     return fallback;
   }
 
-  const number = Number(match[0]);
+  const value = Number(match[0]);
 
-  if (!Number.isFinite(number) || number <= 0) {
+  if (!Number.isFinite(value) || value <= 0) {
     return fallback;
   }
 
-  return number;
+  return value;
 }
 
 function formatTarget(
   value: number,
   unit: GoalEditorConfig['unit']
 ): string {
-  const clean = Number.isInteger(value)
+  const cleanValue = Number.isInteger(value)
     ? String(value)
     : String(Number(value.toFixed(1)));
 
-  return `${clean} ${unit}${value === 1 ? '' : 's'}`;
+  return `${cleanValue} ${unit}${value === 1 ? '' : 's'}`;
 }
 
 export const SettingsGoalsView: React.FC<
   SettingsGoalsViewProps
-> = (props) => {
-  const {
-    settings,
-    onUpdateSettings,
-    onExportJSON,
-    onImportJSON,
-    onResetAllData,
-    gateStore,
-    onUpdateActiveGateModule,
-  } = props;
-
+> = ({
+  settings,
+  onUpdateSettings,
+  onExportJSON,
+  onImportJSON,
+  onResetAllData,
+  gateStore,
+  onUpdateActiveGateModule,
+}) => {
   const [name, setName] = useState(
     settings.name || 'Rohan'
   );
 
   const [sleepTarget, setSleepTarget] =
-    useState(settings.sleepTargetHours);
+    useState<number>(
+      settings.sleepTargetHours
+    );
 
   const [editingGoal, setEditingGoal] =
     useState<DailyGoalId | null>(null);
@@ -155,14 +155,19 @@ export const SettingsGoalsView: React.FC<
   const [importStatus, setImportStatus] =
     useState<string | null>(null);
 
-  const firstSubject =
-    gateStore?.subjects?.[0]?.id || '';
+  /*
+   * --------------------------------------------------
+   * GATE ACTIVE CONNECTION
+   * --------------------------------------------------
+   */
+
+  const initialSubjectId =
+    gateStore?.activeConnection?.subjectId ||
+    gateStore?.subjects?.[0]?.id ||
+    '';
 
   const [activeSubjId, setActiveSubjId] =
-    useState(
-      gateStore?.activeConnection?.subjectId ||
-        firstSubject
-    );
+    useState<string>(initialSubjectId);
 
   const modulesForSubject =
     gateStore?.modules?.filter(
@@ -170,27 +175,45 @@ export const SettingsGoalsView: React.FC<
         module.subjectId === activeSubjId
     ) || [];
 
-  const firstModule =
-    modulesForSubject[0]?.id || '';
+  const initialModuleId =
+    gateStore?.activeConnection?.moduleId ||
+    modulesForSubject[0]?.id ||
+    '';
 
   const [activeModId, setActiveModId] =
-    useState(
-      gateStore?.activeConnection?.moduleId ||
-        firstModule
-    );
+    useState<string>(initialModuleId);
+
+  /*
+   * --------------------------------------------------
+   * SYNC SETTINGS
+   * --------------------------------------------------
+   */
 
   useEffect(() => {
     setName(settings.name || 'Rohan');
-    setSleepTarget(settings.sleepTargetHours);
+
+    setSleepTarget(
+      settings.sleepTargetHours
+    );
   }, [
     settings.name,
     settings.sleepTargetHours,
   ]);
 
+  /*
+   * --------------------------------------------------
+   * SYNC ACTIVE SUBJECT
+   * --------------------------------------------------
+   */
+
   useEffect(() => {
+    if (!gateStore) {
+      return;
+    }
+
     const subjectId =
-      gateStore?.activeConnection?.subjectId ||
-      gateStore?.subjects?.[0]?.id ||
+      gateStore.activeConnection?.subjectId ||
+      gateStore.subjects?.[0]?.id ||
       '';
 
     setActiveSubjId(subjectId);
@@ -199,34 +222,53 @@ export const SettingsGoalsView: React.FC<
     gateStore?.subjects,
   ]);
 
+  /*
+   * --------------------------------------------------
+   * SYNC ACTIVE MODULE
+   * --------------------------------------------------
+   */
+
   useEffect(() => {
+    if (!gateStore) {
+      return;
+    }
+
     const modules =
-      gateStore?.modules?.filter(
+      gateStore.modules?.filter(
         (module) =>
           module.subjectId === activeSubjId
       ) || [];
 
-    const activeModule =
-      gateStore?.activeConnection?.moduleId;
+    const savedModuleId =
+      gateStore.activeConnection?.moduleId ||
+      '';
 
-    const matchingActiveModule =
+    const savedModuleExists =
       modules.some(
         (module) =>
-          module.id === activeModule
+          module.id === savedModuleId
       );
 
-    setActiveModId(
-      matchingActiveModule
-        ? activeModule || ''
-        : modules[0]?.id || ''
-    );
+    if (savedModuleExists) {
+      setActiveModId(savedModuleId);
+    } else {
+      setActiveModId(
+        modules[0]?.id || ''
+      );
+    }
   }, [
     activeSubjId,
     gateStore?.modules,
     gateStore?.activeConnection?.moduleId,
   ]);
 
-  const savePreferences = () => {
+  /*
+   * --------------------------------------------------
+   * SAVE GENERAL SETTINGS
+   * --------------------------------------------------
+   */
+
+  const handleSavePreferences = () => {
     onUpdateSettings({
       ...settings,
       name: name.trim() || 'Rohan',
@@ -251,62 +293,79 @@ export const SettingsGoalsView: React.FC<
     }, 2000);
   };
 
-  const editGoal = (
+  /*
+   * --------------------------------------------------
+   * GOAL EDITOR
+   * --------------------------------------------------
+   */
+
+  const openGoalEditor = (
     goal: GoalEditorConfig
   ) => {
-    setEditingGoal(goal.id);
-
-    setEditingTitle(
+    const currentTitle =
       getGoalTitle(
         goal.id,
         settings
-      ) || goal.defaultTitle
+      );
+
+    const currentTarget =
+      getGoalTarget(
+        goal.id,
+        settings
+      );
+
+    setEditingGoal(goal.id);
+
+    setEditingTitle(
+      currentTitle || goal.defaultTitle
     );
 
     setEditingTarget(
-      parseTarget(
-        getGoalTarget(
-          goal.id,
-          settings
-        ),
+      parseTargetNumber(
+        currentTarget,
         goal.defaultTarget
       )
     );
   };
 
-  const cancelEdit = () => {
+  const cancelGoalEditor = () => {
     setEditingGoal(null);
     setEditingTitle('');
     setEditingTarget(1);
   };
 
-  const saveGoal = (
+  const saveGoalEditor = (
     goal: GoalEditorConfig
   ) => {
-    const title =
+    const cleanTitle =
       editingTitle.trim() ||
       goal.defaultTitle;
 
-    const target =
+    const safeTarget =
+      Number.isFinite(editingTarget) &&
       editingTarget > 0
         ? editingTarget
         : goal.defaultTarget;
 
+    const updatedCustomGoals = {
+      ...(settings.customGoals || {}),
+      [goal.id]: {
+        title: cleanTitle,
+        target: formatTarget(
+          safeTarget,
+          goal.unit
+        ),
+      },
+    };
+
     onUpdateSettings({
       ...settings,
-      customGoals: {
-        ...(settings.customGoals || {}),
-        [goal.id]: {
-          title,
-          target: formatTarget(
-            target,
-            goal.unit
-          ),
-        },
-      },
+      customGoals: updatedCustomGoals,
     });
 
-    cancelEdit();
+    setEditingGoal(null);
+    setEditingTitle('');
+    setEditingTarget(1);
 
     setSavedSuccess(true);
 
@@ -315,26 +374,45 @@ export const SettingsGoalsView: React.FC<
     }, 1500);
   };
 
-  const changeTarget = (
-    goal: GoalEditorConfig,
-    direction: 1 | -1
+  const increaseGoalTarget = (
+    goal: GoalEditorConfig
   ) => {
     const step =
-      goal.unit === 'Minutes' ? 5 : 1;
+      goal.unit === 'Minutes'
+        ? 5
+        : 1;
 
     setEditingTarget((current) =>
-      Math.max(
-        1,
-        Math.min(
-          999,
-          current +
-            direction * step
-        )
+      Math.min(
+        current + step,
+        999
       )
     );
   };
 
-  const changeSubject = (
+  const decreaseGoalTarget = (
+    goal: GoalEditorConfig
+  ) => {
+    const step =
+      goal.unit === 'Minutes'
+        ? 5
+        : 1;
+
+    setEditingTarget((current) =>
+      Math.max(
+        current - step,
+        1
+      )
+    );
+  };
+
+  /*
+   * --------------------------------------------------
+   * GATE SUBJECT
+   * --------------------------------------------------
+   */
+
+  const handleSubjectChange = (
     subjectId: string
   ) => {
     setActiveSubjId(subjectId);
@@ -345,23 +423,30 @@ export const SettingsGoalsView: React.FC<
           module.subjectId === subjectId
       ) || [];
 
-    const moduleId =
+    const firstModule =
       modules[0]?.id || '';
 
-    setActiveModId(moduleId);
+    setActiveModId(firstModule);
 
     if (
       onUpdateActiveGateModule &&
-      moduleId
+      subjectId &&
+      firstModule
     ) {
       onUpdateActiveGateModule(
         subjectId,
-        moduleId
+        firstModule
       );
     }
   };
 
-  const changeModule = (
+  /*
+   * --------------------------------------------------
+   * GATE MODULE
+   * --------------------------------------------------
+   */
+
+  const handleModuleChange = (
     moduleId: string
   ) => {
     setActiveModId(moduleId);
@@ -378,7 +463,13 @@ export const SettingsGoalsView: React.FC<
     }
   };
 
-  const exportBackup = () => {
+  /*
+   * --------------------------------------------------
+   * BACKUP EXPORT
+   * --------------------------------------------------
+   */
+
+  const handleExportBackup = () => {
     const json = onExportJSON();
 
     const blob = new Blob(
@@ -395,19 +486,28 @@ export const SettingsGoalsView: React.FC<
       document.createElement('a');
 
     anchor.href = url;
+
     anchor.download =
       `study_journal_backup_${new Date()
         .toISOString()
         .slice(0, 10)}.json`;
 
     document.body.appendChild(anchor);
+
     anchor.click();
+
     document.body.removeChild(anchor);
 
     URL.revokeObjectURL(url);
   };
 
-  const importBackup = (
+  /*
+   * --------------------------------------------------
+   * BACKUP IMPORT
+   * --------------------------------------------------
+   */
+
+  const handleImportBackup = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file =
@@ -429,18 +529,23 @@ export const SettingsGoalsView: React.FC<
         setImportStatus(
           'Unable to read backup file.'
         );
+
         return;
       }
 
       const response =
         onImportJSON(result);
 
-      setImportStatus(
-        response.success
-          ? 'Data successfully restored!'
-          : response.error ||
-              'Failed to restore data.'
-      );
+      if (response.success) {
+        setImportStatus(
+          'Data successfully restored!'
+        );
+      } else {
+        setImportStatus(
+          response.error ||
+            'Failed to restore data.'
+        );
+      }
 
       window.setTimeout(() => {
         setImportStatus(null);
@@ -458,7 +563,13 @@ export const SettingsGoalsView: React.FC<
     event.target.value = '';
   };
 
-  const resetData = () => {
+  /*
+   * --------------------------------------------------
+   * RESET
+   * --------------------------------------------------
+   */
+
+  const handleResetAllData = () => {
     const confirmed =
       window.confirm(
         'Are you sure you want to reset all app data? This cannot be undone.'
@@ -469,34 +580,49 @@ export const SettingsGoalsView: React.FC<
     }
   };
 
+  /*
+   * --------------------------------------------------
+   * RENDER
+   * --------------------------------------------------
+   */
+
   return (
     <div
       id="settings-goals-view"
-      className="space-y-4 font-handwriting text-[#1C1917] pb-6"
+      className="space-y-4 pb-6 font-handwriting text-[#1C1917]"
     >
-      {/* PROFILE */}
+      {/* ============================================
+          PERSONAL PROFILE
+          ============================================ */}
+
       <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm">
         <h3 className="text-base sm:text-lg font-bold font-fancy mb-3">
           Personal Profile
         </h3>
 
         <div className="flex items-center gap-3">
-          <label className="text-sm text-[#78716C] w-20 shrink-0">
+          <label className="w-20 shrink-0 text-sm text-[#78716C]">
             Your Name
           </label>
 
           <input
+            type="text"
             value={name}
-            onChange={(event) =>
-              setName(event.target.value)
-            }
+            onChange={(event) => {
+              setName(
+                event.target.value
+              );
+            }}
             placeholder="Rohan"
-            className="flex-1 bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base focus:outline-none focus:border-[#1C1917]"
+            className="flex-1 bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base text-[#1C1917] focus:outline-none focus:border-[#1C1917]"
           />
         </div>
       </section>
 
-      {/* DAILY GOALS */}
+      {/* ============================================
+          DAILY GOALS
+          ============================================ */}
+
       <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-base sm:text-lg font-bold font-fancy">
@@ -509,287 +635,184 @@ export const SettingsGoalsView: React.FC<
         </div>
 
         <div>
-          {GOALS.map((goal) => {
-            const editing =
-              editingGoal === goal.id;
+          {GOAL_CONFIGS.map(
+            (goal) => {
+              const isEditing =
+                editingGoal ===
+                goal.id;
 
-            const title =
-              getGoalTitle(
-                goal.id,
-                settings
-              );
+              const title =
+                getGoalTitle(
+                  goal.id,
+                  settings
+                );
 
-            const target =
-              getGoalTarget(
-                goal.id,
-                settings
-              );
+              const target =
+                getGoalTarget(
+                  goal.id,
+                  settings
+                );
 
-            return (
-              <div
-                key={goal.id}
-                className="border-b border-[#E5DDD0] last:border-b-0"
-              >
-                {!editing && (
-                  <div className="flex items-center justify-between py-2">
-                    <div className="flex items-center gap-2 min-w-0">
-                      {goal.icon}
-
-                      <span className="font-bold truncate">
-                        {title}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-xs text-[#78716C]">
-                        {target} / day
-                      </span>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          editGoal(goal)
-                        }
-                        className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-[#F1ECE1] cursor-pointer"
-                        aria-label={`Edit ${title}`}
-                      >
-                        <Pencil className="w-3.5 h-3.5 text-[#78716C]" />
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {editing && (
-                  <div className="py-3 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+              return (
+                <div
+                  key={goal.id}
+                  className="border-b border-[#E5DDD0] last:border-b-0"
+                >
+                  {!isEditing && (
+                    <div className="flex items-center justify-between py-2">
+                      <div className="flex items-center gap-2.5 min-w-0">
                         {goal.icon}
 
-                        <span className="font-bold">
-                          Edit {title}
+                        <span className="font-bold truncate">
+                          {title}
                         </span>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={
-                          cancelEdit
-                        }
-                        className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[#F1ECE1] cursor-pointer"
-                        aria-label="Close editor"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="text-xs text-[#78716C]">
+                          {target} / day
+                        </span>
 
-                    <div>
-                      <label className="block text-xs font-bold text-[#78716C] mb-1">
-                        Goal Name
-                      </label>
-
-                      <input
-                        value={editingTitle}
-                        onChange={(event) =>
-                          setEditingTitle(
-                            event.target.value
-                          )
-                        }
-                        className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base focus:outline-none focus:border-[#1C1917]"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-[#78716C] mb-1">
-                        Daily Target
-                      </label>
-
-                      <div className="flex items-center gap-2">
                         <button
                           type="button"
-                          onClick={() =>
-                            changeTarget(
-                              goal,
-                              -1
-                            )
-                          }
-                          className="w-11 h-11 rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] flex items-center justify-center cursor-pointer"
+                          onClick={() => {
+                            openGoalEditor(
+                              goal
+                            );
+                          }}
+                          className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-[#F1ECE1] active:bg-[#E8E1D4] cursor-pointer"
+                          aria-label={`Edit ${title}`}
                         >
-                          <Minus className="w-4 h-4" />
+                          <Pencil className="w-3.5 h-3.5 text-[#78716C]" />
                         </button>
+                      </div>
+                    </div>
+                  )}
 
-                        <div className="flex-1 h-11 rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] flex items-center justify-center gap-2">
-                          <span className="text-xl font-bold">
-                            {editingTarget}
-                          </span>
+                  {isEditing && (
+                    <div className="py-3 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {goal.icon}
 
-                          <span className="text-sm text-[#78716C]">
-                            {goal.unit}
-                            {editingTarget ===
-                            1
-                              ? ''
-                              : 's'}{' '}
-                            / day
+                          <span className="font-bold">
+                            Edit {title}
                           </span>
                         </div>
 
                         <button
                           type="button"
-                          onClick={() =>
-                            changeTarget(
-                              goal,
-                              1
-                            )
+                          onClick={
+                            cancelGoalEditor
                           }
-                          className="w-11 h-11 rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] flex items-center justify-center cursor-pointer"
+                          className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[#F1ECE1] cursor-pointer"
+                          aria-label="Close editor"
                         >
-                          <Plus className="w-4 h-4" />
+                          <X className="w-4 h-4 text-[#78716C]" />
+                        </button>
+                      </div>
+
+                      {/* GOAL NAME */}
+
+                      <div>
+                        <label className="block text-xs font-bold text-[#78716C] mb-1">
+                          Goal Name
+                        </label>
+
+                        <input
+                          type="text"
+                          value={
+                            editingTitle
+                          }
+                          onChange={(
+                            event
+                          ) => {
+                            setEditingTitle(
+                              event.target
+                                .value
+                            );
+                          }}
+                          className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base text-[#1C1917] focus:outline-none focus:border-[#1C1917]"
+                        />
+                      </div>
+
+                      {/* DAILY TARGET */}
+
+                      <div>
+                        <label className="block text-xs font-bold text-[#78716C] mb-1">
+                          Daily Target
+                        </label>
+
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              decreaseGoalTarget(
+                                goal
+                              );
+                            }}
+                            className="w-11 h-11 rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] flex items-center justify-center hover:bg-[#E8E1D4] active:bg-[#DDD5C7] cursor-pointer"
+                            aria-label="Decrease target"
+                          >
+                            <Minus className="w-4 h-4" />
+                          </button>
+
+                          <div className="flex-1 h-11 rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] flex items-center justify-center gap-2">
+                            <span className="text-xl font-bold">
+                              {
+                                editingTarget
+                              }
+                            </span>
+
+                            <span className="text-sm text-[#78716C]">
+                              {goal.unit}
+                              {editingTarget ===
+                              1
+                                ? ''
+                                : 's'}{' '}
+                              / day
+                            </span>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              increaseGoalTarget(
+                                goal
+                              );
+                            }}
+                            className="w-11 h-11 rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] flex items-center justify-center hover:bg-[#E8E1D4] active:bg-[#DDD5C7] cursor-pointer"
+                            aria-label="Increase target"
+                          >
+                            <Plus className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* SAVE / CANCEL */}
+
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            saveGoalEditor(
+                              goal
+                            );
+                          }}
+                          className="flex-1 rounded-xl bg-[#1C1917] text-white px-4 py-2.5 font-bold flex items-center justify-center gap-2 hover:bg-black cursor-pointer"
+                        >
+                          <Check className="w-4 h-4" />
+                          Save
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={
+                            cancelGoalEditor
+                          }
+                          className="rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] px-4 py-2.5 font-bold cursor-pointer"
+                        >
+                          Cancel
                         </button>
                       </div>
                     </div>
-
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          saveGoal(goal)
-                        }
-                        className="flex-1 rounded-xl bg-[#1C1917] text-white px-4 py-2.5 font-bold flex items-center justify-center gap-2 cursor-pointer"
-                      >
-                        <Check className="w-4 h-4" />
-                        Save
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={
-                          cancelEdit
-                        }
-                        className="rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] px-4 py-2.5 font-bold cursor-pointer"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* GATE CONNECTION */}
-      {gateStore && (
-        <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-base sm:text-lg font-bold font-fancy">
-              Active GATE Subject & Module
-            </h3>
-
-            <GraduationCap className="w-5 h-5 text-[#78716C]" />
-          </div>
-
-          <p className="text-xs text-[#78716C] mb-3">
-            Choose the subject and module used for future
-            daily GATE progress.
-          </p>
-
-          <div className="space-y-3">
-            <div>
-              <label className="block text-xs font-bold text-[#78716C] mb-1">
-                Current Subject
-              </label>
-
-              <select
-                value={activeSubjId}
-                onChange={(event) =>
-                  changeSubject(
-                    event.target.value
-                  )
-                }
-                className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base focus:outline-none focus:border-[#1C1917]"
-              >
-                {gateStore.subjects.map(
-                  (subject) => (
-                    <option
-                      key={subject.id}
-                      value={subject.id}
-                    >
-                      {subject.title}
-                    </option>
-                  )
-                )}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-[#78716C] mb-1">
-                Current Module
-              </label>
-
-              <select
-                value={activeModId}
-                disabled={
-                  modulesForSubject.length ===
-                  0
-                }
-                onChange={(event) =>
-                  changeModule(
-                    event.target.value
-                  )
-                }
-                className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base focus:outline-none focus:border-[#1C1917] disabled:opacity-50"
-              >
-                {modulesForSubject.length ===
-                0 ? (
-                  <option value="">
-                    No modules available
-                  </option>
-                ) : (
-                  modulesForSubject.map(
-                    (module) => (
-                      <option
-                        key={module.id}
-                        value={module.id}
-                      >
-                        {module.title}
-                      </option>
-                    )
-                  )
-                )}
-              </select>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* SLEEP */}
-      <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm">
-        <h3 className="text-base sm:text-lg font-bold font-fancy mb-3">
-          Sleep Goal
-        </h3>
-
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Bed className="w-4 h-4 text-[#78716C]" />
-
-            <span className="text-sm">
-              Target
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() =>
-                setSleepTarget((value) =>
-                  Math.max(
-                    1,
-                    Number(
-                      (
-                        value - 0.5
-                      ).toFixed(1)
-                    )
-                  )
-                )
-              }
-              className="w-9 h-9 rounded-lg bg-[#F1ECE
