@@ -13,7 +13,6 @@ import { DailyGoalId, DailyRecord, UserSettings } from './types/daily';
 import { GateStoreState, GateVideo } from './types/gate';
 import {
   getTodayDateString,
-  calculateDailyProgress,
   getEmptyDailyGoals,
 } from './logic/calculations';
 import {
@@ -42,10 +41,10 @@ export default function App() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Today Gate Selection Modal (triggers on first click or when current module finishes)
+  // Today Gate Selection Modal
   const [isTodayGateModalOpen, setIsTodayGateModalOpen] = useState(false);
 
-  // Home Gate Notice Modal (fallback)
+  // Home Gate Notice Modal
   const [homeNoticeModal, setHomeNoticeModal] = useState<{
     isOpen: boolean;
     type: 'no_connection' | 'module_completed';
@@ -83,6 +82,7 @@ export default function App() {
     if (allRecords[selectedDate]) {
       return allRecords[selectedDate];
     }
+
     return {
       date: selectedDate,
       goals: getEmptyDailyGoals(),
@@ -94,15 +94,26 @@ export default function App() {
 
   // Active GATE connection metrics
   const activeSubject = useMemo(() => {
-    return gateStore.subjects.find((s) => s.id === gateStore.activeConnection.subjectId) || null;
+    return (
+      gateStore.subjects.find(
+        (s) => s.id === gateStore.activeConnection.subjectId
+      ) || null
+    );
   }, [gateStore.subjects, gateStore.activeConnection.subjectId]);
 
   const activeModule = useMemo(() => {
-    return gateStore.modules.find((m) => m.id === gateStore.activeConnection.moduleId) || null;
+    return (
+      gateStore.modules.find(
+        (m) => m.id === gateStore.activeConnection.moduleId
+      ) || null
+    );
   }, [gateStore.modules, gateStore.activeConnection.moduleId]);
 
   const nextIncompleteVideo = useMemo(() => {
-    return getNextIncompleteVideo(gateStore.activeConnection.moduleId, gateStore.videos);
+    return getNextIncompleteVideo(
+      gateStore.activeConnection.moduleId,
+      gateStore.videos
+    );
   }, [gateStore.activeConnection.moduleId, gateStore.videos]);
 
   // Toggle goal handler on Home Dashboard
@@ -122,10 +133,12 @@ export default function App() {
         };
 
         saveDailyRecord(updatedRecord);
+
         setAllRecords((prev) => ({
           ...prev,
           [selectedDate]: updatedRecord,
         }));
+
         return;
       }
 
@@ -135,27 +148,45 @@ export default function App() {
       if (!isCurrentlyCompleted) {
         const activeSubjId = gateStore.activeConnection.subjectId;
         const activeModId = gateStore.activeConnection.moduleId;
-        const activeMod = activeModId ? gateStore.modules.find((m) => m.id === activeModId) : null;
-        const nextVideo = activeModId ? getNextIncompleteVideo(activeModId, gateStore.videos) : null;
 
-        // If no active connection or the current module is completed: ask which subject and module!
-        if (!activeSubjId || !activeModId || !activeMod || !nextVideo) {
+        const activeMod = activeModId
+          ? gateStore.modules.find((m) => m.id === activeModId)
+          : null;
+
+        const nextVideo = activeModId
+          ? getNextIncompleteVideo(activeModId, gateStore.videos)
+          : null;
+
+        // If no active connection or current module is completed,
+        // ask which subject and module
+        if (
+          !activeSubjId ||
+          !activeModId ||
+          !activeMod ||
+          !nextVideo
+        ) {
           setIsTodayGateModalOpen(true);
           return;
         }
 
-        // Module continuation: SILENT TICK! No popup!
+        // Module continuation: silent tick
         const completionTime = new Date().toISOString();
-        let updatedVideosList: GateVideo[] = [];
 
         handleUpdateGateStore((prev) => {
           const updated = prev.videos.map((v) =>
             v.id === nextVideo.id
-              ? { ...v, completed: true, completedAt: completionTime }
+              ? {
+                  ...v,
+                  completed: true,
+                  completedAt: completionTime,
+                }
               : v
           );
-          updatedVideosList = updated;
-          return { ...prev, videos: updated };
+
+          return {
+            ...prev,
+            videos: updated,
+          };
         });
 
         const updatedRecord: DailyRecord = {
@@ -169,6 +200,7 @@ export default function App() {
         };
 
         saveDailyRecord(updatedRecord);
+
         setAllRecords((prev) => ({
           ...prev,
           [selectedDate]: updatedRecord,
@@ -181,10 +213,18 @@ export default function App() {
           handleUpdateGateStore((prev) => {
             const updated = prev.videos.map((v) =>
               v.id === linkedVideoId
-                ? { ...v, completed: false, completedAt: undefined }
+                ? {
+                    ...v,
+                    completed: false,
+                    completedAt: undefined,
+                  }
                 : v
             );
-            return { ...prev, videos: updated };
+
+            return {
+              ...prev,
+              videos: updated,
+            };
           });
         }
 
@@ -199,6 +239,7 @@ export default function App() {
         };
 
         saveDailyRecord(updatedRecord);
+
         setAllRecords((prev) => ({
           ...prev,
           [selectedDate]: updatedRecord,
@@ -210,23 +251,29 @@ export default function App() {
       selectedDate,
       gateStore,
       handleUpdateGateStore,
-      activeSubject,
-      activeModule,
     ]
   );
 
-  // Confirm Today's Gate Selection (from modal on initial click or after module finished)
+  // Confirm Today's Gate Selection
   const handleConfirmTodayGate = useCallback(
     (subjId: string, modId: string) => {
       setIsTodayGateModalOpen(false);
 
       let currentVideos = gateStore.videos;
-      const existingInMod = currentVideos.filter((v) => v.moduleId === modId);
-      let nextVid = getNextIncompleteVideo(modId, currentVideos);
 
-      // Auto-generate 7 videos if this module doesn't have any yet
+      const existingInMod = currentVideos.filter(
+        (v) => v.moduleId === modId
+      );
+
+      let nextVid = getNextIncompleteVideo(
+        modId,
+        currentVideos
+      );
+
+      // Auto-generate 7 videos if module doesn't have any yet
       if (existingInMod.length === 0) {
         const generated: GateVideo[] = [];
+
         for (let i = 1; i <= 7; i++) {
           generated.push({
             id: `vid-${Date.now()}-${i}`,
@@ -236,22 +283,40 @@ export default function App() {
             completed: false,
           });
         }
+
         currentVideos = [...currentVideos, ...generated];
         nextVid = generated[0];
       } else if (!nextVid) {
-        // If all existing videos in this module were previously completed,
-        // and user explicitly selected it again, reset them to restart fresh from Video 1
+        // If all existing videos were completed,
+        // reset them when explicitly selected again
         currentVideos = currentVideos.map((v) =>
-          v.moduleId === modId ? { ...v, completed: false, completedAt: undefined } : v
+          v.moduleId === modId
+            ? {
+                ...v,
+                completed: false,
+                completedAt: undefined,
+              }
+            : v
         );
-        nextVid = getNextIncompleteVideo(modId, currentVideos);
+
+        nextVid = getNextIncompleteVideo(
+          modId,
+          currentVideos
+        );
       }
 
       if (!nextVid) return;
 
       const completionTime = new Date().toISOString();
+
       const updatedVideos = currentVideos.map((v) =>
-        v.id === nextVid!.id ? { ...v, completed: true, completedAt: completionTime } : v
+        v.id === nextVid!.id
+          ? {
+              ...v,
+              completed: true,
+              completedAt: completionTime,
+            }
+          : v
       );
 
       // Save sticky active connection
@@ -276,12 +341,18 @@ export default function App() {
       };
 
       saveDailyRecord(updatedRecord);
+
       setAllRecords((prev) => ({
         ...prev,
         [selectedDate]: updatedRecord,
       }));
     },
-    [gateStore.videos, currentRecord, selectedDate, handleUpdateGateStore]
+    [
+      gateStore.videos,
+      currentRecord,
+      selectedDate,
+      handleUpdateGateStore,
+    ]
   );
 
   // Update sleep handler
@@ -294,6 +365,7 @@ export default function App() {
       };
 
       saveDailyRecord(updatedRecord);
+
       setAllRecords((prev) => ({
         ...prev,
         [selectedDate]: updatedRecord,
@@ -312,6 +384,7 @@ export default function App() {
       };
 
       saveDailyRecord(updatedRecord);
+
       setAllRecords((prev) => ({
         ...prev,
         [selectedDate]: updatedRecord,
@@ -321,51 +394,67 @@ export default function App() {
   );
 
   // Update user settings
-  const handleUpdateSettings = useCallback((newSettings: UserSettings) => {
-    setSettings(newSettings);
-    saveUserSettings(newSettings);
-  }, []);
+  const handleUpdateSettings = useCallback(
+    (newSettings: UserSettings) => {
+      setSettings(newSettings);
+      saveUserSettings(newSettings);
+    },
+    []
+  );
 
   // Reset data
   const handleResetAllData = useCallback(() => {
     clearAllAppData();
+
     setAllRecords({});
     setSettings(DEFAULT_USER_SETTINGS);
     setGateStore(DEFAULT_GATE_STORE);
   }, []);
 
   // Import JSON data
-  const handleImportJSON = useCallback((jsonString: string) => {
-    const res = importAppDataJSON(jsonString);
-    if (res.success) {
-      setAllRecords(loadAllDailyRecords());
-      setSettings(loadUserSettings());
-      setGateStore(loadGateStore());
-    }
-    return res;
-  }, []);
+  const handleImportJSON = useCallback(
+    (jsonString: string) => {
+      const res = importAppDataJSON(jsonString);
+
+      if (res.success) {
+        setAllRecords(loadAllDailyRecords());
+        setSettings(loadUserSettings());
+        setGateStore(loadGateStore());
+      }
+
+      return res;
+    },
+    []
+  );
 
   // Subtitle & badge for Home GATE item
   const gateSubtitle = useMemo(() => {
     if (!activeSubject || !activeModule) {
       return '1 video (tap to set active subject)';
     }
+
     if (!nextIncompleteVideo) {
       return `${activeSubject.title} • Module complete`;
     }
+
     return `${activeSubject.title} • ${activeModule.title} (Video #${nextIncompleteVideo.order})`;
-  }, [activeSubject, activeModule, nextIncompleteVideo]);
+  }, [
+    activeSubject,
+    activeModule,
+    nextIncompleteVideo,
+  ]);
 
   const gateBadge = useMemo(() => {
     if (!activeSubject || !activeModule) {
       return undefined;
     }
+
     return `${activeSubject.title.slice(0, 10)}..`;
   }, [activeSubject, activeModule]);
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-[#060608] flex items-center justify-center font-handwriting text-zinc-400 text-lg">
+      <div className="h-dvh bg-[#060608] flex items-center justify-center font-handwriting text-zinc-400 text-lg">
         Opening Study Journal...
       </div>
     );
@@ -381,18 +470,21 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#060608] flex flex-col justify-center items-center p-0 sm:py-6 select-none">
+    <div className="h-dvh overflow-hidden bg-[#060608] flex flex-col justify-center items-center p-0 sm:py-6 select-none">
       {/* Real Android Phone Shell Frame */}
       <div
         id="android-phone-frame"
-        className="w-full sm:max-w-[430px] min-h-screen sm:min-h-[860px] sm:max-h-[920px] bg-[#0C0C12] sm:rounded-[40px] sm:shadow-2xl sm:border-[8px] sm:border-[#1E1E28] flex flex-col justify-between overflow-hidden relative text-zinc-100"
+        className="w-full h-full sm:max-w-[430px] sm:max-h-[920px] bg-[#0C0C12] sm:rounded-[40px] sm:shadow-2xl sm:border-[8px] sm:border-[#1E1E28] flex flex-col overflow-hidden relative text-zinc-100"
       >
-        {/* Android Simulated Status Bar (clean, subtle dark) */}
+        {/* Android Simulated Status Bar */}
         <div className="w-full bg-[#0C0C12] px-5 pt-2.5 pb-1 flex items-center justify-between text-[11px] font-mono font-bold text-zinc-400 z-30 shrink-0">
           <span>9:41</span>
+
           <div className="w-16 h-4 bg-zinc-800/80 rounded-full mx-auto hidden sm:block" />
+
           <div className="flex items-center gap-1.5">
             <span>5G</span>
+
             <span className="w-4 h-2 rounded-[2px] border border-zinc-500 inline-block p-0.5">
               <span className="w-full h-full bg-zinc-400 block rounded-[1px]" />
             </span>
@@ -409,27 +501,35 @@ export default function App() {
           onExportData={() => exportAppDataJSON()}
           onImportData={() => {
             const input = document.createElement('input');
+
             input.type = 'file';
             input.accept = '.json';
+
             input.onchange = (e) => {
               const file = (e.target as HTMLInputElement).files?.[0];
+
               if (file) {
                 const reader = new FileReader();
+
                 reader.onload = (ev) => {
-                  handleImportJSON(ev.target?.result as string);
+                  handleImportJSON(
+                    ev.target?.result as string
+                  );
                 };
+
                 reader.readAsText(file);
               }
             };
+
             input.click();
           }}
           onResetData={handleResetAllData}
         />
 
-        {/* Main Scrollable Content View */}
+        {/* ONLY THIS AREA SCROLLS */}
         <main
           id="android-content-area"
-          className="flex-1 overflow-y-auto px-4 py-3 space-y-4"
+          className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3 space-y-4"
         >
           {activeTab === 'home' && (
             <HomeDashboardView
@@ -468,7 +568,10 @@ export default function App() {
               sleepTargetHours={settings.sleepTargetHours}
               onUpdateSleep={handleUpdateSleep}
               onUpdateTarget={(val) =>
-                handleUpdateSettings({ ...settings, sleepTargetHours: val })
+                handleUpdateSettings({
+                  ...settings,
+                  sleepTargetHours: val,
+                })
               }
             />
           )}
@@ -491,18 +594,23 @@ export default function App() {
               onUpdateActiveGateModule={(subjectId, moduleId) => {
                 handleUpdateGateStore((prev) => ({
                   ...prev,
-                  activeConnection: { subjectId, moduleId },
+                  activeConnection: {
+                    subjectId,
+                    moduleId,
+                  },
                 }));
               }}
             />
           )}
         </main>
 
-        {/* Bottom Navigation Bar */}
-        <AndroidBottomNav
-          activeTab={activeTab}
-          onSelectTab={setActiveTab}
-        />
+        {/* FIXED BOTTOM NAVIGATION */}
+        <div className="shrink-0 z-40">
+          <AndroidBottomNav
+            activeTab={activeTab}
+            onSelectTab={setActiveTab}
+          />
+        </div>
 
         {/* Android Drawer */}
         <AndroidDrawer
@@ -516,7 +624,7 @@ export default function App() {
           }}
         />
 
-        {/* Today Gate Selection Modal (Sticky: pops up on first click or when module completes) */}
+        {/* Today Gate Selection Modal */}
         <TodayGateSelectionModal
           isOpen={isTodayGateModalOpen}
           gateStore={gateStore}
@@ -531,7 +639,12 @@ export default function App() {
           onNavigateToActiveConnection={() => {
             setActiveTab('gate');
           }}
-          onClose={() => setHomeNoticeModal({ isOpen: false, type: 'no_connection' })}
+          onClose={() =>
+            setHomeNoticeModal({
+              isOpen: false,
+              type: 'no_connection',
+            })
+          }
         />
       </div>
     </div>
