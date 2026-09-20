@@ -9,13 +9,17 @@ import {
   MessageSquare,
   Bed,
   Pencil,
-  Calendar,
   CalendarDays,
   RotateCcw,
-  PenTool,
-  Check,
 } from 'lucide-react';
-import { DailyGoalId, DailyRecord, DAILY_GOALS_DEFINITION } from '../../types/daily';
+import {
+  DailyGoalId,
+  DailyRecord,
+  DAILY_GOALS_DEFINITION,
+  UserSettings,
+  getGoalTitle,
+  getGoalTarget,
+} from '../../types/daily';
 import { HandwrittenCheckbox } from '../HandwrittenDoodles';
 import { shiftDate, getTodayDateString } from '../../logic/calculations';
 
@@ -34,6 +38,7 @@ interface HomeDashboardViewProps {
   onSaveNote?: (note: string) => void;
   dailyNote?: string;
   allRecords?: Record<string, DailyRecord>;
+  settings: UserSettings;
 }
 
 export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
@@ -46,9 +51,12 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
   sleepTargetHours,
   onUpdateSleep,
   allRecords,
+  settings,
 }) => {
   const [isEditingSleep, setIsEditingSleep] = useState(false);
-  const [tempSleepHours, setTempSleepHours] = useState(sleepHours !== null ? String(sleepHours) : '7.0');
+  const [tempSleepHours, setTempSleepHours] = useState(
+    sleepHours !== null ? String(sleepHours) : '7.0'
+  );
 
   const todayDate = getTodayDateString();
   const isToday = selectedDate === todayDate;
@@ -72,11 +80,15 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
   // Format date parts
   const [year, month, day] = selectedDate.split('-').map(Number);
   const dateObj = new Date(year, month - 1, day);
-  const weekdayShort = dateObj.toLocaleDateString('en-US', { weekday: 'short' });
-  const monthShort = dateObj.toLocaleDateString('en-US', { month: 'short' });
+  const weekdayShort = dateObj.toLocaleDateString('en-US', {
+    weekday: 'short',
+  });
+  const monthShort = dateObj.toLocaleDateString('en-US', {
+    month: 'short',
+  });
 
   // Compute 7 days of current week (Monday to Sunday)
-  const dayOfWeek = dateObj.getDay(); // 0 is Sunday
+  const dayOfWeek = dateObj.getDay();
   const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
   const mondayDateStr = shiftDate(selectedDate, diffToMonday);
 
@@ -84,7 +96,9 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
     const dStr = shiftDate(mondayDateStr, offset);
     const [y, m, d] = dStr.split('-').map(Number);
     const dObj = new Date(y, m - 1, d);
-    const dayName = dObj.toLocaleDateString('en-US', { weekday: 'short' });
+    const dayName = dObj.toLocaleDateString('en-US', {
+      weekday: 'short',
+    });
     const dayNum = dObj.getDate();
     const isSelected = dStr === selectedDate;
     const isDayToday = dStr === todayDate;
@@ -92,8 +106,11 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
     // Check goals completion if allRecords is available
     const rec = allRecords ? allRecords[dStr] : undefined;
     const completedGoals = rec
-      ? DAILY_GOALS_DEFINITION.filter((def) => rec.goals[def.id] === true).length
+      ? DAILY_GOALS_DEFINITION.filter(
+          (def) => rec.goals[def.id] === true
+        ).length
       : 0;
+
     const isAllDone = completedGoals === 5;
     const hasSomeDone = completedGoals > 0;
 
@@ -113,9 +130,10 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
   const completedGoalsCount = DAILY_GOALS_DEFINITION.filter(
     (def) => currentRecord.goals[def.id] === true
   ).length;
+
   const progressPercent = Math.round((completedGoalsCount / 5) * 100);
 
-  // Icon mapping - All icons share identical stroke and outline visual weight
+  // Icon mapping - all icons share identical stroke and outline visual weight
   const goalIcons: Record<DailyGoalId, React.ElementType> = {
     gate: GraduationCap,
     academics: BookOpen,
@@ -126,17 +144,26 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
 
   const handleSleepSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     const parsed = parseFloat(tempSleepHours);
+
     if (!isNaN(parsed) && parsed >= 0 && parsed <= 24) {
       onUpdateSleep(Math.round(parsed * 10) / 10);
     }
+
     setIsEditingSleep(false);
   };
 
   return (
-    <div id="home-dashboard" className="space-y-4 sm:space-y-5 font-handwriting">
-      {/* Upgraded Date Window Model: Capsule + 7-Day Interactive Strip in Warm Tone */}
-      <div id="date-window-container" className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 sm:p-3.5 shadow-sm space-y-2.5 select-none text-[#1C1917]">
+    <div
+      id="home-dashboard"
+      className="space-y-4 sm:space-y-5 font-handwriting"
+    >
+      {/* Date Window */}
+      <div
+        id="date-window-container"
+        className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 sm:p-3.5 shadow-sm space-y-2.5 select-none text-[#1C1917]"
+      >
         {/* Top Navigator Row */}
         <div className="flex items-center justify-between gap-2">
           <button
@@ -164,13 +191,13 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
                 <span className="text-xs font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#E5DDD0] text-[#44403C]">
                   {weekdayShort}
                 </span>
+
                 <span className="text-sm sm:text-base font-bold text-[#1C1917] truncate">
                   {day} {monthShort} {year}
                 </span>
               </div>
             </button>
 
-            {/* Hidden native input hooked to dateInputRef - no transparent overlay blocking buttons */}
             <input
               ref={dateInputRef}
               type="date"
@@ -185,7 +212,6 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
               tabIndex={-1}
             />
 
-            {/* Today status indicator or Jump to Today button */}
             {isToday ? (
               <span className="text-[11px] font-bold text-[#1E3A24] bg-[#D8EADB] border border-[#B9D9BE] px-2.5 py-1 rounded-full shrink-0">
                 Today
@@ -233,21 +259,52 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
                   : 'hover:bg-[#EFE9DF] text-[#78716C]'
               }`}
             >
-              <span className={`text-[10px] sm:text-xs uppercase tracking-wider ${item.isSelected ? 'text-[#D6CEBF] font-semibold' : 'text-[#78716C]'}`}>
+              <span
+                className={`text-[10px] sm:text-xs uppercase tracking-wider ${
+                  item.isSelected
+                    ? 'text-[#D6CEBF] font-semibold'
+                    : 'text-[#78716C]'
+                }`}
+              >
                 {item.dayName.slice(0, 3)}
               </span>
-              <span className={`text-sm sm:text-base font-mono font-bold leading-tight ${item.isSelected ? 'text-[#FAF7F0]' : 'text-[#1C1917]'}`}>
+
+              <span
+                className={`text-sm sm:text-base font-mono font-bold leading-tight ${
+                  item.isSelected
+                    ? 'text-[#FAF7F0]'
+                    : 'text-[#1C1917]'
+                }`}
+              >
                 {item.dayNum}
               </span>
 
               {/* Status indicator dot */}
               <div className="flex items-center gap-0.5 mt-0.5 h-1.5">
                 {item.isAllDone ? (
-                  <span className={`w-1.5 h-1.5 rounded-full ${item.isSelected ? 'bg-emerald-300' : 'bg-emerald-600'}`} />
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full ${
+                      item.isSelected
+                        ? 'bg-emerald-300'
+                        : 'bg-emerald-600'
+                    }`}
+                  />
                 ) : item.hasSomeDone ? (
-                  <span className={`w-1.5 h-1.5 rounded-full ${item.isSelected ? 'bg-amber-300' : 'bg-amber-600'}`} />
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full ${
+                      item.isSelected
+                        ? 'bg-amber-300'
+                        : 'bg-amber-600'
+                    }`}
+                  />
                 ) : item.isDayToday ? (
-                  <span className={`w-1 h-1 rounded-full ${item.isSelected ? 'bg-zinc-400' : 'bg-zinc-500'}`} />
+                  <span
+                    className={`w-1 h-1 rounded-full ${
+                      item.isSelected
+                        ? 'bg-zinc-400'
+                        : 'bg-zinc-500'
+                    }`}
+                  />
                 ) : null}
               </div>
             </button>
@@ -262,38 +319,29 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
         </p>
       </div>
 
-      {/* Checklist Card: TODAY'S WORK in Warm Tone */}
-      <div id="daily-checklist-card" className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 sm:p-5 shadow-sm space-y-2 text-[#1C1917]">
+      {/* Checklist Card */}
+      <div
+        id="daily-checklist-card"
+        className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 sm:p-5 shadow-sm space-y-2 text-[#1C1917]"
+      >
         <div className="pb-1 border-b border-[#E5DDD0]">
           <h2 className="text-sm font-bold text-[#78716C] tracking-wider uppercase font-fancy">
             TODAY'S WORK
           </h2>
         </div>
 
-        {/* Core 5 Goals with identical unified icon styling and clean labels */}
+        {/* Core 5 Goals */}
         {DAILY_GOALS_DEFINITION.map((goal) => {
           const isDone = currentRecord.goals[goal.id] === true;
           const Icon = goalIcons[goal.id];
 
-          // Strictly clean labels as demanded in prompt
-          let displayTitle = goal.title;
-          let subtext = '1 Video';
-          if (goal.id === 'gate') {
-            displayTitle = 'GATE';
-            subtext = '1 Video';
-          } else if (goal.id === 'academics') {
-            displayTitle = 'Academics';
-            subtext = '1 Video';
-          } else if (goal.id === 'exercise') {
-            displayTitle = 'Exercise';
-            subtext = '30 Minutes';
-          } else if (goal.id === 'project') {
-            displayTitle = 'Project / Skill';
-            subtext = '1 Hour';
-          } else if (goal.id === 'english') {
-            displayTitle = 'English Fluency';
-            subtext = '30 Minutes';
-          }
+          /*
+           * IMPORTANT:
+           * The Dashboard now reads the customized title and target
+           * saved from Settings.
+           */
+          const displayTitle = getGoalTitle(goal.id, settings);
+          const subtext = getGoalTarget(goal.id, settings);
 
           return (
             <div
@@ -313,11 +361,14 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
                 <div className="min-w-0">
                   <span
                     className={`text-lg sm:text-xl font-bold leading-tight block ${
-                      isDone ? 'text-[#8C827A] line-through decoration-[#A89F95]' : 'text-[#1C1917]'
+                      isDone
+                        ? 'text-[#8C827A] line-through decoration-[#A89F95]'
+                        : 'text-[#1C1917]'
                     }`}
                   >
                     {displayTitle}
                   </span>
+
                   <p className="text-sm text-[#78716C] leading-tight">
                     {subtext}
                   </p>
@@ -338,7 +389,7 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
         {/* Thin divider before Sleep row */}
         <div className="my-1.5 border-t border-[#E5DDD0]" />
 
-        {/* 6th Row: Sleep - shares same icon styling */}
+        {/* Sleep Row */}
         <div
           onClick={onNavigateToSleep}
           className="flex items-center justify-between p-2.5 rounded-xl hover:bg-[#F1ECE1] transition-colors cursor-pointer min-h-[52px]"
@@ -353,10 +404,14 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
                 <span className="text-lg sm:text-xl font-bold text-[#1C1917] leading-tight">
                   Sleep
                 </span>
+
                 <span className="text-sm sm:text-base font-mono text-[#78716C]">
-                  {sleepHours !== null ? `${sleepHours.toFixed(1)} hrs` : 'Log sleep'}
+                  {sleepHours !== null
+                    ? `${sleepHours.toFixed(1)} hrs`
+                    : 'Log sleep'}
                 </span>
               </div>
+
               <p className="text-sm text-[#78716C]">
                 Target {sleepTargetHours} h
               </p>
@@ -368,6 +423,9 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
             onClick={(e) => {
               e.stopPropagation();
               setIsEditingSleep(true);
+              setTempSleepHours(
+                sleepHours !== null ? String(sleepHours) : '7.0'
+              );
             }}
             className="p-2 rounded-xl text-[#78716C] hover:text-[#1C1917] hover:bg-[#E5DDD0] transition-colors"
             title="Edit sleep hours"
@@ -382,7 +440,10 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
           <div className="bg-[#FAF7F0] border border-[#DDD5C7] rounded-2xl p-5 max-w-xs w-full shadow-2xl space-y-4 font-handwriting text-[#1C1917]">
             <div className="flex items-center justify-between">
-              <h3 className="text-xl font-bold text-[#1C1917]">Log Sleep Hours</h3>
+              <h3 className="text-xl font-bold text-[#1C1917]">
+                Log Sleep Hours
+              </h3>
+
               <button
                 type="button"
                 onClick={() => setIsEditingSleep(false)}
@@ -403,7 +464,10 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
                   onChange={(e) => setTempSleepHours(e.target.value)}
                   className="w-full text-2xl font-mono text-center bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl py-2 text-[#1C1917] focus:outline-none focus:border-[#1C1917]"
                 />
-                <span className="text-base text-[#78716C]">hours</span>
+
+                <span className="text-base text-[#78716C]">
+                  hours
+                </span>
               </div>
 
               <div className="flex gap-2 justify-end pt-2">
@@ -414,6 +478,7 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
                 >
                   Cancel
                 </button>
+
                 <button
                   type="submit"
                   className="px-5 py-2 rounded-xl bg-[#1C1917] text-white text-sm font-bold hover:bg-black shadow-xs cursor-pointer"
@@ -426,16 +491,18 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
         </div>
       )}
 
-      {/* Today's Progress Bar in Warm Card */}
+      {/* Today's Progress Bar */}
       <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 sm:p-5 shadow-sm space-y-2.5 text-[#1C1917]">
         <div className="flex items-center justify-between">
           <span className="text-lg sm:text-xl font-bold text-[#1C1917]">
             Today's Progress
           </span>
+
           <div className="flex items-center gap-3 text-lg sm:text-xl font-mono font-bold text-[#1C1917]">
             <span>
               {completedGoalsCount} / 5
             </span>
+
             <span className="text-emerald-700">
               {progressPercent}%
             </span>
