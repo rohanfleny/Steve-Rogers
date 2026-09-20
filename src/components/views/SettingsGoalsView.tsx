@@ -52,7 +52,7 @@ interface GoalEditorConfig {
   icon: React.ReactNode;
 }
 
-const GOAL_EDITOR_CONFIG: GoalEditorConfig[] = [
+const GOALS: GoalEditorConfig[] = [
   {
     id: 'gate',
     defaultTitle: 'GATE',
@@ -90,60 +90,55 @@ const GOAL_EDITOR_CONFIG: GoalEditorConfig[] = [
   },
 ];
 
-function parseTargetNumber(
-  target: string,
+function parseTarget(
+  value: string,
   fallback: number
 ): number {
-  const match = target.match(/[\d.]+/);
+  const match = value.match(/[\d.]+/);
 
   if (!match) {
     return fallback;
   }
 
-  const value = Number(match[0]);
+  const number = Number(match[0]);
 
-  if (!Number.isFinite(value) || value <= 0) {
+  if (!Number.isFinite(number) || number <= 0) {
     return fallback;
   }
 
-  return value;
+  return number;
 }
 
 function formatTarget(
   value: number,
   unit: GoalEditorConfig['unit']
 ): string {
-  const cleanValue = Number.isInteger(value)
+  const clean = Number.isInteger(value)
     ? String(value)
     : String(Number(value.toFixed(1)));
 
-  return `${cleanValue} ${unit}${value === 1 ? '' : 's'}`;
+  return `${clean} ${unit}${value === 1 ? '' : 's'}`;
 }
 
 export const SettingsGoalsView: React.FC<
   SettingsGoalsViewProps
-> = ({
-  settings,
-  onUpdateSettings,
-  onExportJSON,
-  onImportJSON,
-  onResetAllData,
-  gateStore,
-  onUpdateActiveGateModule,
-}) => {
-  const [sleepTarget, setSleepTarget] = useState<number>(
-    settings.sleepTargetHours
-  );
+> = (props) => {
+  const {
+    settings,
+    onUpdateSettings,
+    onExportJSON,
+    onImportJSON,
+    onResetAllData,
+    gateStore,
+    onUpdateActiveGateModule,
+  } = props;
 
-  const [name, setName] = useState<string>(
+  const [name, setName] = useState(
     settings.name || 'Rohan'
   );
 
-  const [savedSuccess, setSavedSuccess] =
-    useState(false);
-
-  const [importStatus, setImportStatus] =
-    useState<string | null>(null);
+  const [sleepTarget, setSleepTarget] =
+    useState(settings.sleepTargetHours);
 
   const [editingGoal, setEditingGoal] =
     useState<DailyGoalId | null>(null);
@@ -154,103 +149,88 @@ export const SettingsGoalsView: React.FC<
   const [editingTarget, setEditingTarget] =
     useState(1);
 
-  const initialSubjectId =
-    gateStore?.activeConnection?.subjectId ||
-    gateStore?.subjects[0]?.id ||
-    '';
+  const [savedSuccess, setSavedSuccess] =
+    useState(false);
+
+  const [importStatus, setImportStatus] =
+    useState<string | null>(null);
+
+  const firstSubject =
+    gateStore?.subjects?.[0]?.id || '';
 
   const [activeSubjId, setActiveSubjId] =
-    useState(initialSubjectId);
+    useState(
+      gateStore?.activeConnection?.subjectId ||
+        firstSubject
+    );
 
-  const availableMods =
-    gateStore?.modules.filter(
+  const modulesForSubject =
+    gateStore?.modules?.filter(
       (module) =>
         module.subjectId === activeSubjId
     ) || [];
 
-  const initialModuleId =
-    gateStore?.activeConnection?.moduleId ||
-    availableMods[0]?.id ||
-    '';
+  const firstModule =
+    modulesForSubject[0]?.id || '';
 
   const [activeModId, setActiveModId] =
-    useState(initialModuleId);
+    useState(
+      gateStore?.activeConnection?.moduleId ||
+        firstModule
+    );
 
   useEffect(() => {
-    setSleepTarget(settings.sleepTargetHours);
     setName(settings.name || 'Rohan');
+    setSleepTarget(settings.sleepTargetHours);
   }, [
-    settings.sleepTargetHours,
     settings.name,
+    settings.sleepTargetHours,
   ]);
 
   useEffect(() => {
-    if (gateStore?.activeConnection?.subjectId) {
-      setActiveSubjId(
-        gateStore.activeConnection.subjectId
-      );
-    }
+    const subjectId =
+      gateStore?.activeConnection?.subjectId ||
+      gateStore?.subjects?.[0]?.id ||
+      '';
 
-    if (gateStore?.activeConnection?.moduleId) {
-      setActiveModId(
-        gateStore.activeConnection.moduleId
-      );
-    }
-  }, [gateStore?.activeConnection]);
+    setActiveSubjId(subjectId);
+  }, [
+    gateStore?.activeConnection?.subjectId,
+    gateStore?.subjects,
+  ]);
 
-  const handleSubjectChange = (
-    newSubjectId: string
-  ) => {
-    setActiveSubjId(newSubjectId);
-
+  useEffect(() => {
     const modules =
-      gateStore?.modules.filter(
+      gateStore?.modules?.filter(
         (module) =>
-          module.subjectId === newSubjectId
+          module.subjectId === activeSubjId
       ) || [];
 
-    const newModuleId =
-      modules[0]?.id || '';
+    const activeModule =
+      gateStore?.activeConnection?.moduleId;
 
-    setActiveModId(newModuleId);
-
-    if (
-      onUpdateActiveGateModule &&
-      newModuleId
-    ) {
-      onUpdateActiveGateModule(
-        newSubjectId,
-        newModuleId
+    const matchingActiveModule =
+      modules.some(
+        (module) =>
+          module.id === activeModule
       );
-    }
-  };
 
-  const handleModuleChange = (
-    newModuleId: string
-  ) => {
-    setActiveModId(newModuleId);
+    setActiveModId(
+      matchingActiveModule
+        ? activeModule || ''
+        : modules[0]?.id || ''
+    );
+  }, [
+    activeSubjId,
+    gateStore?.modules,
+    gateStore?.activeConnection?.moduleId,
+  ]);
 
-    if (
-      onUpdateActiveGateModule &&
-      activeSubjId &&
-      newModuleId
-    ) {
-      onUpdateActiveGateModule(
-        activeSubjId,
-        newModuleId
-      );
-    }
-  };
-
-  const handleSaveSettings = (
-    event: React.FormEvent
-  ) => {
-    event.preventDefault();
-
+  const savePreferences = () => {
     onUpdateSettings({
       ...settings,
-      sleepTargetHours: sleepTarget,
       name: name.trim() || 'Rohan',
+      sleepTargetHours: sleepTarget,
     });
 
     if (
@@ -271,48 +251,43 @@ export const SettingsGoalsView: React.FC<
     }, 2000);
   };
 
-  const openGoalEditor = (
+  const editGoal = (
     goal: GoalEditorConfig
   ) => {
-    const currentTitle = getGoalTitle(
-      goal.id,
-      settings
-    );
-
-    const currentTarget = getGoalTarget(
-      goal.id,
-      settings
-    );
-
     setEditingGoal(goal.id);
 
     setEditingTitle(
-      currentTitle || goal.defaultTitle
+      getGoalTitle(
+        goal.id,
+        settings
+      ) || goal.defaultTitle
     );
 
     setEditingTarget(
-      parseTargetNumber(
-        currentTarget,
+      parseTarget(
+        getGoalTarget(
+          goal.id,
+          settings
+        ),
         goal.defaultTarget
       )
     );
   };
 
-  const cancelGoalEditor = () => {
+  const cancelEdit = () => {
     setEditingGoal(null);
     setEditingTitle('');
     setEditingTarget(1);
   };
 
-  const saveGoalEditor = (
+  const saveGoal = (
     goal: GoalEditorConfig
   ) => {
-    const cleanTitle =
+    const title =
       editingTitle.trim() ||
       goal.defaultTitle;
 
-    const safeTarget =
-      Number.isFinite(editingTarget) &&
+    const target =
       editingTarget > 0
         ? editingTarget
         : goal.defaultTarget;
@@ -322,18 +297,16 @@ export const SettingsGoalsView: React.FC<
       customGoals: {
         ...(settings.customGoals || {}),
         [goal.id]: {
-          title: cleanTitle,
+          title,
           target: formatTarget(
-            safeTarget,
+            target,
             goal.unit
           ),
         },
       },
     });
 
-    setEditingGoal(null);
-    setEditingTitle('');
-    setEditingTarget(1);
+    cancelEdit();
 
     setSavedSuccess(true);
 
@@ -342,34 +315,77 @@ export const SettingsGoalsView: React.FC<
     }, 1500);
   };
 
-  const increaseTarget = (
-    goal: GoalEditorConfig
+  const changeTarget = (
+    goal: GoalEditorConfig,
+    direction: 1 | -1
   ) => {
     const step =
       goal.unit === 'Minutes' ? 5 : 1;
 
     setEditingTarget((current) =>
-      Math.min(current + step, 999)
+      Math.max(
+        1,
+        Math.min(
+          999,
+          current +
+            direction * step
+        )
+      )
     );
   };
 
-  const decreaseTarget = (
-    goal: GoalEditorConfig
+  const changeSubject = (
+    subjectId: string
   ) => {
-    const step =
-      goal.unit === 'Minutes' ? 5 : 1;
+    setActiveSubjId(subjectId);
 
-    setEditingTarget((current) =>
-      Math.max(current - step, 1)
-    );
+    const modules =
+      gateStore?.modules?.filter(
+        (module) =>
+          module.subjectId === subjectId
+      ) || [];
+
+    const moduleId =
+      modules[0]?.id || '';
+
+    setActiveModId(moduleId);
+
+    if (
+      onUpdateActiveGateModule &&
+      moduleId
+    ) {
+      onUpdateActiveGateModule(
+        subjectId,
+        moduleId
+      );
+    }
   };
 
-  const handleDownloadBackup = () => {
+  const changeModule = (
+    moduleId: string
+  ) => {
+    setActiveModId(moduleId);
+
+    if (
+      onUpdateActiveGateModule &&
+      activeSubjId &&
+      moduleId
+    ) {
+      onUpdateActiveGateModule(
+        activeSubjId,
+        moduleId
+      );
+    }
+  };
+
+  const exportBackup = () => {
     const json = onExportJSON();
 
     const blob = new Blob(
       [json],
-      { type: 'application/json' }
+      {
+        type: 'application/json',
+      }
     );
 
     const url =
@@ -391,7 +407,7 @@ export const SettingsGoalsView: React.FC<
     URL.revokeObjectURL(url);
   };
 
-  const handleFileUpload = (
+  const importBackup = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file =
@@ -403,11 +419,13 @@ export const SettingsGoalsView: React.FC<
 
     const reader = new FileReader();
 
-    reader.onload = (loadEvent) => {
+    reader.onload = () => {
       const result =
-        loadEvent.target?.result;
+        reader.result;
 
-      if (typeof result !== 'string') {
+      if (
+        typeof result !== 'string'
+      ) {
         setImportStatus(
           'Unable to read backup file.'
         );
@@ -433,10 +451,6 @@ export const SettingsGoalsView: React.FC<
       setImportStatus(
         'Unable to read backup file.'
       );
-
-      window.setTimeout(() => {
-        setImportStatus(null);
-      }, 3500);
     };
 
     reader.readAsText(file);
@@ -444,10 +458,11 @@ export const SettingsGoalsView: React.FC<
     event.target.value = '';
   };
 
-  const handleReset = () => {
-    const confirmed = window.confirm(
-      'Are you sure you want to reset all app data? This cannot be undone.'
-    );
+  const resetData = () => {
+    const confirmed =
+      window.confirm(
+        'Are you sure you want to reset all app data? This cannot be undone.'
+      );
 
     if (confirmed) {
       onResetAllData();
@@ -459,9 +474,9 @@ export const SettingsGoalsView: React.FC<
       id="settings-goals-view"
       className="space-y-4 font-handwriting text-[#1C1917] pb-6"
     >
-      {/* Personal Profile */}
-      <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm space-y-3">
-        <h3 className="text-base sm:text-lg font-bold font-fancy">
+      {/* PROFILE */}
+      <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm">
+        <h3 className="text-base sm:text-lg font-bold font-fancy mb-3">
           Personal Profile
         </h3>
 
@@ -471,20 +486,19 @@ export const SettingsGoalsView: React.FC<
           </label>
 
           <input
-            type="text"
             value={name}
             onChange={(event) =>
               setName(event.target.value)
             }
             placeholder="Rohan"
-            className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-1.5 text-base text-[#1C1917] focus:outline-none focus:border-[#1C1917]"
+            className="flex-1 bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base focus:outline-none focus:border-[#1C1917]"
           />
         </div>
       </section>
 
-      {/* Daily Goals */}
-      <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm space-y-3">
-        <div className="flex items-center justify-between">
+      {/* DAILY GOALS */}
+      <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm">
+        <div className="flex items-center justify-between mb-3">
           <h3 className="text-base sm:text-lg font-bold font-fancy">
             Daily Goals
           </h3>
@@ -494,192 +508,179 @@ export const SettingsGoalsView: React.FC<
           </span>
         </div>
 
-        <div className="space-y-2 text-sm">
-          {GOAL_EDITOR_CONFIG.map(
-            (goal, index) => {
-              const isEditing =
-                editingGoal === goal.id;
+        <div>
+          {GOALS.map((goal) => {
+            const editing =
+              editingGoal === goal.id;
 
-              const title =
-                getGoalTitle(
-                  goal.id,
-                  settings
-                );
+            const title =
+              getGoalTitle(
+                goal.id,
+                settings
+              );
 
-              const target =
-                getGoalTarget(
-                  goal.id,
-                  settings
-                );
+            const target =
+              getGoalTarget(
+                goal.id,
+                settings
+              );
 
-              return (
-                <div
-                  key={goal.id}
-                  className={
-                    index <
-                    GOAL_EDITOR_CONFIG.length - 1
-                      ? 'border-b border-[#E5DDD0]'
-                      : ''
-                  }
-                >
-                  {!isEditing ? (
-                    <div className="flex items-center justify-between py-2">
-                      <div className="flex items-center gap-2.5 min-w-0">
+            return (
+              <div
+                key={goal.id}
+                className="border-b border-[#E5DDD0] last:border-b-0"
+              >
+                {!editing && (
+                  <div className="flex items-center justify-between py-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      {goal.icon}
+
+                      <span className="font-bold truncate">
+                        {title}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="text-xs text-[#78716C]">
+                        {target} / day
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          editGoal(goal)
+                        }
+                        className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-[#F1ECE1] cursor-pointer"
+                        aria-label={`Edit ${title}`}
+                      >
+                        <Pencil className="w-3.5 h-3.5 text-[#78716C]" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {editing && (
+                  <div className="py-3 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
                         {goal.icon}
 
-                        <span className="font-bold truncate">
-                          {title}
+                        <span className="font-bold">
+                          Edit {title}
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-xs text-[#78716C]">
-                          {target} / day
-                        </span>
+                      <button
+                        type="button"
+                        onClick={
+                          cancelEdit
+                        }
+                        className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[#F1ECE1] cursor-pointer"
+                        aria-label="Close editor"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
 
+                    <div>
+                      <label className="block text-xs font-bold text-[#78716C] mb-1">
+                        Goal Name
+                      </label>
+
+                      <input
+                        value={editingTitle}
+                        onChange={(event) =>
+                          setEditingTitle(
+                            event.target.value
+                          )
+                        }
+                        className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base focus:outline-none focus:border-[#1C1917]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-[#78716C] mb-1">
+                        Daily Target
+                      </label>
+
+                      <div className="flex items-center gap-2">
                         <button
                           type="button"
                           onClick={() =>
-                            openGoalEditor(
-                              goal
+                            changeTarget(
+                              goal,
+                              -1
                             )
                           }
-                          className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-[#F1ECE1] active:bg-[#E8E1D4] cursor-pointer"
-                          aria-label={`Edit ${title}`}
+                          className="w-11 h-11 rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] flex items-center justify-center cursor-pointer"
                         >
-                          <Pencil className="w-3.5 h-3.5 text-[#78716C]" />
+                          <Minus className="w-4 h-4" />
                         </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="py-3 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          {goal.icon}
 
-                          <span className="font-bold">
-                            Edit {title}
+                        <div className="flex-1 h-11 rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] flex items-center justify-center gap-2">
+                          <span className="text-xl font-bold">
+                            {editingTarget}
+                          </span>
+
+                          <span className="text-sm text-[#78716C]">
+                            {goal.unit}
+                            {editingTarget ===
+                            1
+                              ? ''
+                              : 's'}{' '}
+                            / day
                           </span>
                         </div>
 
                         <button
                           type="button"
-                          onClick={
-                            cancelGoalEditor
-                          }
-                          className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#F1ECE1] cursor-pointer"
-                          aria-label="Cancel editing"
-                        >
-                          <X className="w-4 h-4 text-[#78716C]" />
-                        </button>
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold text-[#78716C] mb-1">
-                          Goal Name
-                        </label>
-
-                        <input
-                          type="text"
-                          value={editingTitle}
-                          onChange={(event) =>
-                            setEditingTitle(
-                              event.target.value
-                            )
-                          }
-                          className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base text-[#1C1917] focus:outline-none focus:border-[#1C1917]"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold text-[#78716C] mb-1">
-                          Daily Target
-                        </label>
-
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              decreaseTarget(
-                                goal
-                              )
-                            }
-                            className="w-11 h-11 flex items-center justify-center rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] hover:bg-[#E8E1D4] active:bg-[#DDD5C7] cursor-pointer"
-                            aria-label="Decrease target"
-                          >
-                            <Minus className="w-4 h-4" />
-                          </button>
-
-                          <div className="flex-1 flex items-center justify-center gap-2 bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl h-11">
-                            <span className="text-xl font-bold font-mono">
-                              {editingTarget}
-                            </span>
-
-                            <span className="text-sm text-[#78716C]">
-                              {goal.unit}
-                              {editingTarget ===
-                              1
-                                ? ''
-                                : 's'}
-                              {' / day'}
-                            </span>
-                          </div>
-
-                          <button
-                            type="button"
-                            onClick={() =>
-                              increaseTarget(
-                                goal
-                              )
-                            }
-                            className="w-11 h-11 flex items-center justify-center rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] hover:bg-[#E8E1D4] active:bg-[#DDD5C7] cursor-pointer"
-                            aria-label="Increase target"
-                          >
-                            <Plus className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="flex gap-2">
-                        <button
-                          type="button"
                           onClick={() =>
-                            saveGoalEditor(
-                              goal
+                            changeTarget(
+                              goal,
+                              1
                             )
                           }
-                          className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#1C1917] text-white font-bold hover:bg-black cursor-pointer"
+                          className="w-11 h-11 rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] flex items-center justify-center cursor-pointer"
                         >
-                          <Check className="w-4 h-4" />
-                          Save
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={
-                            cancelGoalEditor
-                          }
-                          className="px-4 py-2.5 rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] font-semibold hover:bg-[#E8E1D4] cursor-pointer"
-                        >
-                          Cancel
+                          <Plus className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
-                  )}
-                </div>
-              );
-            }
-          )}
+
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          saveGoal(goal)
+                        }
+                        className="flex-1 rounded-xl bg-[#1C1917] text-white px-4 py-2.5 font-bold flex items-center justify-center gap-2 cursor-pointer"
+                      >
+                        <Check className="w-4 h-4" />
+                        Save
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={
+                          cancelEdit
+                        }
+                        className="rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] px-4 py-2.5 font-bold cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </section>
 
-      {/* Active GATE Subject & Module */}
+      {/* GATE CONNECTION */}
       {gateStore && (
-        <section
-          id="settings-gate-active-config"
-          className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm space-y-3"
-        >
-          <div className="flex items-center justify-between">
+        <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm">
+          <div className="flex items-center justify-between mb-2">
             <h3 className="text-base sm:text-lg font-bold font-fancy">
               Active GATE Subject & Module
             </h3>
@@ -687,26 +688,25 @@ export const SettingsGoalsView: React.FC<
             <GraduationCap className="w-5 h-5 text-[#78716C]" />
           </div>
 
-          <p className="text-xs text-[#78716C]">
-            Set or change the current subject and module
-            tracked when ticking the daily GATE video.
+          <p className="text-xs text-[#78716C] mb-3">
+            Choose the subject and module used for future
+            daily GATE progress.
           </p>
 
-          <div className="space-y-3 pt-1">
+          <div className="space-y-3">
             <div>
               <label className="block text-xs font-bold text-[#78716C] mb-1">
                 Current Subject
               </label>
 
               <select
-                id="settings-gate-subj-dropdown"
                 value={activeSubjId}
                 onChange={(event) =>
-                  handleSubjectChange(
+                  changeSubject(
                     event.target.value
                   )
                 }
-                className="w-full text-base px-3 py-2 bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl text-[#1C1917] focus:outline-none focus:border-[#1C1917]"
+                className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base focus:outline-none focus:border-[#1C1917]"
               >
                 {gateStore.subjects.map(
                   (subject) => (
@@ -727,28 +727,69 @@ export const SettingsGoalsView: React.FC<
               </label>
 
               <select
-                id="settings-gate-mod-dropdown"
                 value={activeModId}
                 disabled={
-                  availableMods.length === 0
+                  modulesForSubject.length ===
+                  0
                 }
                 onChange={(event) =>
-                  handleModuleChange(
+                  changeModule(
                     event.target.value
                   )
                 }
-                className="w-full text-base px-3 py-2 bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl text-[#1C1917] focus:outline-none focus:border-[#1C1917] disabled:opacity-50"
+                className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base focus:outline-none focus:border-[#1C1917] disabled:opacity-50"
               >
-                {availableMods.length ===
+                {modulesForSubject.length ===
                 0 ? (
                   <option value="">
-                    No modules in this subject
+                    No modules available
                   </option>
                 ) : (
-                  availableMods.map(
+                  modulesForSubject.map(
                     (module) => (
                       <option
                         key={module.id}
                         value={module.id}
                       >
                         {module.title}
+                      </option>
+                    )
+                  )
+                )}
+              </select>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* SLEEP */}
+      <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm">
+        <h3 className="text-base sm:text-lg font-bold font-fancy mb-3">
+          Sleep Goal
+        </h3>
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Bed className="w-4 h-4 text-[#78716C]" />
+
+            <span className="text-sm">
+              Target
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() =>
+                setSleepTarget((value) =>
+                  Math.max(
+                    1,
+                    Number(
+                      (
+                        value - 0.5
+                      ).toFixed(1)
+                    )
+                  )
+                )
+              }
+              className="w-9 h-9 rounded-lg bg-[#F1ECE
