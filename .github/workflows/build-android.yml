@@ -11,45 +11,58 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Get the project
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2. Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
 
+      # 3. Install dependencies
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install
+          npm install @rolldown/binding-linux-x64-gnu --save-dev
 
+      # 4. Build the web application
       - name: Build web app
         run: npm run build
 
+      # 5. Check Capacitor
       - name: Check Capacitor
         run: npx cap --version
 
+      # 6. Add Android platform
       - name: Add Android platform
         run: npx cap add android
 
+      # 7. Copy web app into Android project
       - name: Sync web app to Android
         run: npx cap sync android
 
+      # 8. Setup Java
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
 
+      # 9. Setup Android SDK
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
         with:
           packages: 'platform-tools'
 
+      # 10. Build debug APK
       - name: Build debug APK
         working-directory: android
         run: ./gradlew assembleDebug
 
+      # 11. Upload APK
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
