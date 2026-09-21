@@ -1,21 +1,32 @@
 import React from 'react';
 import { Home, BookOpen, Moon, BarChart2 } from 'lucide-react';
 import { AndroidNavTab } from './AndroidDrawer';
+import { UserSettings, getGoalTitle } from '../types/daily';
 
 interface AndroidBottomNavProps {
   activeTab: AndroidNavTab;
   onSelectTab: (tab: AndroidNavTab) => void;
+  settings: UserSettings;
 }
 
 export const AndroidBottomNav: React.FC<AndroidBottomNavProps> = ({
   activeTab,
   onSelectTab,
+  settings,
 }) => {
   const tabs = [
     { id: 'home' as AndroidNavTab, label: 'Home', icon: Home },
-    { id: 'gate' as AndroidNavTab, label: 'GATE', icon: BookOpen },
+    {
+      id: 'gate' as AndroidNavTab,
+      label: getGoalTitle('gate', settings),
+      icon: BookOpen,
+    },
     { id: 'sleep' as AndroidNavTab, label: 'Sleep', icon: Moon },
-    { id: 'analytics' as AndroidNavTab, label: 'Analytics', icon: BarChart2 },
+    {
+      id: 'analytics' as AndroidNavTab,
+      label: 'Analytics',
+      icon: BarChart2,
+    },
   ];
 
   return (
@@ -41,12 +52,17 @@ export const AndroidBottomNav: React.FC<AndroidBottomNavProps> = ({
           >
             <Icon
               className={`w-5 h-5 transition-transform ${
-                isActive ? 'scale-110 stroke-[2.4] text-emerald-400' : 'stroke-[1.6]'
+                isActive
+                  ? 'scale-110 stroke-[2.4] text-emerald-400'
+                  : 'stroke-[1.6]'
               }`}
             />
+
             <span
               className={`text-[12px] font-handwriting mt-0.5 leading-none ${
-                isActive ? 'font-bold text-white' : 'font-normal text-zinc-400'
+                isActive
+                  ? 'font-bold text-white'
+                  : 'font-normal text-zinc-400'
               }`}
             >
               {tab.label}
