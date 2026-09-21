@@ -6,6 +6,7 @@ import {
   Trash2,
   Pencil,
   Calendar,
+  Shield,
 } from 'lucide-react';
 
 import {
@@ -1688,64 +1689,62 @@ return (
     id="gate-overview-screen"
     className="h-full min-h-0 flex flex-col font-handwriting"
   >
+    {/* Captain America quote */}
+    <div className="shrink-0 pb-2">
+      <div className="flex items-center justify-center gap-2 py-1">
+        <Shield className="w-4 h-4 text-blue-700 shrink-0" />
+        <p className="text-sm sm:text-base font-fancy font-bold text-zinc-100 text-center">
+          “I can do this all day.”
+        </p>
+      </div>
+    </div>
+
     {/* Fixed top content */}
-
     <div className="shrink-0 space-y-2.5 pb-2">
-
-  {/* Overall Progress */}
-
+      {/* Overall Progress */}
       <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 shadow-sm text-[#1C1917]">
         <div className="flex items-center justify-between">
           <span className="text-[10px] font-bold text-[#78716C] tracking-wider uppercase">
             OVERALL PROGRESS
           </span>
-
           <span className="text-xl font-bold font-mono text-emerald-700">
             {overallProgress.percentage}%
           </span>
         </div>
 
-       <div className="flex items-center justify-between mt-0.5">
-  <span className="text-base font-mono font-bold">
-    {overallProgress.completed} /{' '}
-    {overallProgress.total}
-  </span>
-
-  <span className="text-[10px] font-mono text-[#78716C]">
-    {overallProgress.remaining} remaining
-  </span>
-</div>
+        <div className="flex items-center justify-between mt-0.5">
+          <span className="text-base font-mono font-bold">
+            {overallProgress.completed} /{' '}
+            {overallProgress.total}
+          </span>
+          <span className="text-[10px] font-mono text-[#78716C]">
+            {overallProgress.remaining} remaining
+          </span>
+        </div>
 
         <div className="w-full bg-[#E5DDD0] h-1.5 rounded-full overflow-hidden mt-1.5">
           <div
             className="h-full bg-emerald-600 rounded-full transition-all duration-300"
-            style={{
-              width: `${overallProgress.percentage}%`,
-            }}
+            style={{ width: `${overallProgress.percentage}%` }}
           />
         </div>
       </div>
 
       {/* Expected Completion */}
-
       <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 shadow-sm text-[#1C1917]">
         <div className="text-[10px] font-bold text-[#78716C] tracking-wider uppercase">
           EXPECTED COMPLETION
         </div>
-
         <div className="flex items-center justify-between gap-2 mt-1">
           <span className="text-base sm:text-lg font-fancy font-bold">
             {overallProgress.remaining === 0
               ? 'All Completed! 🎉'
               : expectedCompletion.formattedDate}
           </span>
-
           {overallProgress.remaining > 0 && (
             <span className="text-[10px] font-mono text-[#78716C] shrink-0">
               {overallProgress.remaining}{' '}
-              {overallProgress.remaining === 1
-                ? 'day'
-                : 'days'}{' '}
+              {overallProgress.remaining === 1 ? 'day' : 'days'}{' '}
               left
             </span>
           )}
@@ -1753,89 +1752,82 @@ return (
       </div>
     </div>
 
-    {/* Scrollable subjects only */}
-
+    {/* Subjects box: fixed header + scrollable list */}
     <div className="min-h-0 flex-1 pr-0.5">
-      <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 shadow-sm text-[#1C1917]">
-        <div className="flex items-center justify-between pb-1.5 border-b border-[#E5DDD0]">
-          <span className="text-[11px] font-bold text-[#78716C] tracking-wider uppercase">
-            SUBJECTS ({gateStore.subjects.length})
-          </span>
-
-          <button
-            type="button"
-            onClick={() => setIsAddingSubject(true)}
-            className="text-[11px] font-bold flex items-center gap-1"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            Add Subject
-          </button>
+      <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl shadow-sm text-[#1C1917] flex flex-col overflow-hidden">
+        <div className="shrink-0 px-3 pt-3 pb-2 border-b border-[#E5DDD0]">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-[#78716C] tracking-wider uppercase">
+              SUBJECTS ({gateStore.subjects.length})
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsAddingSubject(true)}
+              className="text-[11px] font-bold flex items-center gap-1"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              Add Subject
+            </button>
+          </div>
         </div>
 
-        <div className="space-y-1.5 pt-2 max-h-[360px] overflow-y-auto overscroll-contain pr-1">
-          {gateStore.subjects.map((subject) => {
-            const progress = calculateSubjectProgress(
-              subject.id,
-              gateStore.modules,
-              gateStore.videos
-            );
+        <div className="h-[235px] shrink-0 overflow-y-auto overscroll-contain px-3 py-2">
+          <div className="space-y-1.5">
+            {gateStore.subjects.map((subject) => {
+              const progress = calculateSubjectProgress(
+                subject.id,
+                gateStore.modules,
+                gateStore.videos
+              );
 
-            return (
-              <div
-                key={subject.id}
-                className="p-2.5 bg-[#F1ECE2] border border-[#DDD4C5] rounded-xl"
-              >
-                <div className="flex items-center justify-between">
+              return (
+                <div
+                  key={subject.id}
+                  className="p-2.5 bg-[#F1ECE2] border border-[#DDD4C5] rounded-xl"
+                >
+                  <div className="flex items-center justify-between">
+                    <div
+                      onClick={() => setSelectedSubjectId(subject.id)}
+                      className="flex-1 min-w-0 cursor-pointer"
+                    >
+                      <div className="text-sm sm:text-base font-bold truncate">
+                        {subject.title}
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleOpenEditSubject(subject)}
+                      className="p-1 text-[#78716C]"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+
                   <div
-                    onClick={() =>
-                      setSelectedSubjectId(subject.id)
-                    }
-                    className="flex-1 min-w-0 cursor-pointer"
+                    onClick={() => setSelectedSubjectId(subject.id)}
+                    className="cursor-pointer"
                   >
-                    <div className="text-sm sm:text-base font-bold truncate">
-                      {subject.title}
+                    <div className="flex items-center justify-between mt-0.5 text-xs font-mono">
+                      <span className="font-bold">
+                        {progress.completed} / {progress.total}
+                      </span>
+                      <span className="font-bold text-emerald-700">
+                        {progress.percentage}%
+                      </span>
+                    </div>
+
+                    <div className="w-full bg-[#DDD5C7] h-1.5 rounded-full overflow-hidden mt-1">
+                      <div
+                        className="h-full bg-emerald-600 rounded-full transition-all duration-300"
+                        style={{ width: `${progress.percentage}%` }}
+                      />
                     </div>
                   </div>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleOpenEditSubject(subject)
-                    }
-                    className="p-1 text-[#78716C]"
-                  >
-                    <Pencil className="w-3.5 h-3.5" />
-                  </button>
                 </div>
-
-                <div
-                  onClick={() =>
-                    setSelectedSubjectId(subject.id)
-                  }
-                  className="cursor-pointer"
-                >
-                  <div className="flex items-center justify-between mt-0.5 text-xs font-mono">
-                    <span className="font-bold">
-                      {progress.completed} / {progress.total}
-                    </span>
-
-                    <span className="font-bold text-emerald-700">
-                      {progress.percentage}%
-                    </span>
-                  </div>
-
-                  <div className="w-full bg-[#DDD5C7] h-1.5 rounded-full overflow-hidden mt-1">
-                    <div
-                      className="h-full bg-emerald-600 rounded-full transition-all duration-300"
-                      style={{
-                        width: `${progress.percentage}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
