@@ -5,6 +5,7 @@ import {
   Plus,
   Trash2,
   Pencil,
+  Calendar,
 } from 'lucide-react';
 
 import {
@@ -20,6 +21,7 @@ import {
   calculateOverallGateProgress,
   calculateSubjectProgress,
   calculateModuleProgress,
+  calculateExpectedCompletionDate,
   getNextIncompleteVideo,
 } from '../../logic/gateCalculations';
 
@@ -49,34 +51,14 @@ export const GateView: React.FC<GateViewProps> = ({
   gateStore,
   onUpdateStore,
   onTriggerCompletionModal,
-  onBackToHome,
   currentRecord,
-  allRecords,
   selectedDate,
 }) => {
-  /*
-   * These props are intentionally retained because App.tsx may still
-   * pass them. They do not need to be used directly on this screen.
-   */
-  void onBackToHome;
-  void allRecords;
+  const [selectedSubjectId, setSelectedSubjectId] =
+    useState<string | null>(null);
 
-  // ------------------------------------------------------------
-  // INTERNAL GATE NAVIGATION
-  // overview -> subject -> module
-  // ------------------------------------------------------------
-
-  const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(
-    null
-  );
-
-  const [selectedModuleId, setSelectedModuleId] = useState<string | null>(
-    null
-  );
-
-  // ------------------------------------------------------------
-  // ADD SUBJECT / MODULE / VIDEO COUNT
-  // ------------------------------------------------------------
+  const [selectedModuleId, setSelectedModuleId] =
+    useState<string | null>(null);
 
   const [isAddingSubject, setIsAddingSubject] = useState(false);
   const [newSubjectTitle, setNewSubjectTitle] = useState('');
@@ -84,40 +66,24 @@ export const GateView: React.FC<GateViewProps> = ({
   const [isAddingModule, setIsAddingModule] = useState(false);
   const [newModuleTitle, setNewModuleTitle] = useState('');
 
-  const [isSettingVideoCount, setIsSettingVideoCount] = useState(false);
+  const [isSettingVideoCount, setIsSettingVideoCount] =
+    useState(false);
   const [targetVideoCountInput, setTargetVideoCountInput] =
     useState('7');
 
-  // ------------------------------------------------------------
-  // EDIT / DELETE SUBJECT
-  // ------------------------------------------------------------
-
   const [editingSubject, setEditingSubject] =
     useState<GateSubject | null>(null);
-
   const [editSubjectTitle, setEditSubjectTitle] = useState('');
-
   const [isConfirmingDeleteSubject, setIsConfirmingDeleteSubject] =
     useState(false);
 
-  // ------------------------------------------------------------
-  // EDIT / DELETE MODULE
-  // ------------------------------------------------------------
-
   const [editingModule, setEditingModule] =
     useState<GateModule | null>(null);
-
   const [editModuleTitle, setEditModuleTitle] = useState('');
-
   const [editModuleVideoCount, setEditModuleVideoCount] =
     useState('7');
-
   const [isConfirmingDeleteModule, setIsConfirmingDeleteModule] =
     useState(false);
-
-  // ------------------------------------------------------------
-  // CALCULATIONS
-  // ------------------------------------------------------------
 
   const overallProgress = calculateOverallGateProgress(
     gateStore.videos
@@ -130,12 +96,12 @@ export const GateView: React.FC<GateViewProps> = ({
   const effectiveDate =
     selectedDate || getTodayDateString();
 
-  /*
-   * Kept so the existing selected-date behaviour remains available
-   * to the component without changing the surrounding app logic.
-   */
-  void isTodayGateDone;
-  void effectiveDate;
+  const expectedCompletion =
+    calculateExpectedCompletionDate(
+      overallProgress.remaining,
+      isTodayGateDone,
+      effectiveDate
+    );
 
   const selectedSubject = gateStore.subjects.find(
     (s) => s.id === selectedSubjectId
@@ -145,9 +111,9 @@ export const GateView: React.FC<GateViewProps> = ({
     (m) => m.id === selectedModuleId
   );
 
-  // ------------------------------------------------------------
-  // TOGGLE VIDEO COMPLETION
-  // ------------------------------------------------------------
+  /* ==========================================================
+     VIDEO COMPLETION
+     ========================================================== */
 
   const handleToggleVideo = (video: GateVideo) => {
     const isNowCompleted = !video.completed;
@@ -166,7 +132,6 @@ export const GateView: React.FC<GateViewProps> = ({
           : v
       );
 
-      // Check whether the module has just been completed.
       if (isNowCompleted) {
         const remainingInModule = updatedVideos.filter(
           (v) =>
@@ -175,25 +140,25 @@ export const GateView: React.FC<GateViewProps> = ({
         ).length;
 
         if (remainingInModule === 0) {
-          const module = prev.modules.find(
+          const mod = prev.modules.find(
             (m) => m.id === video.moduleId
           );
 
-          const subject = module
+          const subj = mod
             ? prev.subjects.find(
-                (s) => s.id === module.subjectId
+                (s) => s.id === mod.subjectId
               )
             : null;
 
           if (
-            subject &&
-            module &&
+            subj &&
+            mod &&
             onTriggerCompletionModal
           ) {
             setTimeout(() => {
               onTriggerCompletionModal(
-                subject.id,
-                module.id
+                subj.id,
+                mod.id
               );
             }, 150);
           }
@@ -207,64 +172,62 @@ export const GateView: React.FC<GateViewProps> = ({
     });
   };
 
-  // ------------------------------------------------------------
-  // TOGGLE REVISION
-  // ------------------------------------------------------------
+  /* ==========================================================
+     REVISION
+     ========================================================== */
 
   const handleToggleRevision = (moduleId: string) => {
     onUpdateStore((prev) => ({
       ...prev,
-      modules: prev.modules.map((module) =>
-        module.id === moduleId
+      modules: prev.modules.map((m) =>
+        m.id === moduleId
           ? {
-              ...module,
+              ...m,
               revisionCompleted:
-                !module.revisionCompleted,
+                !m.revisionCompleted,
               revisionCompletedAt:
-                !module.revisionCompleted
+                !m.revisionCompleted
                   ? new Date().toISOString()
                   : undefined,
             }
-          : module
+          : m
       ),
     }));
   };
 
-  // ------------------------------------------------------------
-  // TOGGLE PYQ
-  // ------------------------------------------------------------
+  /* ==========================================================
+     PYQ
+     ========================================================== */
 
   const handleTogglePYQ = (moduleId: string) => {
     onUpdateStore((prev) => ({
       ...prev,
-      modules: prev.modules.map((module) =>
-        module.id === moduleId
+      modules: prev.modules.map((m) =>
+        m.id === moduleId
           ? {
-              ...module,
+              ...m,
               pyqCompleted:
-                !module.pyqCompleted,
+                !m.pyqCompleted,
               pyqCompletedAt:
-                !module.pyqCompleted
+                !m.pyqCompleted
                   ? new Date().toISOString()
                   : undefined,
             }
-          : module
+          : m
       ),
     }));
   };
 
-  // ------------------------------------------------------------
-  // ADD SUBJECT
-  // ------------------------------------------------------------
+  /* ==========================================================
+     ADD SUBJECT
+     ========================================================== */
 
   const handleAddSubject = (
     e: React.FormEvent
   ) => {
     e.preventDefault();
 
-    if (!newSubjectTitle.trim()) {
-      return;
-    }
+    if (!newSubjectTitle.trim()) return;
 
     const newSubject: GateSubject = {
       id: `subj-${Date.now()}`,
@@ -284,9 +247,9 @@ export const GateView: React.FC<GateViewProps> = ({
     setIsAddingSubject(false);
   };
 
-  // ------------------------------------------------------------
-  // ADD MODULE
-  // ------------------------------------------------------------
+  /* ==========================================================
+     ADD MODULE
+     ========================================================== */
 
   const handleAddModule = (
     e: React.FormEvent
@@ -325,9 +288,9 @@ export const GateView: React.FC<GateViewProps> = ({
     setIsAddingModule(false);
   };
 
-  // ------------------------------------------------------------
-  // SET VIDEO COUNT
-  // ------------------------------------------------------------
+  /* ==========================================================
+     SET VIDEO COUNT
+     ========================================================== */
 
   const handleSetVideoCount = (
     newCount: number
@@ -343,13 +306,11 @@ export const GateView: React.FC<GateViewProps> = ({
     onUpdateStore((prev) => {
       const existingVideos = prev.videos
         .filter(
-          (video) =>
-            video.moduleId ===
-            selectedModuleId
+          (v) =>
+            v.moduleId === selectedModuleId
         )
         .sort(
-          (a, b) =>
-            a.order - b.order
+          (a, b) => a.order - b.order
         );
 
       let updatedModuleVideos: GateVideo[] =
@@ -362,33 +323,32 @@ export const GateView: React.FC<GateViewProps> = ({
         updatedModuleVideos =
           existingVideos
             .slice(0, newCount)
-            .map((video, index) => ({
-              ...video,
+            .map((v, index) => ({
+              ...v,
               order: index + 1,
               title: `Video ${index + 1}`,
             }));
       } else {
         updatedModuleVideos =
           existingVideos.map(
-            (video, index) => ({
-              ...video,
+            (v, index) => ({
+              ...v,
               order: index + 1,
               title: `Video ${index + 1}`,
             })
           );
 
         for (
-          let index =
+          let i =
             existingVideos.length + 1;
-          index <= newCount;
-          index++
+          i <= newCount;
+          i++
         ) {
           updatedModuleVideos.push({
-            id: `vid-${Date.now()}-${index}`,
-            moduleId:
-              selectedModuleId,
-            title: `Video ${index}`,
-            order: index,
+            id: `vid-${Date.now()}-${i}`,
+            moduleId: selectedModuleId,
+            title: `Video ${i}`,
+            order: i,
             completed: false,
           });
         }
@@ -396,9 +356,8 @@ export const GateView: React.FC<GateViewProps> = ({
 
       const otherVideos =
         prev.videos.filter(
-          (video) =>
-            video.moduleId !==
-            selectedModuleId
+          (v) =>
+            v.moduleId !== selectedModuleId
         );
 
       return {
@@ -413,17 +372,15 @@ export const GateView: React.FC<GateViewProps> = ({
     setIsSettingVideoCount(false);
   };
 
-  // ------------------------------------------------------------
-  // EDIT SUBJECT
-  // ------------------------------------------------------------
+  /* ==========================================================
+     EDIT SUBJECT
+     ========================================================== */
 
   const handleOpenEditSubject = (
     subject: GateSubject
   ) => {
     setEditingSubject(subject);
-    setEditSubjectTitle(
-      subject.title
-    );
+    setEditSubjectTitle(subject.title);
     setIsConfirmingDeleteSubject(false);
   };
 
@@ -439,29 +396,25 @@ export const GateView: React.FC<GateViewProps> = ({
       return;
     }
 
-    const trimmedTitle =
+    const title =
       editSubjectTitle.trim();
 
     onUpdateStore((prev) => ({
       ...prev,
       subjects: prev.subjects.map(
-        (subject) =>
-          subject.id ===
-          editingSubject.id
-            ? {
-                ...subject,
-                title: trimmedTitle,
-              }
-            : subject
+        (s) =>
+          s.id === editingSubject.id
+            ? { ...s, title }
+            : s
       ),
     }));
 
     setEditingSubject(null);
   };
 
-  // ------------------------------------------------------------
-  // DELETE SUBJECT
-  // ------------------------------------------------------------
+  /* ==========================================================
+     DELETE SUBJECT
+     ========================================================== */
 
   const handleDeleteSubject = (
     subjectId: string
@@ -469,35 +422,32 @@ export const GateView: React.FC<GateViewProps> = ({
     onUpdateStore((prev) => {
       const subjectModules =
         prev.modules.filter(
-          (module) =>
-            module.subjectId === subjectId
+          (m) =>
+            m.subjectId === subjectId
         );
 
-      const moduleIdsToDelete =
+      const moduleIds =
         new Set(
           subjectModules.map(
-            (module) => module.id
+            (m) => m.id
           )
         );
 
       const updatedSubjects =
         prev.subjects.filter(
-          (subject) =>
-            subject.id !== subjectId
+          (s) => s.id !== subjectId
         );
 
       const updatedModules =
         prev.modules.filter(
-          (module) =>
-            module.subjectId !== subjectId
+          (m) =>
+            m.subjectId !== subjectId
         );
 
       const updatedVideos =
         prev.videos.filter(
-          (video) =>
-            !moduleIdsToDelete.has(
-              video.moduleId
-            )
+          (v) =>
+            !moduleIds.has(v.moduleId)
         );
 
       let updatedActive = {
@@ -511,18 +461,16 @@ export const GateView: React.FC<GateViewProps> = ({
         const nextSubject =
           updatedSubjects[0]?.id || '';
 
-        const nextSubjectModules =
+        const nextModules =
           updatedModules.filter(
-            (module) =>
-              module.subjectId ===
-              nextSubject
+            (m) =>
+              m.subjectId === nextSubject
           );
 
         updatedActive = {
           subjectId: nextSubject,
           moduleId:
-            nextSubjectModules[0]?.id ||
-            '',
+            nextModules[0]?.id || '',
         };
       }
 
@@ -546,31 +494,26 @@ export const GateView: React.FC<GateViewProps> = ({
     setEditingSubject(null);
   };
 
-  // ------------------------------------------------------------
-  // EDIT MODULE
-  // ------------------------------------------------------------
+  /* ==========================================================
+     EDIT MODULE
+     ========================================================== */
 
   const handleOpenEditModule = (
     module: GateModule
   ) => {
-    const moduleVideos =
+    const videos =
       gateStore.videos.filter(
-        (video) =>
-          video.moduleId === module.id
+        (v) =>
+          v.moduleId === module.id
       );
 
     setEditingModule(module);
-
-    setEditModuleTitle(
-      module.title
-    );
-
+    setEditModuleTitle(module.title);
     setEditModuleVideoCount(
-      moduleVideos.length > 0
-        ? String(moduleVideos.length)
+      videos.length > 0
+        ? String(videos.length)
         : '7'
     );
-
     setIsConfirmingDeleteModule(false);
   };
 
@@ -586,25 +529,22 @@ export const GateView: React.FC<GateViewProps> = ({
       return;
     }
 
-    const trimmedTitle =
+    const title =
       editModuleTitle.trim();
 
-    const newCount = parseInt(
-      editModuleVideoCount,
-      10
-    );
+    const newCount =
+      parseInt(
+        editModuleVideoCount,
+        10
+      );
 
     onUpdateStore((prev) => {
       const updatedModules =
         prev.modules.map(
-          (module) =>
-            module.id ===
-            editingModule.id
-              ? {
-                  ...module,
-                  title: trimmedTitle,
-                }
-              : module
+          (m) =>
+            m.id === editingModule.id
+              ? { ...m, title }
+              : m
         );
 
       let updatedVideos =
@@ -617,8 +557,8 @@ export const GateView: React.FC<GateViewProps> = ({
         const existingVideos =
           prev.videos
             .filter(
-              (video) =>
-                video.moduleId ===
+              (v) =>
+                v.moduleId ===
                 editingModule.id
             )
             .sort(
@@ -626,49 +566,48 @@ export const GateView: React.FC<GateViewProps> = ({
                 a.order - b.order
             );
 
-        let updatedModuleVideos: GateVideo[] =
-          [];
+        let moduleVideos:
+          GateVideo[] = [];
 
         if (
           newCount <=
           existingVideos.length
         ) {
-          updatedModuleVideos =
+          moduleVideos =
             existingVideos
               .slice(0, newCount)
               .map(
-                (video, index) => ({
-                  ...video,
+                (v, index) => ({
+                  ...v,
                   order: index + 1,
-                  title: `Video ${
-                    index + 1
-                  }`,
+                  title:
+                    `Video ${index + 1}`,
                 })
               );
         } else {
-          updatedModuleVideos =
+          moduleVideos =
             existingVideos.map(
-              (video, index) => ({
-                ...video,
+              (v, index) => ({
+                ...v,
                 order: index + 1,
-                title: `Video ${
-                  index + 1
-                }`,
+                title:
+                  `Video ${index + 1}`,
               })
             );
 
           for (
-            let index =
+            let i =
               existingVideos.length + 1;
-            index <= newCount;
-            index++
+            i <= newCount;
+            i++
           ) {
-            updatedModuleVideos.push({
-              id: `vid-${Date.now()}-${index}`,
+            moduleVideos.push({
+              id: `vid-${Date.now()}-${i}`,
               moduleId:
                 editingModule.id,
-              title: `Video ${index}`,
-              order: index,
+              title:
+                `Video ${i}`,
+              order: i,
               completed: false,
             });
           }
@@ -676,14 +615,14 @@ export const GateView: React.FC<GateViewProps> = ({
 
         const otherVideos =
           prev.videos.filter(
-            (video) =>
-              video.moduleId !==
+            (v) =>
+              v.moduleId !==
               editingModule.id
           );
 
         updatedVideos = [
           ...otherVideos,
-          ...updatedModuleVideos,
+          ...moduleVideos,
         ];
       }
 
@@ -697,9 +636,9 @@ export const GateView: React.FC<GateViewProps> = ({
     setEditingModule(null);
   };
 
-  // ------------------------------------------------------------
-  // DELETE MODULE
-  // ------------------------------------------------------------
+  /* ==========================================================
+     DELETE MODULE
+     ========================================================== */
 
   const handleDeleteModule = (
     moduleId: string
@@ -707,14 +646,13 @@ export const GateView: React.FC<GateViewProps> = ({
     onUpdateStore((prev) => {
       const updatedModules =
         prev.modules.filter(
-          (module) =>
-            module.id !== moduleId
+          (m) => m.id !== moduleId
         );
 
       const updatedVideos =
         prev.videos.filter(
-          (video) =>
-            video.moduleId !== moduleId
+          (v) =>
+            v.moduleId !== moduleId
         );
 
       let updatedActive = {
@@ -727,8 +665,8 @@ export const GateView: React.FC<GateViewProps> = ({
       ) {
         const remainingModules =
           updatedModules.filter(
-            (module) =>
-              module.subjectId ===
+            (m) =>
+              m.subjectId ===
               prev.activeConnection
                 .subjectId
           );
@@ -759,37 +697,33 @@ export const GateView: React.FC<GateViewProps> = ({
     setEditingModule(null);
   };
 
-  // ------------------------------------------------------------
-  // EDIT SUBJECT MODAL
-  // ------------------------------------------------------------
+  /* ==========================================================
+     EDIT SUBJECT MODAL
+     ========================================================== */
 
   const renderEditSubjectModal = () => {
-    if (!editingSubject) {
-      return null;
-    }
+    if (!editingSubject) return null;
 
     const subjectModules =
       gateStore.modules.filter(
-        (module) =>
-          module.subjectId ===
+        (m) =>
+          m.subjectId ===
           editingSubject.id
       );
 
     const subjectVideos =
       gateStore.videos.filter(
-        (video) =>
+        (v) =>
           subjectModules.some(
-            (module) =>
-              module.id ===
-              video.moduleId
+            (m) => m.id === v.moduleId
           )
       );
 
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/70 backdrop-blur-xs">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
         <div className="bg-[#FAF7F0] border border-[#DDD5C7] rounded-2xl p-4 max-w-sm w-full shadow-2xl space-y-3 font-handwriting text-[#1C1917]">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-bold font-fancy">
+            <h3 className="text-lg font-bold font-fancy">
               Edit Subject
             </h3>
 
@@ -801,7 +735,7 @@ export const GateView: React.FC<GateViewProps> = ({
                   false
                 );
               }}
-              className="p-1.5 rounded-full text-[#78716C] hover:text-[#1C1917] hover:bg-[#EAE2D7]"
+              className="p-1 rounded-full text-[#78716C]"
             >
               ✕
             </button>
@@ -814,7 +748,7 @@ export const GateView: React.FC<GateViewProps> = ({
             className="space-y-3"
           >
             <div>
-              <label className="block text-[11px] font-bold text-[#78716C] mb-1">
+              <label className="block text-xs font-bold text-[#78716C] mb-1">
                 Subject Name
               </label>
 
@@ -826,8 +760,7 @@ export const GateView: React.FC<GateViewProps> = ({
                     e.target.value
                   )
                 }
-                placeholder="Subject name"
-                className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-sm text-[#1C1917] focus:outline-none focus:border-[#1C1917]"
+                className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base text-[#1C1917] focus:outline-none focus:border-[#1C1917]"
                 autoFocus
               />
             </div>
@@ -841,21 +774,21 @@ export const GateView: React.FC<GateViewProps> = ({
                     false
                   );
                 }}
-                className="px-3 py-1.5 rounded-xl border border-[#DDD5C7] text-xs text-[#57534E]"
+                className="px-3 py-1.5 rounded-xl border border-[#DDD5C7] text-sm"
               >
                 Cancel
               </button>
 
               <button
                 type="submit"
-                className="px-3.5 py-1.5 rounded-xl bg-[#1C1917] text-white text-xs font-bold"
+                className="px-4 py-1.5 rounded-xl bg-[#1C1917] text-white text-sm font-bold"
               >
                 Save Changes
               </button>
             </div>
           </form>
 
-          <div className="pt-2.5 border-t border-[#E5DDD0]">
+          <div className="pt-2 border-t border-[#E5DDD0]">
             {!isConfirmingDeleteSubject ? (
               <button
                 type="button"
@@ -864,15 +797,16 @@ export const GateView: React.FC<GateViewProps> = ({
                     true
                   )
                 }
-                className="w-full py-1.5 px-3 rounded-xl border border-rose-300 bg-rose-50 text-rose-800 text-xs font-bold flex items-center justify-center gap-1.5"
+                className="w-full py-2 rounded-xl border border-rose-300 bg-rose-50 text-rose-800 text-xs font-bold flex items-center justify-center gap-1.5"
               >
-                <Trash2 className="w-3.5 h-3.5" />
+                <Trash2 className="w-4 h-4" />
                 Delete Subject
               </button>
             ) : (
-              <div className="p-2.5 bg-rose-50 border border-rose-200 rounded-xl space-y-2">
-                <p className="text-[11px] text-rose-900 leading-snug font-semibold">
-                  Delete{' '}
+              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl space-y-2">
+                <p className="text-xs text-rose-900">
+                  Are you sure you want to
+                  delete{' '}
                   <strong>
                     {editingSubject.title}
                   </strong>
@@ -892,7 +826,7 @@ export const GateView: React.FC<GateViewProps> = ({
                         false
                       )
                     }
-                    className="px-2.5 py-1 text-[11px] rounded-lg bg-[#EAE2D7] border border-[#DDD5C7]"
+                    className="px-3 py-1 text-xs rounded-xl bg-[#EAE2D7]"
                   >
                     Cancel
                   </button>
@@ -904,7 +838,7 @@ export const GateView: React.FC<GateViewProps> = ({
                         editingSubject.id
                       )
                     }
-                    className="px-2.5 py-1 text-[11px] rounded-lg bg-rose-600 text-white font-bold"
+                    className="px-3 py-1 text-xs rounded-xl bg-rose-600 text-white font-bold"
                   >
                     Yes, Delete
                   </button>
@@ -917,27 +851,25 @@ export const GateView: React.FC<GateViewProps> = ({
     );
   };
 
-  // ------------------------------------------------------------
-  // EDIT MODULE MODAL
-  // ------------------------------------------------------------
+  /* ==========================================================
+     EDIT MODULE MODAL
+     ========================================================== */
 
   const renderEditModuleModal = () => {
-    if (!editingModule) {
-      return null;
-    }
+    if (!editingModule) return null;
 
     const moduleVideos =
       gateStore.videos.filter(
-        (video) =>
-          video.moduleId ===
+        (v) =>
+          v.moduleId ===
           editingModule.id
       );
 
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/70 backdrop-blur-xs">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
         <div className="bg-[#FAF7F0] border border-[#DDD5C7] rounded-2xl p-4 max-w-sm w-full shadow-2xl space-y-3 font-handwriting text-[#1C1917]">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-bold font-fancy">
+            <h3 className="text-lg font-bold font-fancy">
               Edit Module
             </h3>
 
@@ -949,18 +881,20 @@ export const GateView: React.FC<GateViewProps> = ({
                   false
                 );
               }}
-              className="p-1.5 rounded-full text-[#78716C] hover:text-[#1C1917] hover:bg-[#EAE2D7]"
+              className="p-1 rounded-full text-[#78716C]"
             >
               ✕
             </button>
           </div>
 
           <form
-            onSubmit={handleSaveEditModule}
+            onSubmit={
+              handleSaveEditModule
+            }
             className="space-y-3"
           >
             <div>
-              <label className="block text-[11px] font-bold text-[#78716C] mb-1">
+              <label className="block text-xs font-bold text-[#78716C] mb-1">
                 Module Name
               </label>
 
@@ -972,33 +906,30 @@ export const GateView: React.FC<GateViewProps> = ({
                     e.target.value
                   )
                 }
-                placeholder="Module title"
-                className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-sm text-[#1C1917] focus:outline-none focus:border-[#1C1917]"
+                className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base focus:outline-none focus:border-[#1C1917]"
                 autoFocus
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-[#78716C] mb-1">
-                Total Videos
+              <label className="block text-xs font-bold text-[#78716C] mb-1">
+                Total Videos Count
               </label>
 
               <input
                 type="number"
                 min="0"
                 max="200"
-                value={
-                  editModuleVideoCount
-                }
+                value={editModuleVideoCount}
                 onChange={(e) =>
                   setEditModuleVideoCount(
                     e.target.value
                   )
                 }
-                className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-sm font-mono text-[#1C1917] focus:outline-none focus:border-[#1C1917]"
+                className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base font-mono focus:outline-none focus:border-[#1C1917]"
               />
 
-              <p className="text-[10px] text-[#78716C] mt-1">
+              <p className="text-[11px] text-[#78716C] mt-1">
                 Currently{' '}
                 {moduleVideos.length}{' '}
                 videos.
@@ -1014,21 +945,21 @@ export const GateView: React.FC<GateViewProps> = ({
                     false
                   );
                 }}
-                className="px-3 py-1.5 rounded-xl border border-[#DDD5C7] text-xs text-[#57534E]"
+                className="px-3 py-1.5 rounded-xl border border-[#DDD5C7] text-sm"
               >
                 Cancel
               </button>
 
               <button
                 type="submit"
-                className="px-3.5 py-1.5 rounded-xl bg-[#1C1917] text-white text-xs font-bold"
+                className="px-4 py-1.5 rounded-xl bg-[#1C1917] text-white text-sm font-bold"
               >
                 Save Changes
               </button>
             </div>
           </form>
 
-          <div className="pt-2.5 border-t border-[#E5DDD0]">
+          <div className="pt-2 border-t border-[#E5DDD0]">
             {!isConfirmingDeleteModule ? (
               <button
                 type="button"
@@ -1037,20 +968,20 @@ export const GateView: React.FC<GateViewProps> = ({
                     true
                   )
                 }
-                className="w-full py-1.5 px-3 rounded-xl border border-rose-300 bg-rose-50 text-rose-800 text-xs font-bold flex items-center justify-center gap-1.5"
+                className="w-full py-2 rounded-xl border border-rose-300 bg-rose-50 text-rose-800 text-xs font-bold flex items-center justify-center gap-1.5"
               >
-                <Trash2 className="w-3.5 h-3.5" />
+                <Trash2 className="w-4 h-4" />
                 Delete Module
               </button>
             ) : (
-              <div className="p-2.5 bg-rose-50 border border-rose-200 rounded-xl space-y-2">
-                <p className="text-[11px] text-rose-900 leading-snug font-semibold">
+              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl space-y-2">
+                <p className="text-xs text-rose-900">
                   Delete{' '}
                   <strong>
                     {editingModule.title}
                   </strong>
                   ? This will permanently
-                  delete this module and its{' '}
+                  delete this module and all{' '}
                   {moduleVideos.length}{' '}
                   videos.
                 </p>
@@ -1063,7 +994,7 @@ export const GateView: React.FC<GateViewProps> = ({
                         false
                       )
                     }
-                    className="px-2.5 py-1 text-[11px] rounded-lg bg-[#EAE2D7] border border-[#DDD5C7]"
+                    className="px-3 py-1 text-xs rounded-xl bg-[#EAE2D7]"
                   >
                     Cancel
                   </button>
@@ -1075,7 +1006,7 @@ export const GateView: React.FC<GateViewProps> = ({
                         editingModule.id
                       )
                     }
-                    className="px-2.5 py-1 text-[11px] rounded-lg bg-rose-600 text-white font-bold"
+                    className="px-3 py-1 text-xs rounded-xl bg-rose-600 text-white font-bold"
                   >
                     Yes, Delete
                   </button>
@@ -1088,9 +1019,9 @@ export const GateView: React.FC<GateViewProps> = ({
     );
   };
 
-  // ============================================================
-  // PAGE 3 — MODULE DETAIL
-  // ============================================================
+  /* ==========================================================
+     MODULE DETAIL
+     ========================================================== */
 
   if (
     selectedModule &&
@@ -1099,8 +1030,8 @@ export const GateView: React.FC<GateViewProps> = ({
     const moduleVideos =
       gateStore.videos
         .filter(
-          (video) =>
-            video.moduleId ===
+          (v) =>
+            v.moduleId ===
             selectedModule.id
         )
         .sort(
@@ -1123,20 +1054,18 @@ export const GateView: React.FC<GateViewProps> = ({
     return (
       <div
         id="gate-module-detail"
-        className="space-y-3 font-handwriting pb-2"
+        className="space-y-2.5 font-handwriting pb-2"
       >
-        {/* Module header */}
-
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 min-w-0">
             <button
               type="button"
               onClick={() =>
                 setSelectedModuleId(null)
               }
-              className="p-1.5 rounded-full text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 shrink-0"
+              className="p-1.5 rounded-full text-zinc-400 shrink-0"
             >
-              <ArrowLeft className="w-4.5 h-4.5 stroke-[2.5]" />
+              <ArrowLeft className="w-5 h-5" />
             </button>
 
             <div className="min-w-0">
@@ -1144,7 +1073,7 @@ export const GateView: React.FC<GateViewProps> = ({
                 {selectedSubject.title}
               </span>
 
-              <h2 className="text-lg font-bold text-zinc-100 leading-tight truncate">
+              <h2 className="text-lg font-bold text-zinc-100 truncate">
                 {selectedModule.title}
               </h2>
             </div>
@@ -1152,28 +1081,25 @@ export const GateView: React.FC<GateViewProps> = ({
 
           <button
             type="button"
-            title="Edit Module"
             onClick={() =>
               handleOpenEditModule(
                 selectedModule
               )
             }
-            className="px-2 py-1.5 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800 text-[11px] font-bold border border-zinc-700 shrink-0 flex items-center gap-1"
+            className="p-1.5 rounded-lg text-zinc-300 border border-zinc-700 bg-zinc-800/60 flex items-center gap-1 text-xs font-bold shrink-0"
           >
             <Pencil className="w-3 h-3" />
             Edit
           </button>
         </div>
 
-        {/* Module progress */}
-
-        <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-xl p-3 shadow-sm space-y-2 text-[#1C1917]">
+        <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 shadow-sm space-y-1.5 text-[#1C1917]">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-[#78716C] uppercase tracking-wider font-fancy truncate pr-2">
+            <span className="text-[11px] font-bold text-[#78716C] uppercase tracking-wider">
               {selectedModule.title}
             </span>
 
-            <span className="text-xl font-bold font-mono text-emerald-700">
+            <span className="text-2xl font-bold font-mono text-emerald-700">
               {moduleProgress.percentage}%
             </span>
           </div>
@@ -1184,23 +1110,21 @@ export const GateView: React.FC<GateViewProps> = ({
               {moduleProgress.total}
             </span>
 
-            <span className="text-[11px] font-normal text-[#78716C]">
+            <span className="text-xs font-normal text-[#78716C]">
               {moduleProgress.remaining}{' '}
               remaining
             </span>
           </div>
 
-          <div className="w-full bg-[#E5DDD0] h-2.5 rounded-full overflow-hidden border border-[#DDD5C7]">
+          <div className="w-full bg-[#E5DDD0] h-2.5 rounded-full overflow-hidden">
             <div
-              className="h-full bg-emerald-600 rounded-full transition-all duration-300"
+              className="h-full bg-emerald-600 rounded-full"
               style={{
                 width: `${moduleProgress.percentage}%`,
               }}
             />
           </div>
         </div>
-
-        {/* Revision / PYQ */}
 
         <div className="grid grid-cols-2 gap-2">
           <div
@@ -1209,9 +1133,9 @@ export const GateView: React.FC<GateViewProps> = ({
                 selectedModule.id
               )
             }
-            className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-xl px-3 py-2.5 flex items-center justify-between cursor-pointer hover:bg-[#F1ECE1] shadow-xs"
+            className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-xl p-2.5 flex items-center justify-between cursor-pointer"
           >
-            <span className="text-sm font-bold text-[#1C1917]">
+            <span className="text-sm font-bold">
               Revision
             </span>
 
@@ -1235,9 +1159,9 @@ export const GateView: React.FC<GateViewProps> = ({
                 selectedModule.id
               )
             }
-            className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-xl px-3 py-2.5 flex items-center justify-between cursor-pointer hover:bg-[#F1ECE1] shadow-xs"
+            className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-xl p-2.5 flex items-center justify-between cursor-pointer"
           >
-            <span className="text-sm font-bold text-[#1C1917]">
+            <span className="text-sm font-bold">
               PYQ
             </span>
 
@@ -1256,11 +1180,9 @@ export const GateView: React.FC<GateViewProps> = ({
           </div>
         </div>
 
-        {/* Videos */}
-
-        <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-xl p-3 shadow-sm space-y-2.5 text-[#1C1917]">
-          <div className="flex items-center justify-between pb-1.5 border-b border-[#E5DDD0]">
-            <span className="text-[11px] font-bold text-[#78716C] tracking-wider uppercase font-fancy">
+        <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 shadow-sm space-y-2 text-[#1C1917]">
+          <div className="flex items-center justify-between pb-1 border-b border-[#E5DDD0]">
+            <span className="text-[11px] font-bold text-[#78716C] uppercase tracking-wider">
               VIDEOS (
               {moduleProgress.completed}/
               {moduleProgress.total})
@@ -1270,26 +1192,25 @@ export const GateView: React.FC<GateViewProps> = ({
               type="button"
               onClick={() => {
                 setTargetVideoCountInput(
-                  moduleVideos.length > 0
+                  moduleVideos.length
                     ? String(
                         moduleVideos.length
                       )
                     : '7'
                 );
-
                 setIsSettingVideoCount(
                   true
                 );
               }}
-              className="text-[10px] text-[#1C1917] font-bold flex items-center gap-1 bg-[#EAE2D7] border border-[#DDD5C7] px-2 py-1 rounded-lg"
+              className="text-[11px] font-bold bg-[#EAE2D7] border border-[#DDD5C7] px-2 py-1 rounded-lg flex items-center gap-1"
             >
               <Pencil className="w-3 h-3" />
-              Set Count
+              Count
             </button>
           </div>
 
           {moduleVideos.length === 0 ? (
-            <div className="py-5 text-center space-y-2">
+            <div className="py-4 text-center space-y-2">
               <p className="text-xs text-[#78716C]">
                 No videos added yet.
               </p>
@@ -1304,7 +1225,7 @@ export const GateView: React.FC<GateViewProps> = ({
                     true
                   );
                 }}
-                className="inline-flex items-center px-4 py-1.5 rounded-lg bg-[#1C1917] text-white font-bold text-xs"
+                className="px-4 py-2 rounded-xl bg-[#1C1917] text-white text-xs font-bold"
               >
                 Set Video Count
               </button>
@@ -1320,25 +1241,23 @@ export const GateView: React.FC<GateViewProps> = ({
                         video
                       )
                     }
-                    className={`flex items-center justify-between px-2 py-1.5 rounded-lg cursor-pointer min-h-[40px] ${
+                    className={`flex items-center justify-between p-2 rounded-lg cursor-pointer ${
                       video.completed
                         ? 'bg-[#EDE7DC]/70'
                         : 'hover:bg-[#F1ECE1]'
                     }`}
                   >
                     <div className="flex items-center gap-2 min-w-0">
-                      <div
-                        className={`shrink-0 ${
+                      <HandwrittenPlayIcon
+                        className={`w-3 h-3 ${
                           video.completed
                             ? 'text-[#8C827A]'
                             : 'text-[#78716C]'
                         }`}
-                      >
-                        <HandwrittenPlayIcon className="w-3 h-3 stroke-[2]" />
-                      </div>
+                      />
 
                       <span
-                        className={`text-sm truncate ${
+                        className={`text-sm ${
                           video.completed
                             ? 'text-[#8C827A] line-through'
                             : 'text-[#1C1917] font-semibold'
@@ -1369,8 +1288,6 @@ export const GateView: React.FC<GateViewProps> = ({
           )}
         </div>
 
-        {/* Complete next */}
-
         {nextVideo ? (
           <button
             type="button"
@@ -1379,7 +1296,7 @@ export const GateView: React.FC<GateViewProps> = ({
                 nextVideo
               )
             }
-            className="w-full py-2.5 rounded-xl bg-[#1C1917] text-[#FAF7F0] text-sm font-bold shadow-md flex items-center justify-center"
+            className="w-full py-2.5 rounded-xl bg-[#1C1917] text-[#FAF7F0] text-sm font-bold shadow-md"
           >
             Complete Next: Video{' '}
             {nextVideo.order || 1}
@@ -1389,25 +1306,21 @@ export const GateView: React.FC<GateViewProps> = ({
           moduleProgress.remaining ===
             0 ? (
           <div className="w-full py-2.5 rounded-xl bg-emerald-700 text-white text-center font-bold text-sm">
-            ✓ Module 100% Completed
+            ✓ Module 100% Completed!
           </div>
         ) : null}
 
-        {/* Set video count modal */}
-
         {isSettingVideoCount && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/70 backdrop-blur-xs">
-            <div className="bg-[#FAF7F0] border border-[#DDD5C7] rounded-2xl p-4 max-w-xs w-full shadow-2xl space-y-3 font-handwriting text-[#1C1917]">
-              <div>
-                <h3 className="text-base font-bold font-fancy">
-                  Total Videos
-                </h3>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
+            <div className="bg-[#FAF7F0] border border-[#DDD5C7] rounded-2xl p-4 max-w-xs w-full shadow-2xl space-y-3 font-handwriting">
+              <h3 className="text-lg font-bold font-fancy">
+                Total Videos Count
+              </h3>
 
-                <p className="text-[10px] text-[#78716C] leading-normal mt-1">
-                  Enter the number of videos
-                  in this module.
-                </p>
-              </div>
+              <p className="text-xs text-[#78716C]">
+                Enter the number of videos in
+                this module.
+              </p>
 
               <form
                 onSubmit={(e) => {
@@ -1442,7 +1355,7 @@ export const GateView: React.FC<GateViewProps> = ({
                       e.target.value
                     )
                   }
-                  className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-xl font-mono text-center font-bold focus:outline-none focus:border-[#1C1917]"
+                  className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-xl font-mono text-center font-bold focus:outline-none"
                   autoFocus
                 />
 
@@ -1454,14 +1367,14 @@ export const GateView: React.FC<GateViewProps> = ({
                         false
                       )
                     }
-                    className="px-3 py-1.5 rounded-lg border border-[#DDD5C7] text-xs"
+                    className="px-3 py-1.5 rounded-xl border border-[#DDD5C7] text-sm"
                   >
                     Cancel
                   </button>
 
                   <button
                     type="submit"
-                    className="px-4 py-1.5 rounded-lg bg-[#1C1917] text-white text-xs font-bold"
+                    className="px-5 py-1.5 rounded-xl bg-[#1C1917] text-white text-sm font-bold"
                   >
                     Save
                   </button>
@@ -1477,16 +1390,16 @@ export const GateView: React.FC<GateViewProps> = ({
     );
   }
 
-  // ============================================================
-  // PAGE 2 — SUBJECT DETAIL
-  // ============================================================
+  /* ==========================================================
+     SUBJECT DETAIL
+     ========================================================== */
 
   if (selectedSubject) {
     const subjectModules =
       gateStore.modules
         .filter(
-          (module) =>
-            module.subjectId ===
+          (m) =>
+            m.subjectId ===
             selectedSubject.id
         )
         .sort(
@@ -1505,7 +1418,7 @@ export const GateView: React.FC<GateViewProps> = ({
     const circumference =
       2 * Math.PI * radius;
 
-    const strokeDashoffset =
+    const dashOffset =
       circumference *
       (1 -
         subjectProgress.percentage /
@@ -1514,48 +1427,43 @@ export const GateView: React.FC<GateViewProps> = ({
     return (
       <div
         id="gate-subject-detail"
-        className="space-y-3 font-handwriting pb-2"
+        className="space-y-2.5 font-handwriting pb-2"
       >
-        {/* Subject header */}
-
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 min-w-0">
             <button
               type="button"
               onClick={() =>
                 setSelectedSubjectId(null)
               }
-              className="p-1.5 rounded-full text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 shrink-0"
+              className="p-1.5 rounded-full text-zinc-400 shrink-0"
             >
-              <ArrowLeft className="w-4.5 h-4.5 stroke-[2.5]" />
+              <ArrowLeft className="w-5 h-5" />
             </button>
 
-            <h2 className="text-lg font-bold text-zinc-100 leading-tight truncate">
+            <h2 className="text-lg font-bold text-zinc-100 truncate">
               {selectedSubject.title}
             </h2>
           </div>
 
           <button
             type="button"
-            title="Edit Subject"
             onClick={() =>
               handleOpenEditSubject(
                 selectedSubject
               )
             }
-            className="px-2 py-1.5 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800 text-[11px] font-bold border border-zinc-700 shrink-0 flex items-center gap-1"
+            className="p-1.5 rounded-lg text-zinc-300 border border-zinc-700 bg-zinc-800/60 flex items-center gap-1 text-xs font-bold"
           >
             <Pencil className="w-3 h-3" />
             Edit
           </button>
         </div>
 
-        {/* Subject progress */}
-
-        <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-xl p-3 shadow-sm flex items-center gap-3 text-[#1C1917]">
+        <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 shadow-sm flex items-center gap-3 text-[#1C1917]">
           <div className="relative w-16 h-16 shrink-0 flex items-center justify-center">
             <svg
-              className="w-full h-full -rotate-90 origin-center"
+              className="w-full h-full -rotate-90"
               viewBox="0 0 48 48"
             >
               <circle
@@ -1577,22 +1485,21 @@ export const GateView: React.FC<GateViewProps> = ({
                   circumference
                 }
                 strokeDashoffset={
-                  strokeDashoffset
+                  dashOffset
                 }
                 strokeLinecap="round"
                 fill="none"
-                className="transition-all duration-500"
               />
             </svg>
 
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-base font-mono font-bold">
+              <span className="text-sm font-mono font-bold">
                 {subjectProgress.percentage}%
               </span>
             </div>
           </div>
 
-          <div className="min-w-0">
+          <div>
             <div className="text-base font-mono font-bold">
               {subjectProgress.completed}{' '}
               /{' '}
@@ -1604,18 +1511,12 @@ export const GateView: React.FC<GateViewProps> = ({
               {subjectModules.length}{' '}
               modules
             </div>
-
-            <p className="text-xs font-notes text-[#78716C] italic mt-0.5">
-              "One subject at a time."
-            </p>
           </div>
         </div>
 
-        {/* Modules */}
-
-        <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-xl p-3 shadow-sm space-y-2.5 text-[#1C1917]">
-          <div className="flex items-center justify-between pb-1.5 border-b border-[#E5DDD0]">
-            <span className="text-[11px] font-bold text-[#78716C] tracking-wider uppercase font-fancy">
+        <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 shadow-sm space-y-2 text-[#1C1917]">
+          <div className="flex items-center justify-between pb-1 border-b border-[#E5DDD0]">
+            <span className="text-[11px] font-bold text-[#78716C] tracking-wider">
               MODULES
             </span>
 
@@ -1624,7 +1525,7 @@ export const GateView: React.FC<GateViewProps> = ({
               onClick={() =>
                 setIsAddingModule(true)
               }
-              className="text-[11px] text-[#1C1917] font-bold flex items-center gap-1"
+              className="text-[11px] font-bold flex items-center gap-1"
             >
               <Plus className="w-3.5 h-3.5" />
               Add Module
@@ -1634,22 +1535,21 @@ export const GateView: React.FC<GateViewProps> = ({
           <div className="space-y-1.5">
             {subjectModules.map(
               (module) => {
-                const moduleProgress =
+                const progress =
                   calculateModuleProgress(
                     module.id,
                     gateStore.videos
                   );
 
                 const isDone =
-                  moduleProgress.total >
-                    0 &&
-                  moduleProgress.remaining ===
+                  progress.total > 0 &&
+                  progress.remaining ===
                     0;
 
                 return (
                   <div
                     key={module.id}
-                    className="group p-2.5 bg-[#F1ECE2] hover:bg-[#E8E1D3] border border-[#DDD4C5] rounded-lg transition-all"
+                    className="p-2.5 bg-[#F1ECE2] border border-[#DDD4C5] rounded-xl"
                   >
                     <div className="flex items-center justify-between">
                       <div
@@ -1658,35 +1558,31 @@ export const GateView: React.FC<GateViewProps> = ({
                             module.id
                           )
                         }
-                        className="flex-1 cursor-pointer min-w-0 pr-1"
+                        className="flex-1 min-w-0 cursor-pointer"
                       >
-                        <span className="text-sm font-bold text-[#1C1917] truncate block">
+                        <span className="text-sm font-bold truncate block">
                           {module.title}
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-1 shrink-0">
+                      <div className="flex items-center gap-1">
                         {isDone && (
-                          <span className="text-emerald-700 font-bold text-[10px]">
+                          <span className="text-emerald-700 text-[10px] font-bold">
                             ✓
                           </span>
                         )}
 
                         <button
                           type="button"
-                          title="Edit Module"
-                          onClick={(e) => {
-                            e.stopPropagation();
+                          onClick={() =>
                             handleOpenEditModule(
                               module
-                            );
-                          }}
-                          className="p-1 rounded-md text-[#78716C] hover:text-[#1C1917] hover:bg-[#DDD5C7]"
+                            )
+                          }
+                          className="p-1 text-[#78716C]"
                         >
                           <Pencil className="w-3 h-3" />
                         </button>
-
-                        <ChevronRight className="w-3.5 h-3.5 text-[#78716C]" />
                       </div>
                     </div>
 
@@ -1698,30 +1594,23 @@ export const GateView: React.FC<GateViewProps> = ({
                       }
                       className="cursor-pointer"
                     >
-                      <div className="flex items-center justify-between text-[11px] font-mono mt-0.5">
+                      <div className="flex items-center justify-between mt-0.5 text-xs font-mono">
                         <span>
-                          {
-                            moduleProgress.completed
-                          }{' '}
+                          {progress.completed}{' '}
                           /{' '}
-                          {
-                            moduleProgress.total
-                          }
+                          {progress.total}
                         </span>
 
                         <span className="text-emerald-700 font-bold">
-                          {
-                            moduleProgress.percentage
-                          }
-                          %
+                          {progress.percentage}%
                         </span>
                       </div>
 
                       <div className="w-full bg-[#DDD5C7] h-1.5 rounded-full overflow-hidden mt-1">
                         <div
-                          className="h-full bg-emerald-600 rounded-full transition-all duration-300"
+                          className="h-full bg-emerald-600 rounded-full"
                           style={{
-                            width: `${moduleProgress.percentage}%`,
+                            width: `${progress.percentage}%`,
                           }}
                         />
                       </div>
@@ -1733,12 +1622,10 @@ export const GateView: React.FC<GateViewProps> = ({
           </div>
         </div>
 
-        {/* Add Module modal */}
-
         {isAddingModule && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/70 backdrop-blur-xs">
-            <div className="bg-[#FAF7F0] border border-[#DDD5C7] rounded-2xl p-4 max-w-xs w-full shadow-2xl space-y-3 font-handwriting text-[#1C1917]">
-              <h3 className="text-base font-bold font-fancy">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
+            <div className="bg-[#FAF7F0] border border-[#DDD5C7] rounded-2xl p-4 max-w-xs w-full shadow-2xl space-y-3 font-handwriting">
+              <h3 className="text-lg font-bold">
                 Add Module
               </h3>
 
@@ -1750,14 +1637,14 @@ export const GateView: React.FC<GateViewProps> = ({
               >
                 <input
                   type="text"
-                  placeholder="Module name"
+                  placeholder="Module title"
                   value={newModuleTitle}
                   onChange={(e) =>
                     setNewModuleTitle(
                       e.target.value
                     )
                   }
-                  className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#1C1917]"
+                  className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base focus:outline-none"
                   autoFocus
                 />
 
@@ -1769,14 +1656,14 @@ export const GateView: React.FC<GateViewProps> = ({
                         false
                       )
                     }
-                    className="px-3 py-1.5 rounded-lg border border-[#DDD5C7] text-xs"
+                    className="px-3 py-1.5 rounded-xl border border-[#DDD5C7] text-sm"
                   >
                     Cancel
                   </button>
 
                   <button
                     type="submit"
-                    className="px-4 py-1.5 rounded-lg bg-[#1C1917] text-white text-xs font-bold"
+                    className="px-4 py-1.5 rounded-xl bg-[#1C1917] text-white text-sm font-bold"
                   >
                     Add
                   </button>
@@ -1792,14 +1679,14 @@ export const GateView: React.FC<GateViewProps> = ({
     );
   }
 
-  // ============================================================
-  // PAGE 1 — GATE OVERVIEW
-  // ============================================================
+  /* ==========================================================
+     GATE OVERVIEW
+     ========================================================== */
 
   return (
     <div
       id="gate-overview-screen"
-      className="space-y-3 font-handwriting pb-2"
+      className="space-y-2.5 font-handwriting pb-2"
     >
       {/* Thought */}
 
@@ -1809,23 +1696,23 @@ export const GateView: React.FC<GateViewProps> = ({
         </p>
       </div>
 
-      {/* Overall progress */}
+      {/* Overall Progress */}
 
-      <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-xl p-3 shadow-sm space-y-2 text-[#1C1917]">
+      <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 sm:p-4 shadow-sm space-y-1.5 text-[#1C1917]">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-bold text-[#78716C] tracking-wider uppercase font-fancy">
+          <span className="text-[11px] font-bold text-[#78716C] tracking-wider uppercase">
             OVERALL PROGRESS
           </span>
 
-          <span className="text-xl font-bold font-mono text-emerald-700">
+          <span className="text-2xl font-bold font-mono text-emerald-700">
             {overallProgress.percentage}%
           </span>
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-lg font-mono font-bold">
-            {overallProgress.completed}{' '}
-            / {overallProgress.total}
+          <span className="text-lg sm:text-xl font-mono font-bold">
+            {overallProgress.completed} /{' '}
+            {overallProgress.total}
           </span>
 
           <span className="text-[11px] font-mono text-[#78716C]">
@@ -1834,7 +1721,7 @@ export const GateView: React.FC<GateViewProps> = ({
           </span>
         </div>
 
-        <div className="w-full bg-[#E5DDD0] h-2.5 rounded-full overflow-hidden border border-[#DDD5C7]">
+        <div className="w-full bg-[#E5DDD0] h-2.5 rounded-full overflow-hidden">
           <div
             className="h-full bg-emerald-600 rounded-full transition-all duration-300"
             style={{
@@ -1844,13 +1731,68 @@ export const GateView: React.FC<GateViewProps> = ({
         </div>
       </div>
 
+      {/* Expected Completion Date */}
+
+      <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 sm:p-4 shadow-sm space-y-1.5 text-[#1C1917]">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <Calendar className="w-3.5 h-3.5 text-[#78716C] shrink-0" />
+
+            <span className="text-[10px] sm:text-[11px] font-bold text-[#78716C] tracking-wider uppercase truncate">
+              EXPECTED COMPLETION
+            </span>
+          </div>
+
+          <span
+            className={`text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full font-bold shrink-0 ${
+              isTodayGateDone
+                ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                : 'bg-amber-100 text-amber-800 border border-amber-300'
+            }`}
+          >
+            {isTodayGateDone
+              ? '✓ Today Done'
+              : '○ Pending'}
+          </span>
+        </div>
+
+        <div className="flex items-baseline justify-between gap-2">
+          <span className="text-base sm:text-lg font-fancy font-bold tracking-wide">
+            {overallProgress.remaining ===
+            0
+              ? 'All Completed! 🎉'
+              : expectedCompletion.formattedDate}
+          </span>
+
+          {overallProgress.remaining >
+            0 && (
+            <span className="text-[10px] font-mono text-[#78716C] shrink-0">
+              {overallProgress.remaining}{' '}
+              {overallProgress.remaining ===
+              1
+                ? 'day'
+                : 'days'}{' '}
+              left
+            </span>
+          )}
+        </div>
+
+        <p className="text-[10px] text-[#78716C] font-notes italic pt-1 border-t border-[#E5DDD0]/70 leading-tight">
+          {overallProgress.remaining ===
+          0
+            ? 'All GATE videos have been finished!'
+            : isTodayGateDone
+            ? `Paced at 1 video/day. Today's video completed; remaining ${overallProgress.remaining} videos count from tomorrow.`
+            : `Paced at 1 video/day. If today is missed, expected completion dynamically extends by 1 day.`}
+        </p>
+      </div>
+
       {/* Subjects */}
 
-      <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-xl p-3 shadow-sm space-y-2 text-[#1C1917]">
-        <div className="flex items-center justify-between pb-1.5 border-b border-[#E5DDD0]">
-          <span className="text-[11px] font-bold text-[#78716C] tracking-wider uppercase font-fancy">
-            SUBJECTS (
-            {gateStore.subjects.length})
+      <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 sm:p-4 shadow-sm space-y-2 text-[#1C1917]">
+        <div className="flex items-center justify-between pb-1 border-b border-[#E5DDD0]">
+          <span className="text-[11px] font-bold text-[#78716C] tracking-wider uppercase">
+            SUBJECTS ({gateStore.subjects.length})
           </span>
 
           <button
@@ -1858,17 +1800,17 @@ export const GateView: React.FC<GateViewProps> = ({
             onClick={() =>
               setIsAddingSubject(true)
             }
-            className="text-[11px] text-[#1C1917] font-bold flex items-center gap-1 hover:text-emerald-700"
+            className="text-[11px] font-bold flex items-center gap-1"
           >
             <Plus className="w-3.5 h-3.5" />
             Add Subject
           </button>
         </div>
 
-        <div className="space-y-1.5 pt-0.5">
+        <div className="space-y-1.5">
           {gateStore.subjects.map(
             (subject) => {
-              const subjectProgress =
+              const progress =
                 calculateSubjectProgress(
                   subject.id,
                   gateStore.modules,
@@ -1878,7 +1820,7 @@ export const GateView: React.FC<GateViewProps> = ({
               return (
                 <div
                   key={subject.id}
-                  className="group p-2.5 bg-[#F1ECE2] hover:bg-[#E8E1D3] rounded-lg transition-colors border border-[#DDD4C5] text-[#1C1917]"
+                  className="p-2.5 bg-[#F1ECE2] border border-[#DDD4C5] rounded-xl"
                 >
                   <div className="flex items-center justify-between">
                     <div
@@ -1887,28 +1829,24 @@ export const GateView: React.FC<GateViewProps> = ({
                           subject.id
                         )
                       }
-                      className="flex-1 cursor-pointer min-w-0 pr-1"
+                      className="flex-1 min-w-0 cursor-pointer"
                     >
-                      <div className="text-sm font-bold truncate">
+                      <div className="text-sm sm:text-base font-bold truncate">
                         {subject.title}
                       </div>
                     </div>
 
                     <button
                       type="button"
-                      title="Edit Subject"
-                      onClick={(e) => {
-                        e.stopPropagation();
+                      onClick={() =>
                         handleOpenEditSubject(
                           subject
-                        );
-                      }}
-                      className="p-1 rounded-md text-[#78716C] hover:text-[#1C1917] hover:bg-[#DDD5C7] shrink-0"
+                        )
+                      }
+                      className="p-1 text-[#78716C]"
                     >
                       <Pencil className="w-3.5 h-3.5" />
                     </button>
-
-                    <ChevronRight className="w-3.5 h-3.5 ml-1 text-[#78716C]" />
                   </div>
 
                   <div
@@ -1919,22 +1857,15 @@ export const GateView: React.FC<GateViewProps> = ({
                     }
                     className="cursor-pointer"
                   >
-                    <div className="flex items-center justify-between mt-0.5 text-[11px] font-mono text-[#57534E]">
+                    <div className="flex items-center justify-between mt-0.5 text-xs font-mono">
                       <span className="font-bold">
-                        {
-                          subjectProgress.completed
-                        }{' '}
+                        {progress.completed}{' '}
                         /{' '}
-                        {
-                          subjectProgress.total
-                        }
+                        {progress.total}
                       </span>
 
                       <span className="font-bold text-emerald-700">
-                        {
-                          subjectProgress.percentage
-                        }
-                        %
+                        {progress.percentage}%
                       </span>
                     </div>
 
@@ -1942,7 +1873,7 @@ export const GateView: React.FC<GateViewProps> = ({
                       <div
                         className="h-full bg-emerald-600 rounded-full transition-all duration-300"
                         style={{
-                          width: `${subjectProgress.percentage}%`,
+                          width: `${progress.percentage}%`,
                         }}
                       />
                     </div>
@@ -1954,12 +1885,12 @@ export const GateView: React.FC<GateViewProps> = ({
         </div>
       </div>
 
-      {/* Add Subject modal */}
+      {/* Add Subject Modal */}
 
       {isAddingSubject && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/70 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
           <div className="bg-[#FAF7F0] border border-[#DDD5C7] rounded-2xl p-4 max-w-xs w-full shadow-2xl space-y-3 font-handwriting text-[#1C1917]">
-            <h3 className="text-base font-bold font-fancy">
+            <h3 className="text-lg font-bold font-fancy">
               Add Subject
             </h3>
 
@@ -1978,7 +1909,7 @@ export const GateView: React.FC<GateViewProps> = ({
                     e.target.value
                   )
                 }
-                className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#1C1917]"
+                className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base focus:outline-none"
                 autoFocus
               />
 
@@ -1990,14 +1921,14 @@ export const GateView: React.FC<GateViewProps> = ({
                       false
                     )
                   }
-                  className="px-3 py-1.5 rounded-lg border border-[#DDD5C7] text-xs"
+                  className="px-3 py-1.5 rounded-xl border border-[#DDD5C7] text-sm"
                 >
                   Cancel
                 </button>
 
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg bg-[#1C1917] text-white text-xs font-bold"
+                  className="px-4 py-1.5 rounded-xl bg-[#1C1917] text-white text-sm font-bold"
                 >
                   Add
                 </button>
