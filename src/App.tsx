@@ -610,6 +610,7 @@ export default function App() {
           <AndroidBottomNav
             activeTab={activeTab}
             onSelectTab={setActiveTab}
+            settings={settings}
           />
         </div>
 
