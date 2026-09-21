@@ -1847,10 +1847,11 @@ return (
 
       {gateStore.subjects.map((subject) => {
         const progress =
-          calculateSubjectProgress(
-            subject,
-            gateStore.videos
-          );
+  calculateSubjectProgress(
+    subject.id,
+    gateStore.modules,
+    gateStore.videos
+  );
 
         return (
           <div
