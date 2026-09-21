@@ -454,7 +454,7 @@ export default function App() {
 
   if (!isLoaded) {
     return (
-      <div className="h-dvh bg-[#060608] flex items-center justify-center font-handwriting text-zinc-400 text-lg">
+      <div className="h-dvh bg-[#071426] flex items-center justify-center font-handwriting text-white text-lg">
         Opening Study Journal...
       </div>
     );
@@ -470,11 +470,11 @@ export default function App() {
   };
 
   return (
-    <div className="h-dvh overflow-hidden bg-[#060608] flex flex-col justify-center items-center p-0 sm:py-6 select-none">
+    <div className="h-dvh overflow-hidden bg-[#071426] flex flex-col justify-center items-center p-0 sm:py-6 select-none">
       {/* Real Android Phone Shell Frame */}
       <div
         id="android-phone-frame"
-        className="w-full h-full sm:max-w-[430px] sm:max-h-[920px] bg-[#0C0C12] sm:rounded-[40px] sm:shadow-2xl sm:border-[8px] sm:border-[#1E1E28] flex flex-col overflow-hidden relative text-zinc-100"
+       className="w-full h-full sm:max-w-[430px] sm:max-h-[920px] bg-[#F8F9FC] sm:rounded-[40px] sm:shadow-2xl sm:border-[8px] sm:border-[#B91C2C] flex flex-col overflow-hidden relative text-[#111827]"
       >
         
         {/* Top App Bar */}
