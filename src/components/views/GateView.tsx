@@ -722,7 +722,7 @@ export const GateView: React.FC<GateViewProps> = ({
 
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
-        <div className="bg-[#FAF7F0] border border-[#DDD5C7] rounded-2xl p-4 max-w-sm w-full shadow-2xl space-y-3 font-handwriting text-[#1C1917]">
+        <div className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-4 max-w-sm w-full shadow-2xl space-y-3 font-handwriting text-[#1B3A57]">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-bold font-fancy">
               Edit Subject
@@ -736,7 +736,7 @@ export const GateView: React.FC<GateViewProps> = ({
                   false
                 );
               }}
-              className="p-1 rounded-full text-[#78716C]"
+              className="p-1 rounded-full text-[#64748B]"
             >
               ✕
             </button>
@@ -749,7 +749,7 @@ export const GateView: React.FC<GateViewProps> = ({
             className="space-y-3"
           >
             <div>
-              <label className="block text-xs font-bold text-[#78716C] mb-1">
+              <label className="block text-xs font-bold text-[#64748B] mb-1">
                 Subject Name
               </label>
 
@@ -761,7 +761,7 @@ export const GateView: React.FC<GateViewProps> = ({
                     e.target.value
                   )
                 }
-                className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base text-[#1C1917] focus:outline-none focus:border-[#1C1917]"
+                className="w-full bg-[#F1ECE1] border border-[#D6DCE8] rounded-xl px-3 py-2 text-base text-[#1B3A57] focus:outline-none focus:border-[#1B3A57]"
                 autoFocus
               />
             </div>
@@ -775,21 +775,21 @@ export const GateView: React.FC<GateViewProps> = ({
                     false
                   );
                 }}
-                className="px-3 py-1.5 rounded-xl border border-[#DDD5C7] text-sm"
+                className="px-3 py-1.5 rounded-xl border border-[#D6DCE8] text-sm"
               >
                 Cancel
               </button>
 
               <button
                 type="submit"
-                className="px-4 py-1.5 rounded-xl bg-[#1C1917] text-white text-sm font-bold"
+                className="px-4 py-1.5 rounded-xl bg-[#9B1B30] text-white text-sm font-bold"
               >
                 Save Changes
               </button>
             </div>
           </form>
 
-          <div className="pt-2 border-t border-[#E5DDD0]">
+          <div className="pt-2 border-t border-[#D6DCE8]">
             {!isConfirmingDeleteSubject ? (
               <button
                 type="button"
@@ -827,7 +827,7 @@ export const GateView: React.FC<GateViewProps> = ({
                         false
                       )
                     }
-                    className="px-3 py-1 text-xs rounded-xl bg-[#EAE2D7]"
+                    className="px-3 py-1 text-xs rounded-xl bg-[#E8EDF3]"
                   >
                     Cancel
                   </button>
@@ -868,7 +868,7 @@ export const GateView: React.FC<GateViewProps> = ({
 
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
-        <div className="bg-[#FAF7F0] border border-[#DDD5C7] rounded-2xl p-4 max-w-sm w-full shadow-2xl space-y-3 font-handwriting text-[#1C1917]">
+        <div className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-4 max-w-sm w-full shadow-2xl space-y-3 font-handwriting text-[#1B3A57]">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-bold font-fancy">
               Edit Module
@@ -882,7 +882,7 @@ export const GateView: React.FC<GateViewProps> = ({
                   false
                 );
               }}
-              className="p-1 rounded-full text-[#78716C]"
+              className="p-1 rounded-full text-[#64748B]"
             >
               ✕
             </button>
@@ -895,7 +895,7 @@ export const GateView: React.FC<GateViewProps> = ({
             className="space-y-3"
           >
             <div>
-              <label className="block text-xs font-bold text-[#78716C] mb-1">
+              <label className="block text-xs font-bold text-[#64748B] mb-1">
                 Module Name
               </label>
 
@@ -907,13 +907,13 @@ export const GateView: React.FC<GateViewProps> = ({
                     e.target.value
                   )
                 }
-                className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base focus:outline-none focus:border-[#1C1917]"
+                className="w-full bg-[#F1ECE1] border border-[#D6DCE8] rounded-xl px-3 py-2 text-base focus:outline-none focus:border-[#1B3A57]"
                 autoFocus
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#78716C] mb-1">
+              <label className="block text-xs font-bold text-[#64748B] mb-1">
                 Total Videos Count
               </label>
 
@@ -927,10 +927,10 @@ export const GateView: React.FC<GateViewProps> = ({
                     e.target.value
                   )
                 }
-                className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base font-mono focus:outline-none focus:border-[#1C1917]"
+                className="w-full bg-[#F1ECE1] border border-[#D6DCE8] rounded-xl px-3 py-2 text-base font-mono focus:outline-none focus:border-[#1B3A57]"
               />
 
-              <p className="text-[11px] text-[#78716C] mt-1">
+              <p className="text-[11px] text-[#64748B] mt-1">
                 Currently{' '}
                 {moduleVideos.length}{' '}
                 videos.
@@ -946,21 +946,21 @@ export const GateView: React.FC<GateViewProps> = ({
                     false
                   );
                 }}
-                className="px-3 py-1.5 rounded-xl border border-[#DDD5C7] text-sm"
+                className="px-3 py-1.5 rounded-xl border border-[#D6DCE8] text-sm"
               >
                 Cancel
               </button>
 
               <button
                 type="submit"
-                className="px-4 py-1.5 rounded-xl bg-[#1C1917] text-white text-sm font-bold"
+                className="px-4 py-1.5 rounded-xl bg-[#9B1B30] text-white text-sm font-bold"
               >
                 Save Changes
               </button>
             </div>
           </form>
 
-          <div className="pt-2 border-t border-[#E5DDD0]">
+          <div className="pt-2 border-t border-[#D6DCE8]">
             {!isConfirmingDeleteModule ? (
               <button
                 type="button"
@@ -995,7 +995,7 @@ export const GateView: React.FC<GateViewProps> = ({
                         false
                       )
                     }
-                    className="px-3 py-1 text-xs rounded-xl bg-[#EAE2D7]"
+                    className="px-3 py-1 text-xs rounded-xl bg-[#E8EDF3]"
                   >
                     Cancel
                   </button>
@@ -1064,17 +1064,17 @@ export const GateView: React.FC<GateViewProps> = ({
               onClick={() =>
                 setSelectedModuleId(null)
               }
-              className="p-1.5 rounded-full text-zinc-400 shrink-0"
+              className="p-1.5 rounded-full text-[#64748B] shrink-0"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
 
             <div className="min-w-0">
-              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block truncate">
+              <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider block truncate">
                 {selectedSubject.title}
               </span>
 
-              <h2 className="text-lg font-bold text-zinc-100 truncate">
+              <h2 className="text-lg font-bold text-[#1B3A57] truncate">
                 {selectedModule.title}
               </h2>
             </div>
@@ -1087,20 +1087,20 @@ export const GateView: React.FC<GateViewProps> = ({
                 selectedModule
               )
             }
-            className="p-1.5 rounded-lg text-zinc-300 border border-zinc-700 bg-zinc-800/60 flex items-center gap-1 text-xs font-bold shrink-0"
+            className="p-1.5 rounded-lg text-[#1B3A57] border border-[#D6DCE8] bg-[#EEF2F6] flex items-center gap-1 text-xs font-bold shrink-0"
           >
             <Pencil className="w-3 h-3" />
             Edit
           </button>
         </div>
 
-        <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 shadow-sm space-y-1.5 text-[#1C1917]">
+        <div className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-3 shadow-sm space-y-1.5 text-[#1B3A57]">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-[#78716C] uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">
               {selectedModule.title}
             </span>
 
-            <span className="text-2xl font-bold font-mono text-emerald-700">
+            <span className="text-2xl font-bold font-mono text-[#9B1B30]">
               {moduleProgress.percentage}%
             </span>
           </div>
@@ -1111,15 +1111,15 @@ export const GateView: React.FC<GateViewProps> = ({
               {moduleProgress.total}
             </span>
 
-            <span className="text-xs font-normal text-[#78716C]">
+            <span className="text-xs font-normal text-[#64748B]">
               {moduleProgress.remaining}{' '}
               remaining
             </span>
           </div>
 
-          <div className="w-full bg-[#E5DDD0] h-2.5 rounded-full overflow-hidden">
+          <div className="w-full bg-[#D6DCE8] h-2.5 rounded-full overflow-hidden">
             <div
-              className="h-full bg-emerald-600 rounded-full"
+              className="h-full bg-[#9B1B30] rounded-full"
               style={{
                 width: `${moduleProgress.percentage}%`,
               }}
@@ -1134,7 +1134,7 @@ export const GateView: React.FC<GateViewProps> = ({
                 selectedModule.id
               )
             }
-            className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-xl p-2.5 flex items-center justify-between cursor-pointer"
+            className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-xl p-2.5 flex items-center justify-between cursor-pointer"
           >
             <span className="text-sm font-bold">
               Revision
@@ -1149,7 +1149,7 @@ export const GateView: React.FC<GateViewProps> = ({
                   selectedModule.id
                 )
               }
-              color="sage"
+              color="red"
               size="sm"
             />
           </div>
@@ -1160,7 +1160,7 @@ export const GateView: React.FC<GateViewProps> = ({
                 selectedModule.id
               )
             }
-            className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-xl p-2.5 flex items-center justify-between cursor-pointer"
+            className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-xl p-2.5 flex items-center justify-between cursor-pointer"
           >
             <span className="text-sm font-bold">
               PYQ
@@ -1175,15 +1175,15 @@ export const GateView: React.FC<GateViewProps> = ({
                   selectedModule.id
                 )
               }
-              color="sage"
+              color="red"
               size="sm"
             />
           </div>
         </div>
 
-        <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 shadow-sm space-y-2 text-[#1C1917]">
-          <div className="flex items-center justify-between pb-1 border-b border-[#E5DDD0]">
-            <span className="text-[11px] font-bold text-[#78716C] uppercase tracking-wider">
+        <div className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-3 shadow-sm space-y-2 text-[#1B3A57]">
+          <div className="flex items-center justify-between pb-1 border-b border-[#D6DCE8]">
+            <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">
               VIDEOS (
               {moduleProgress.completed}/
               {moduleProgress.total})
@@ -1203,7 +1203,7 @@ export const GateView: React.FC<GateViewProps> = ({
                   true
                 );
               }}
-              className="text-[11px] font-bold bg-[#EAE2D7] border border-[#DDD5C7] px-2 py-1 rounded-lg flex items-center gap-1"
+              className="text-[11px] font-bold bg-[#E8EDF3] border border-[#D6DCE8] px-2 py-1 rounded-lg flex items-center gap-1"
             >
               <Pencil className="w-3 h-3" />
               Count
@@ -1212,7 +1212,7 @@ export const GateView: React.FC<GateViewProps> = ({
 
           {moduleVideos.length === 0 ? (
             <div className="py-4 text-center space-y-2">
-              <p className="text-xs text-[#78716C]">
+              <p className="text-xs text-[#64748B]">
                 No videos added yet.
               </p>
 
@@ -1226,7 +1226,7 @@ export const GateView: React.FC<GateViewProps> = ({
                     true
                   );
                 }}
-                className="px-4 py-2 rounded-xl bg-[#1C1917] text-white text-xs font-bold"
+                className="px-4 py-2 rounded-xl bg-[#1B3A57] text-white text-xs font-bold"
               >
                 Set Video Count
               </button>
@@ -1244,7 +1244,7 @@ export const GateView: React.FC<GateViewProps> = ({
                     }
                     className={`flex items-center justify-between p-2 rounded-lg cursor-pointer ${
                       video.completed
-                        ? 'bg-[#EDE7DC]/70'
+                        ? 'bg-[#F5E4E7]/70'
                         : 'hover:bg-[#F1ECE1]'
                     }`}
                   >
@@ -1252,16 +1252,16 @@ export const GateView: React.FC<GateViewProps> = ({
                       <HandwrittenPlayIcon
                         className={`w-3 h-3 ${
                           video.completed
-                            ? 'text-[#8C827A]'
-                            : 'text-[#78716C]'
+                            ? 'text-[#64748B]'
+                            : 'text-[#64748B]'
                         }`}
                       />
 
                       <span
                         className={`text-sm ${
                           video.completed
-                            ? 'text-[#8C827A] line-through'
-                            : 'text-[#1C1917] font-semibold'
+                            ? 'text-[#64748B] line-through'
+                            : 'text-[#1B3A57] font-semibold'
                         }`}
                       >
                         Video{' '}
@@ -1279,7 +1279,7 @@ export const GateView: React.FC<GateViewProps> = ({
                           video
                         )
                       }
-                      color="sage"
+                      color="red"
                       size="sm"
                     />
                   </div>
@@ -1297,7 +1297,7 @@ export const GateView: React.FC<GateViewProps> = ({
                 nextVideo
               )
             }
-            className="w-full py-2.5 rounded-xl bg-[#1C1917] text-[#FAF7F0] text-sm font-bold shadow-md"
+            className="w-full py-2.5 rounded-xl bg-[#1B3A57] text-[#FAF7F0] text-sm font-bold shadow-md"
           >
             Complete Next: Video{' '}
             {nextVideo.order || 1}
@@ -1306,19 +1306,19 @@ export const GateView: React.FC<GateViewProps> = ({
             0 &&
           moduleProgress.remaining ===
             0 ? (
-          <div className="w-full py-2.5 rounded-xl bg-emerald-700 text-white text-center font-bold text-sm">
+          <div className="w-full py-2.5 rounded-xl bg-[#9B1B30] text-white text-center font-bold text-sm">
             ✓ Module 100% Completed!
           </div>
         ) : null}
 
         {isSettingVideoCount && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
-            <div className="bg-[#FAF7F0] border border-[#DDD5C7] rounded-2xl p-4 max-w-xs w-full shadow-2xl space-y-3 font-handwriting">
+            <div className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-4 max-w-xs w-full shadow-2xl space-y-3 font-handwriting">
               <h3 className="text-lg font-bold font-fancy">
                 Total Videos Count
               </h3>
 
-              <p className="text-xs text-[#78716C]">
+              <p className="text-xs text-[#64748B]">
                 Enter the number of videos in
                 this module.
               </p>
@@ -1356,7 +1356,7 @@ export const GateView: React.FC<GateViewProps> = ({
                       e.target.value
                     )
                   }
-                  className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-xl font-mono text-center font-bold focus:outline-none"
+                  className="w-full bg-[#F1ECE1] border border-[#D6DCE8] rounded-xl px-3 py-2 text-xl font-mono text-center font-bold focus:outline-none"
                   autoFocus
                 />
 
@@ -1368,14 +1368,14 @@ export const GateView: React.FC<GateViewProps> = ({
                         false
                       )
                     }
-                    className="px-3 py-1.5 rounded-xl border border-[#DDD5C7] text-sm"
+                    className="px-3 py-1.5 rounded-xl border border-[#D6DCE8] text-sm"
                   >
                     Cancel
                   </button>
 
                   <button
                     type="submit"
-                    className="px-5 py-1.5 rounded-xl bg-[#1C1917] text-white text-sm font-bold"
+                    className="px-5 py-1.5 rounded-xl bg-[#9B1B30] text-white text-sm font-bold"
                   >
                     Save
                   </button>
@@ -1437,12 +1437,12 @@ export const GateView: React.FC<GateViewProps> = ({
               onClick={() =>
                 setSelectedSubjectId(null)
               }
-              className="p-1.5 rounded-full text-zinc-400 shrink-0"
+              className="p-1.5 rounded-full text-[#64748B] shrink-0"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
 
-            <h2 className="text-lg font-bold text-zinc-100 truncate">
+            <h2 className="text-lg font-bold text-[#1B3A57] truncate">
               {selectedSubject.title}
             </h2>
           </div>
@@ -1454,14 +1454,14 @@ export const GateView: React.FC<GateViewProps> = ({
                 selectedSubject
               )
             }
-            className="p-1.5 rounded-lg text-zinc-300 border border-zinc-700 bg-zinc-800/60 flex items-center gap-1 text-xs font-bold"
+            className="p-1.5 rounded-lg text-[#1B3A57] border border-[#D6DCE8] bg-[#EEF2F6] flex items-center gap-1 text-xs font-bold"
           >
             <Pencil className="w-3 h-3" />
             Edit
           </button>
         </div>
 
-        <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 shadow-sm flex items-center gap-3 text-[#1C1917]">
+        <div className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-3 shadow-sm flex items-center gap-3 text-[#1B3A57]">
           <div className="relative w-16 h-16 shrink-0 flex items-center justify-center">
             <svg
               className="w-full h-full -rotate-90"
@@ -1471,7 +1471,7 @@ export const GateView: React.FC<GateViewProps> = ({
                 cx="24"
                 cy="24"
                 r={radius}
-                stroke="#E5DDD0"
+                stroke="#D6DCE8"
                 strokeWidth="4"
                 fill="none"
               />
@@ -1480,7 +1480,7 @@ export const GateView: React.FC<GateViewProps> = ({
                 cx="24"
                 cy="24"
                 r={radius}
-                stroke="#16A34A"
+                stroke="#9B1B30"
                 strokeWidth="4"
                 strokeDasharray={
                   circumference
@@ -1508,16 +1508,16 @@ export const GateView: React.FC<GateViewProps> = ({
               videos
             </div>
 
-            <div className="text-xs text-[#78716C]">
+            <div className="text-xs text-[#64748B]">
               {subjectModules.length}{' '}
               modules
             </div>
           </div>
         </div>
 
-        <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 shadow-sm space-y-2 text-[#1C1917]">
-          <div className="flex items-center justify-between pb-1 border-b border-[#E5DDD0]">
-            <span className="text-[11px] font-bold text-[#78716C] tracking-wider">
+        <div className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-3 shadow-sm space-y-2 text-[#1B3A57]">
+          <div className="flex items-center justify-between pb-1 border-b border-[#D6DCE8]">
+            <span className="text-[11px] font-bold text-[#64748B] tracking-wider">
               MODULES
             </span>
 
@@ -1550,7 +1550,7 @@ export const GateView: React.FC<GateViewProps> = ({
                 return (
                   <div
                     key={module.id}
-                    className="p-2.5 bg-[#F1ECE2] border border-[#DDD4C5] rounded-xl"
+                    className="p-2.5 bg-[#EEF2F6] border border-[#D6DCE8] rounded-xl"
                   >
                     <div className="flex items-center justify-between">
                       <div
@@ -1568,7 +1568,7 @@ export const GateView: React.FC<GateViewProps> = ({
 
                       <div className="flex items-center gap-1">
                         {isDone && (
-                          <span className="text-emerald-700 text-[10px] font-bold">
+                          <span className="text-[#9B1B30] text-[10px] font-bold">
                             ✓
                           </span>
                         )}
@@ -1580,7 +1580,7 @@ export const GateView: React.FC<GateViewProps> = ({
                               module
                             )
                           }
-                          className="p-1 text-[#78716C]"
+                          className="p-1 text-[#64748B]"
                         >
                           <Pencil className="w-3 h-3" />
                         </button>
@@ -1602,14 +1602,14 @@ export const GateView: React.FC<GateViewProps> = ({
                           {progress.total}
                         </span>
 
-                        <span className="text-emerald-700 font-bold">
+                        <span className="text-[#9B1B30] font-bold">
                           {progress.percentage}%
                         </span>
                       </div>
 
-                      <div className="w-full bg-[#DDD5C7] h-1.5 rounded-full overflow-hidden mt-1">
+                      <div className="w-full bg-[#D6DCE8] h-1.5 rounded-full overflow-hidden mt-1">
                         <div
-                          className="h-full bg-emerald-600 rounded-full"
+                          className="h-full bg-[#9B1B30] rounded-full"
                           style={{
                             width: `${progress.percentage}%`,
                           }}
@@ -1625,7 +1625,7 @@ export const GateView: React.FC<GateViewProps> = ({
 
         {isAddingModule && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
-            <div className="bg-[#FAF7F0] border border-[#DDD5C7] rounded-2xl p-4 max-w-xs w-full shadow-2xl space-y-3 font-handwriting">
+            <div className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-4 max-w-xs w-full shadow-2xl space-y-3 font-handwriting">
               <h3 className="text-lg font-bold">
                 Add Module
               </h3>
@@ -1645,7 +1645,7 @@ export const GateView: React.FC<GateViewProps> = ({
                       e.target.value
                     )
                   }
-                  className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base focus:outline-none"
+                  className="w-full bg-[#F1ECE1] border border-[#D6DCE8] rounded-xl px-3 py-2 text-base focus:outline-none"
                   autoFocus
                 />
 
@@ -1657,14 +1657,14 @@ export const GateView: React.FC<GateViewProps> = ({
                         false
                       )
                     }
-                    className="px-3 py-1.5 rounded-xl border border-[#DDD5C7] text-sm"
+                    className="px-3 py-1.5 rounded-xl border border-[#D6DCE8] text-sm"
                   >
                     Cancel
                   </button>
 
                   <button
                     type="submit"
-                    className="px-4 py-1.5 rounded-xl bg-[#1C1917] text-white text-sm font-bold"
+                    className="px-4 py-1.5 rounded-xl bg-[#9B1B30] text-white text-sm font-bold"
                   >
                     Add
                   </button>
@@ -1694,13 +1694,13 @@ return (
     <div className="shrink-0 space-y-1.5 pb-1.5">
 
       {/* Overall Progress */}
-      <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl px-3 py-2 shadow-sm text-[#1C1917]">
+      <div className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl px-3 py-2 shadow-sm text-[#1B3A57]">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-bold text-[#78716C] tracking-wider uppercase">
+          <span className="text-[10px] font-bold text-[#64748B] tracking-wider uppercase">
             OVERALL PROGRESS
           </span>
 
-          <span className="text-xl font-bold font-mono text-emerald-700 leading-none">
+          <span className="text-xl font-bold font-mono text-[#9B1B30] leading-none">
             {overallProgress.percentage}%
           </span>
         </div>
@@ -1711,14 +1711,14 @@ return (
             {overallProgress.total}
           </span>
 
-          <span className="text-[10px] font-mono text-[#78716C]">
+          <span className="text-[10px] font-mono text-[#64748B]">
             {overallProgress.remaining} remaining
           </span>
         </div>
 
-        <div className="w-full bg-[#E5DDD0] h-1.5 rounded-full overflow-hidden mt-1">
+        <div className="w-full bg-[#D6DCE8] h-1.5 rounded-full overflow-hidden mt-1">
           <div
-            className="h-full bg-emerald-600 rounded-full transition-all duration-300"
+            className="h-full bg-[#9B1B30] rounded-full transition-all duration-300"
             style={{
               width: `${overallProgress.percentage}%`,
             }}
@@ -1727,8 +1727,8 @@ return (
       </div>
 
       {/* Expected Completion */}
-      <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl px-3 py-2 shadow-sm text-[#1C1917]">
-        <div className="text-[10px] font-bold text-[#78716C] tracking-wider uppercase">
+      <div className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl px-3 py-2 shadow-sm text-[#1B3A57]">
+        <div className="text-[10px] font-bold text-[#64748B] tracking-wider uppercase">
           EXPECTED COMPLETION
         </div>
 
@@ -1738,8 +1738,8 @@ return (
     <span
       className={`text-[10px] font-mono font-bold tracking-wider ${
         isTodayGateDone
-          ? 'text-emerald-700'
-          : 'text-[#78716C]'
+          ? 'text-[#9B1B30]'
+          : 'text-[#64748B]'
       }`}
     >
       TODAY'S TASK: {isTodayGateDone ? 'COMPLETED' : 'PENDING'}
@@ -1756,7 +1756,7 @@ return (
           </span>
 
           {overallProgress.remaining > 0 && (
-            <span className="text-[10px] font-mono text-[#78716C] shrink-0">
+            <span className="text-[10px] font-mono text-[#64748B] shrink-0">
               {overallProgress.remaining}{' '}
               {overallProgress.remaining === 1
                 ? 'day'
@@ -1770,12 +1770,12 @@ return (
 
     {/* Subjects box: header fixed, only subject list scrolls */}
     <div className="min-h-0 flex-1 pr-0.5">
-      <div className="h-full min-h-0 bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl shadow-sm text-[#1C1917] flex flex-col overflow-hidden">
+      <div className="h-full min-h-0 bg-[#1B3A57] border border-[#1B3A57] rounded-2xl shadow-sm text-white flex flex-col overflow-hidden">
 
         {/* Fixed Subjects header */}
-        <div className="shrink-0 px-3 pt-2.5 pb-2 border-b border-[#E5DDD0]">
+        <div className="shrink-0 px-3 pt-2.5 pb-2 border-b border-white/20">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-[#78716C] tracking-wider uppercase">
+            <span className="text-[11px] font-bold text-[#64748B] tracking-wider uppercase">
               SUBJECTS ({gateStore.subjects.length})
             </span>
 
@@ -1791,7 +1791,7 @@ return (
         </div>
 
         {/* Only this area scrolls. The available height now shows about four subjects. */}
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-2">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2.5 py-2 bg-[#FAF7F0]">
           <div className="space-y-1.5">
             {gateStore.subjects.map((subject) => {
               const progress = calculateSubjectProgress(
@@ -1803,7 +1803,7 @@ return (
               return (
                 <div
                   key={subject.id}
-                  className="p-2.5 bg-[#F1ECE2] border border-[#DDD4C5] rounded-xl"
+                  className="p-2.5 bg-[#EEF2F6] border border-[#D6DCE8] rounded-xl"
                 >
                   <div className="flex items-center justify-between">
                     <div
@@ -1822,7 +1822,7 @@ return (
                       onClick={() =>
                         handleOpenEditSubject(subject)
                       }
-                      className="p-1 text-[#78716C]"
+                      className="p-1 text-[#64748B]"
                     >
                       <Pencil className="w-3.5 h-3.5" />
                     </button>
@@ -1839,14 +1839,14 @@ return (
                         {progress.completed} / {progress.total}
                       </span>
 
-                      <span className="font-bold text-emerald-700">
+                      <span className="font-bold text-[#9B1B30]">
                         {progress.percentage}%
                       </span>
                     </div>
 
-                    <div className="w-full bg-[#DDD5C7] h-1.5 rounded-full overflow-hidden mt-1">
+                    <div className="w-full bg-[#D6DCE8] h-1.5 rounded-full overflow-hidden mt-1">
                       <div
-                        className="h-full bg-emerald-600 rounded-full transition-all duration-300"
+                        className="h-full bg-[#9B1B30] rounded-full transition-all duration-300"
                         style={{
                           width: `${progress.percentage}%`,
                         }}
@@ -1864,7 +1864,7 @@ return (
     {/* Add Subject Modal */}
     {isAddingSubject && (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
-        <div className="bg-[#FAF7F0] border border-[#DDD5C7] rounded-2xl p-4 max-w-xs w-full shadow-2xl space-y-3 font-handwriting text-[#1C1917]">
+        <div className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-4 max-w-xs w-full shadow-2xl space-y-3 font-handwriting text-[#1B3A57]">
           <h3 className="text-lg font-bold font-fancy">
             Add Subject
           </h3>
@@ -1880,7 +1880,7 @@ return (
               onChange={(e) =>
                 setNewSubjectTitle(e.target.value)
               }
-              className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base focus:outline-none"
+              className="w-full bg-[#F1ECE1] border border-[#D6DCE8] rounded-xl px-3 py-2 text-base focus:outline-none"
               autoFocus
             />
 
@@ -1890,14 +1890,14 @@ return (
                 onClick={() =>
                   setIsAddingSubject(false)
                 }
-                className="px-3 py-1.5 rounded-xl border border-[#DDD5C7] text-sm"
+                className="px-3 py-1.5 rounded-xl border border-[#D6DCE8] text-sm"
               >
                 Cancel
               </button>
 
               <button
                 type="submit"
-                className="px-4 py-1.5 rounded-xl bg-[#1C1917] text-white text-sm font-bold"
+                className="px-4 py-1.5 rounded-xl bg-[#9B1B30] text-white text-sm font-bold"
               >
                 Add
               </button>
