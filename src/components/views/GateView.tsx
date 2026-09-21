@@ -1679,49 +1679,39 @@ export const GateView: React.FC<GateViewProps> = ({
     );
   }
 
-  /* ==========================================================
-     GATE OVERVIEW
-     ========================================================== */
+{/* ==========================================================
+    GATE OVERVIEW
+    ========================================================== */}
 
-  return (
-    <div
-      id="gate-overview-screen"
-      className="space-y-2.5 font-handwriting pb-2"
-    >
-      {/* Thought */}
+return (
+  <div
+    id="gate-overview-screen"
+    className="h-full min-h-0 flex flex-col font-handwriting"
+  >
+    {/* Fixed top content */}
 
-      <div className="text-center py-0.5 px-1">
-        <p className="text-sm sm:text-base font-notes text-zinc-400 italic">
-          "Same Effort, Better Tomorrow."
-        </p>
-      </div>
-
+    <div className="shrink-0 space-y-2.5 pb-2">
       {/* Overall Progress */}
 
-      <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 sm:p-4 shadow-sm space-y-1.5 text-[#1C1917]">
+      <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 shadow-sm text-[#1C1917]">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-bold text-[#78716C] tracking-wider uppercase">
+          <span className="text-[10px] font-bold text-[#78716C] tracking-wider uppercase">
             OVERALL PROGRESS
           </span>
 
-          <span className="text-2xl font-bold font-mono text-emerald-700">
+          <span className="text-xl font-bold font-mono text-emerald-700">
             {overallProgress.percentage}%
           </span>
         </div>
 
-        <div className="flex items-center justify-between">
-          <span className="text-lg sm:text-xl font-mono font-bold">
+        <div className="flex items-center justify-between mt-0.5">
+          <span className="text-base font-mono font-bold">
             {overallProgress.completed} /{' '}
             {overallProgress.total}
           </span>
-
-          <span className="text-[11px] font-mono text-[#78716C]">
-            {overallProgress.remaining}{' '}
-            remaining
-          </span>
         </div>
 
-        <div className="w-full bg-[#E5DDD0] h-2.5 rounded-full overflow-hidden">
+        <div className="w-full bg-[#E5DDD0] h-1.5 rounded-full overflow-hidden mt-1.5">
           <div
             className="h-full bg-emerald-600 rounded-full transition-all duration-300"
             style={{
@@ -1731,75 +1721,45 @@ export const GateView: React.FC<GateViewProps> = ({
         </div>
       </div>
 
-      {/* Expected Completion Date */}
+      {/* Expected Completion */}
 
-      <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 sm:p-4 shadow-sm space-y-1.5 text-[#1C1917]">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-1.5 min-w-0">
-            <Calendar className="w-3.5 h-3.5 text-[#78716C] shrink-0" />
-
-            <span className="text-[10px] sm:text-[11px] font-bold text-[#78716C] tracking-wider uppercase truncate">
-              EXPECTED COMPLETION
-            </span>
-          </div>
-
-          <span
-            className={`text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full font-bold shrink-0 ${
-              isTodayGateDone
-                ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                : 'bg-amber-100 text-amber-800 border border-amber-300'
-            }`}
-          >
-            {isTodayGateDone
-              ? '✓ Today Done'
-              : '○ Pending'}
-          </span>
+      <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 shadow-sm text-[#1C1917]">
+        <div className="text-[10px] font-bold text-[#78716C] tracking-wider uppercase">
+          EXPECTED COMPLETION
         </div>
 
-        <div className="flex items-baseline justify-between gap-2">
-          <span className="text-base sm:text-lg font-fancy font-bold tracking-wide">
-            {overallProgress.remaining ===
-            0
+        <div className="flex items-center justify-between gap-2 mt-1">
+          <span className="text-base sm:text-lg font-fancy font-bold">
+            {overallProgress.remaining === 0
               ? 'All Completed! 🎉'
               : expectedCompletion.formattedDate}
           </span>
 
-          {overallProgress.remaining >
-            0 && (
+          {overallProgress.remaining > 0 && (
             <span className="text-[10px] font-mono text-[#78716C] shrink-0">
               {overallProgress.remaining}{' '}
-              {overallProgress.remaining ===
-              1
+              {overallProgress.remaining === 1
                 ? 'day'
                 : 'days'}{' '}
               left
             </span>
           )}
         </div>
-
-        <p className="text-[10px] text-[#78716C] font-notes italic pt-1 border-t border-[#E5DDD0]/70 leading-tight">
-          {overallProgress.remaining ===
-          0
-            ? 'All GATE videos have been finished!'
-            : isTodayGateDone
-            ? `Paced at 1 video/day. Today's video completed; remaining ${overallProgress.remaining} videos count from tomorrow.`
-            : `Paced at 1 video/day. If today is missed, expected completion dynamically extends by 1 day.`}
-        </p>
       </div>
+    </div>
 
-      {/* Subjects */}
+    {/* Scrollable subjects only */}
 
-      <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 sm:p-4 shadow-sm space-y-2 text-[#1C1917]">
-        <div className="flex items-center justify-between pb-1 border-b border-[#E5DDD0]">
+    <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pr-0.5">
+      <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 shadow-sm text-[#1C1917]">
+        <div className="flex items-center justify-between pb-1.5 border-b border-[#E5DDD0]">
           <span className="text-[11px] font-bold text-[#78716C] tracking-wider uppercase">
             SUBJECTS ({gateStore.subjects.length})
           </span>
 
           <button
             type="button"
-            onClick={() =>
-              setIsAddingSubject(true)
-            }
+            onClick={() => setIsAddingSubject(true)}
             className="text-[11px] font-bold flex items-center gap-1"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -1807,139 +1767,122 @@ export const GateView: React.FC<GateViewProps> = ({
           </button>
         </div>
 
-        <div className="space-y-1.5">
-          {gateStore.subjects.map(
-            (subject) => {
-              const progress =
-                calculateSubjectProgress(
-                  subject.id,
-                  gateStore.modules,
-                  gateStore.videos
-                );
+        <div className="space-y-1.5 pt-2">
+          {gateStore.subjects.map((subject) => {
+            const progress = calculateSubjectProgress(
+              subject.id,
+              gateStore.modules,
+              gateStore.videos
+            );
 
-              return (
-                <div
-                  key={subject.id}
-                  className="p-2.5 bg-[#F1ECE2] border border-[#DDD4C5] rounded-xl"
-                >
-                  <div className="flex items-center justify-between">
-                    <div
-                      onClick={() =>
-                        setSelectedSubjectId(
-                          subject.id
-                        )
-                      }
-                      className="flex-1 min-w-0 cursor-pointer"
-                    >
-                      <div className="text-sm sm:text-base font-bold truncate">
-                        {subject.title}
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleOpenEditSubject(
-                          subject
-                        )
-                      }
-                      className="p-1 text-[#78716C]"
-                    >
-                      <Pencil className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-
+            return (
+              <div
+                key={subject.id}
+                className="p-2.5 bg-[#F1ECE2] border border-[#DDD4C5] rounded-xl"
+              >
+                <div className="flex items-center justify-between">
                   <div
                     onClick={() =>
-                      setSelectedSubjectId(
-                        subject.id
-                      )
+                      setSelectedSubjectId(subject.id)
                     }
-                    className="cursor-pointer"
+                    className="flex-1 min-w-0 cursor-pointer"
                   >
-                    <div className="flex items-center justify-between mt-0.5 text-xs font-mono">
-                      <span className="font-bold">
-                        {progress.completed}{' '}
-                        /{' '}
-                        {progress.total}
-                      </span>
-
-                      <span className="font-bold text-emerald-700">
-                        {progress.percentage}%
-                      </span>
-                    </div>
-
-                    <div className="w-full bg-[#DDD5C7] h-1.5 rounded-full overflow-hidden mt-1">
-                      <div
-                        className="h-full bg-emerald-600 rounded-full transition-all duration-300"
-                        style={{
-                          width: `${progress.percentage}%`,
-                        }}
-                      />
+                    <div className="text-sm sm:text-base font-bold truncate">
+                      {subject.title}
                     </div>
                   </div>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleOpenEditSubject(subject)
+                    }
+                    className="p-1 text-[#78716C]"
+                  >
+                    <Pencil className="w-3.5 h-3.5" />
+                  </button>
                 </div>
-              );
-            }
-          )}
+
+                <div
+                  onClick={() =>
+                    setSelectedSubjectId(subject.id)
+                  }
+                  className="cursor-pointer"
+                >
+                  <div className="flex items-center justify-between mt-0.5 text-xs font-mono">
+                    <span className="font-bold">
+                      {progress.completed} / {progress.total}
+                    </span>
+
+                    <span className="font-bold text-emerald-700">
+                      {progress.percentage}%
+                    </span>
+                  </div>
+
+                  <div className="w-full bg-[#DDD5C7] h-1.5 rounded-full overflow-hidden mt-1">
+                    <div
+                      className="h-full bg-emerald-600 rounded-full transition-all duration-300"
+                      style={{
+                        width: `${progress.percentage}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
-
-      {/* Add Subject Modal */}
-
-      {isAddingSubject && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
-          <div className="bg-[#FAF7F0] border border-[#DDD5C7] rounded-2xl p-4 max-w-xs w-full shadow-2xl space-y-3 font-handwriting text-[#1C1917]">
-            <h3 className="text-lg font-bold font-fancy">
-              Add Subject
-            </h3>
-
-            <form
-              onSubmit={
-                handleAddSubject
-              }
-              className="space-y-3"
-            >
-              <input
-                type="text"
-                placeholder="e.g. Operating Systems"
-                value={newSubjectTitle}
-                onChange={(e) =>
-                  setNewSubjectTitle(
-                    e.target.value
-                  )
-                }
-                className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base focus:outline-none"
-                autoFocus
-              />
-
-              <div className="flex gap-2 justify-end">
-                <button
-                  type="button"
-                  onClick={() =>
-                    setIsAddingSubject(
-                      false
-                    )
-                  }
-                  className="px-3 py-1.5 rounded-xl border border-[#DDD5C7] text-sm"
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  className="px-4 py-1.5 rounded-xl bg-[#1C1917] text-white text-sm font-bold"
-                >
-                  Add
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {renderEditSubjectModal()}
-      {renderEditModuleModal()}
     </div>
-  );
-};
+
+    {/* Add Subject Modal */}
+
+    {isAddingSubject && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
+        <div className="bg-[#FAF7F0] border border-[#DDD5C7] rounded-2xl p-4 max-w-xs w-full shadow-2xl space-y-3 font-handwriting text-[#1C1917]">
+          <h3 className="text-lg font-bold font-fancy">
+            Add Subject
+          </h3>
+
+          <form
+            onSubmit={handleAddSubject}
+            className="space-y-3"
+          >
+            <input
+              type="text"
+              placeholder="e.g. Operating Systems"
+              value={newSubjectTitle}
+              onChange={(e) =>
+                setNewSubjectTitle(e.target.value)
+              }
+              className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base focus:outline-none"
+              autoFocus
+            />
+
+            <div className="flex gap-2 justify-end">
+              <button
+                type="button"
+                onClick={() =>
+                  setIsAddingSubject(false)
+                }
+                className="px-3 py-1.5 rounded-xl border border-[#DDD5C7] text-sm"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                className="px-4 py-1.5 rounded-xl bg-[#1C1917] text-white text-sm font-bold"
+              >
+                Add
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )}
+
+    {renderEditSubjectModal()}
+    {renderEditModuleModal()}
+  </div>
+); 
