@@ -1692,14 +1692,6 @@ return (
 
     <div className="shrink-0 space-y-2.5 pb-2">
 
-  {/* Captain America quote */}
-
-  <div className="text-center px-2 py-0.5">
-    <p className="text-sm font-notes text-zinc-400 italic">
-      "The price of freedom is high… but it’s a price I’m willing to pay."
-    </p>
-  </div>
-
   {/* Overall Progress */}
 
       <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 shadow-sm text-[#1C1917]">
