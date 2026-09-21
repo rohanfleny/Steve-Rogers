@@ -1689,16 +1689,7 @@ return (
     id="gate-overview-screen"
     className="h-full min-h-0 flex flex-col font-handwriting"
   >
-    {/* Compact Captain America quote */}
-    <div className="shrink-0 pb-1">
-      <div className="flex items-center justify-center gap-2 py-0.5">
-        <Shield className="w-4 h-4 text-blue-700 shrink-0" />
-        <p className="text-sm sm:text-base font-fancy font-bold text-zinc-100 text-center leading-none">
-          “I can do this all day.”
-        </p>
-      </div>
-    </div>
-
+   
     {/* Compact upper progress information */}
     <div className="shrink-0 space-y-1.5 pb-1.5">
 
@@ -1740,6 +1731,22 @@ return (
         <div className="text-[10px] font-bold text-[#78716C] tracking-wider uppercase">
           EXPECTED COMPLETION
         </div>
+
+        {/* Today's GATE task status */}
+
+  <div className="mt-1">
+    <span
+      className={`text-[10px] font-mono font-bold tracking-wider ${
+        isTodayGateDone
+          ? 'text-emerald-700'
+          : 'text-[#78716C]'
+      }`}
+    >
+      TODAY'S TASK: {isTodayGateDone ? 'COMPLETED' : 'PENDING'}
+    </span>
+  </div>
+
+  {/* Expected completion date + remaining days */}
 
         <div className="flex items-center justify-between gap-2 mt-0.5">
           <span className="text-base sm:text-lg font-fancy font-bold leading-tight">
