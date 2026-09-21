@@ -1763,90 +1763,118 @@ return (
 
     {/* Scrollable subjects only */}
 
-    <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pr-0.5">
-      <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 shadow-sm text-[#1C1917]">
-        <div className="flex items-center justify-between pb-1.5 border-b border-[#E5DDD0]">
-          <span className="text-[11px] font-bold text-[#78716C] tracking-wider uppercase">
-            SUBJECTS ({gateStore.subjects.length})
-          </span>
+  {/* Subjects section:
+    Header stays fixed.
+    Only the subject cards scroll. */}
 
-          <button
-            type="button"
-            onClick={() => setIsAddingSubject(true)}
-            className="text-[11px] font-bold flex items-center gap-1"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            Add Subject
-          </button>
-        </div>
+<div className="min-h-0 flex-1 flex flex-col overflow-hidden pr-0.5">
 
-        <div className="space-y-1.5 pt-2">
-          {gateStore.subjects.map((subject) => {
-            const progress = calculateSubjectProgress(
-              subject.id,
-              gateStore.modules,
-              gateStore.videos
-            );
+  {/* FIXED SUBJECT HEADER */}
+  <div
+    className="
+      shrink-0
+      bg-[#FAF7F0]
+      border
+      border-[#E5DDD0]
+      rounded-t-2xl
+      px-3
+      pt-3
+      pb-2
+      shadow-sm
+      text-[#1C1917]
+    "
+  >
+    <div
+      className="
+        flex
+        items-center
+        justify-between
+        pb-1.5
+        border-b
+        border-[#E5DDD0]
+      "
+    >
+      <span
+        className="
+          text-[11px]
+          font-bold
+          text-[#78716C]
+          tracking-wider
+          uppercase
+        "
+      >
+        SUBJECTS ({gateStore.subjects.length})
+      </span>
 
-            return (
-              <div
-                key={subject.id}
-                className="p-2.5 bg-[#F1ECE2] border border-[#DDD4C5] rounded-xl"
-              >
-                <div className="flex items-center justify-between">
-                  <div
-                    onClick={() =>
-                      setSelectedSubjectId(subject.id)
-                    }
-                    className="flex-1 min-w-0 cursor-pointer"
-                  >
-                    <div className="text-sm sm:text-base font-bold truncate">
-                      {subject.title}
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleOpenEditSubject(subject)
-                    }
-                    className="p-1 text-[#78716C]"
-                  >
-                    <Pencil className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-
-                <div
-                  onClick={() =>
-                    setSelectedSubjectId(subject.id)
-                  }
-                  className="cursor-pointer"
-                >
-                  <div className="flex items-center justify-between mt-0.5 text-xs font-mono">
-                    <span className="font-bold">
-                      {progress.completed} / {progress.total}
-                    </span>
-
-                    <span className="font-bold text-emerald-700">
-                      {progress.percentage}%
-                    </span>
-                  </div>
-
-                  <div className="w-full bg-[#DDD5C7] h-1.5 rounded-full overflow-hidden mt-1">
-                    <div
-                      className="h-full bg-emerald-600 rounded-full transition-all duration-300"
-                      style={{
-                        width: `${progress.percentage}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      <button
+        type="button"
+        onClick={() => setIsAddingSubject(true)}
+        className="
+          flex
+          items-center
+          gap-1
+          text-sm
+          font-bold
+          text-[#1C1917]
+          hover:text-emerald-700
+        "
+      >
+        <Plus className="w-4 h-4" />
+        Add Subject
+      </button>
     </div>
+  </div>
+
+  {/* ONLY THIS PART SCROLLS */}
+  <div
+    className="
+      min-h-0
+      flex-1
+      overflow-y-auto
+      overscroll-contain
+      bg-[#FAF7F0]
+      border-x
+      border-b
+      border-[#E5DDD0]
+      rounded-b-2xl
+      px-3
+      pb-3
+      pt-2
+      shadow-sm
+    "
+  >
+    <div className="space-y-2">
+
+      {gateStore.subjects.map((subject) => {
+        const progress =
+          calculateSubjectProgress(
+            subject,
+            gateStore.videos
+          );
+
+        return (
+          <div
+            key={subject.id}
+            className="
+              bg-[#F1ECE2]
+              border
+              border-[#DDD5C7]
+              rounded-2xl
+              p-3
+              shadow-sm
+            "
+          >
+
+            {/* KEEP YOUR EXISTING SUBJECT CARD CONTENT HERE */}
+
+          </div>
+        );
+      })}
+
+    </div>
+  </div>
+
+</div>
 
     {/* Add Subject Modal */}
 
