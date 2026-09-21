@@ -5,7 +5,6 @@ import {
   GraduationCap,
   BookOpen,
   Dumbbell,
-  Shield,
   Laptop,
   MessageSquare,
   Bed,
@@ -316,20 +315,6 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
           ))}
         </div>
       </div>
-
-      <div className="flex items-center justify-center gap-2 py-2">
-  <Shield className="w-5 h-5 text-blue-700 shrink-0" />
-
-  <div className="text-center">
-    <p className="text-base sm:text-lg font-fancy italic font-bold text-[#1C1917] tracking-wide">
-      “I can do this all day.”
-    </p>
-
-    <p className="text-xs sm:text-sm font-fancy italic text-[#57534E] mt-0.5">
-      — Steve Rogers
-    </p>
-  </div>
-</div>
 
       {/* Checklist Card */}
       <div
