@@ -581,6 +581,7 @@ export default function App() {
             <AnalyticsView
               allRecords={allRecords}
               selectedDate={selectedDate}
+              settings={settings}
             />
           )}
 
