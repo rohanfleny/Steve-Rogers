@@ -514,9 +514,10 @@ export default function App() {
 
         {/* ONLY THIS AREA SCROLLS */}
         <main
-          id="android-content-area"
-          className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3 space-y-4"
-        >
+  id="android-content-area"
+  className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3 space-y-4 bg-cover bg-center bg-no-repeat"
+  style={{ backgroundImage: "url('/captain-america-wallpaper.jpeg')" }}
+>
           {activeTab === 'home' && (
             <HomeDashboardView
               selectedDate={selectedDate}
