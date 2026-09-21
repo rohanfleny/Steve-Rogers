@@ -44,6 +44,13 @@ jobs:
       - name: Sync web app to Android
         run: npx cap sync android
 
+      # 7.5 Configure Gradle wrapper for reliable download
+      - name: Configure Gradle wrapper
+        working-directory: android
+        run: |
+          sed -i 's/gradle-8.11.1-all.zip/gradle-8.11.1-bin.zip/' gradle/wrapper/gradle-wrapper.properties
+          echo "networkTimeout=120000" >> gradle/wrapper/gradle-wrapper.properties
+
       # 8. Setup Java
       - name: Setup Java
         uses: actions/setup-java@v4
