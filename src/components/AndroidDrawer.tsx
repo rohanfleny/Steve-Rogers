@@ -9,8 +9,14 @@ import {
   X,
 } from 'lucide-react';
 import { MountainDoodle } from './HandwrittenDoodles';
+import { UserSettings, getGoalTitle } from '../types/daily';
 
-export type AndroidNavTab = 'home' | 'gate' | 'sleep' | 'analytics' | 'settings';
+export type AndroidNavTab =
+  | 'home'
+  | 'gate'
+  | 'sleep'
+  | 'analytics'
+  | 'settings';
 
 interface AndroidDrawerProps {
   isOpen: boolean;
@@ -19,6 +25,7 @@ interface AndroidDrawerProps {
   onSelectTab: (tab: AndroidNavTab) => void;
   userName?: string;
   onOpenAcademics?: () => void;
+  settings: UserSettings;
 }
 
 export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
@@ -28,8 +35,12 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
   onSelectTab,
   userName = 'Rohan',
   onOpenAcademics,
+  settings,
 }) => {
   if (!isOpen) return null;
+
+  const gateTitle = getGoalTitle('gate', settings);
+  const academicsTitle = getGoalTitle('academics', settings);
 
   return (
     <div className="fixed inset-0 z-50 flex">
@@ -42,7 +53,7 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
       {/* Drawer surface */}
       <div className="relative w-4/5 max-w-[280px] bg-[#FAF7F0] h-full shadow-2xl flex flex-col justify-between p-5 border-r border-[#E5DDD0] z-10 overflow-y-auto text-[#1C1917]">
         <div>
-          {/* Close button for accessibility */}
+          {/* Close button */}
           <div className="flex justify-end mb-2">
             <button
               type="button"
@@ -62,7 +73,7 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
             </h2>
           </div>
 
-          {/* Mountain sketch doodle */}
+          {/* Mountain sketch */}
           <div className="my-3 py-1 flex justify-center">
             <MountainDoodle className="w-28 h-14 text-[#A8A29E]" />
           </div>
@@ -76,6 +87,7 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
 
           {/* Navigation Items */}
           <nav className="space-y-1.5 font-handwriting text-base">
+            {/* Dashboard */}
             <button
               type="button"
               onClick={() => {
@@ -92,6 +104,7 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
               <span>Dashboard</span>
             </button>
 
+            {/* GATE - dynamic name */}
             <button
               type="button"
               onClick={() => {
@@ -105,9 +118,10 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
               }`}
             >
               <BookOpen className="w-4 h-4" />
-              <span>GATE</span>
+              <span>{gateTitle}</span>
             </button>
 
+            {/* Academics - dynamic name */}
             <button
               type="button"
               onClick={() => {
@@ -118,9 +132,10 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
               className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left text-[#57534E] hover:bg-[#E8E1D4] hover:text-[#1C1917] transition-colors cursor-pointer"
             >
               <GraduationCap className="w-4 h-4" />
-              <span>Academics</span>
+              <span>{academicsTitle}</span>
             </button>
 
+            {/* Sleep */}
             <button
               type="button"
               onClick={() => {
@@ -137,6 +152,7 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
               <span>Sleep</span>
             </button>
 
+            {/* Analytics */}
             <button
               type="button"
               onClick={() => {
@@ -153,6 +169,7 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
               <span>Analytics</span>
             </button>
 
+            {/* Settings */}
             <button
               type="button"
               onClick={() => {
