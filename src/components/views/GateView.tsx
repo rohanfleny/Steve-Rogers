@@ -1691,7 +1691,16 @@ return (
     {/* Fixed top content */}
 
     <div className="shrink-0 space-y-2.5 pb-2">
-      {/* Overall Progress */}
+
+  {/* Captain America quote */}
+
+  <div className="text-center px-2 py-0.5">
+    <p className="text-sm font-notes text-zinc-400 italic">
+      "The price of freedom is high… but it’s a price I’m willing to pay."
+    </p>
+  </div>
+
+  {/* Overall Progress */}
 
       <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 shadow-sm text-[#1C1917]">
         <div className="flex items-center justify-between">
@@ -1704,12 +1713,16 @@ return (
           </span>
         </div>
 
-        <div className="flex items-center justify-between mt-0.5">
-          <span className="text-base font-mono font-bold">
-            {overallProgress.completed} /{' '}
-            {overallProgress.total}
-          </span>
-        </div>
+       <div className="flex items-center justify-between mt-0.5">
+  <span className="text-base font-mono font-bold">
+    {overallProgress.completed} /{' '}
+    {overallProgress.total}
+  </span>
+
+  <span className="text-[10px] font-mono text-[#78716C]">
+    {overallProgress.remaining} remaining
+  </span>
+</div>
 
         <div className="w-full bg-[#E5DDD0] h-1.5 rounded-full overflow-hidden mt-1.5">
           <div
