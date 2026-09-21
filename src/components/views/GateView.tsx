@@ -1881,9 +1881,9 @@ return (
         </div>
       </div>
     );
-};
 
     {renderEditSubjectModal()}
     {renderEditModuleModal()}
   </div>
 ); 
+};
