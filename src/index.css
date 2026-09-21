@@ -5,32 +5,43 @@
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
   }
+
   body {
     font-family: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
-    color: #F4F4F5;
-    background-color: #09090B;
+    color: #111827;
+    background-color: #071426;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', 'Cinzel', Georgia, serif;
+    font-family: 'Cinzel', 'Playfair Display', Georgia, serif;
     font-weight: 700;
   }
+
   code, pre, .font-mono {
     font-family: 'JetBrains Mono', monospace;
   }
 }
 
-.font-reverie, .font-fancy, .font-display {
+/* =========================================================
+   CAPTAIN AMERICA TYPOGRAPHY
+   ========================================================= */
+
+.font-reverie,
+.font-fancy,
+.font-display {
   font-family: 'Cinzel', 'Playfair Display', serif;
   letter-spacing: 0.02em;
   font-weight: 700;
 }
 
-.font-handwriting, .font-sans-ui, .font-outfit {
+.font-handwriting,
+.font-sans-ui,
+.font-outfit {
   font-family: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
 }
 
@@ -43,55 +54,142 @@
   font-style: italic;
 }
 
-/* Warm Card & Container Styling */
-.warm-card {
-  background-color: #FAF7F0;
-  border: 1px solid #E4DCD0;
-  color: #1C1917;
-  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.35);
+/* =========================================================
+   CAPTAIN AMERICA COLOUR SYSTEM
+   ========================================================= */
+
+:root {
+  --cap-blue: #0B3D91;
+  --cap-blue-dark: #071F4A;
+  --cap-blue-light: #EAF1FF;
+
+  --cap-red: #C1121F;
+  --cap-red-dark: #8F0D17;
+  --cap-red-light: #FDECEE;
+
+  --cap-white: #FFFFFF;
+  --cap-paper: #F8F9FC;
+  --cap-star: #F4F1E8;
+
+  --cap-ink: #111827;
+  --cap-muted: #64748B;
+  --cap-border: #D6DCE8;
 }
 
+/* =========================================================
+   MAIN CARDS
+   ========================================================= */
+
+.warm-card,
 .warm-card-interactive {
-  background-color: #FAF7F0;
-  border: 1px solid #E4DCD0;
-  color: #1C1917;
-  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.35);
+  background-color: var(--cap-white);
+  border: 1px solid var(--cap-border);
+  color: var(--cap-ink);
+  box-shadow: 0 2px 8px -2px rgba(7, 31, 74, 0.18);
 }
 
 .warm-subcard {
-  background-color: #F1ECE2;
-  border: 1px solid #DDD5C7;
-  color: #1C1917;
+  background-color: var(--cap-paper);
+  border: 1px solid var(--cap-border);
+  color: var(--cap-ink);
 }
 
 .warm-subcard-hover:hover {
-  background-color: #E8E0D2;
+  background-color: var(--cap-blue-light);
 }
 
-/* Dark mode notebook grid/line pattern */
+/* =========================================================
+   CAPTAIN AMERICA PAPER SURFACE
+   ========================================================= */
+
+.paper-surface {
+  background-color: var(--cap-paper);
+  border-color: var(--cap-border);
+  color: var(--cap-ink);
+}
+
+/* =========================================================
+   NOTEBOOK / JOURNAL LINES
+   ========================================================= */
+
 .notebook-ruled {
-  background-image: linear-gradient(#181822 1px, transparent 1px);
+  background-image: linear-gradient(
+    rgba(11, 61, 145, 0.10) 1px,
+    transparent 1px
+  );
   background-size: 100% 28px;
 }
 
-/* Dark surface look */
-.paper-surface {
-  background-color: #13131A;
-  border-color: #22222E;
+/* =========================================================
+   SELECTION / FOCUS
+   ========================================================= */
+
+::selection {
+  background-color: #D7E4FF;
+  color: #071F4A;
 }
 
-/* Custom minimal scrollbar for dark mode */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--cap-blue);
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #272730;
+  background: #9AA8BE;
   border-radius: 9999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #3F3F4E;
+  background: var(--cap-blue);
+}
+
+/* =========================================================
+   CAPTAIN AMERICA UTILITY CLASSES
+   ========================================================= */
+
+.cap-blue {
+  color: var(--cap-blue);
+}
+
+.cap-red {
+  color: var(--cap-red);
+}
+
+.cap-blue-bg {
+  background-color: var(--cap-blue);
+  color: white;
+}
+
+.cap-red-bg {
+  background-color: var(--cap-red);
+  color: white;
+}
+
+.cap-star-bg {
+  background-color: var(--cap-star);
+  color: var(--cap-ink);
+}
+
+.cap-blue-border {
+  border-color: var(--cap-blue);
+}
+
+.cap-red-border {
+  border-color: var(--cap-red);
 }
