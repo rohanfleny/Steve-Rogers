@@ -40,7 +40,9 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
   // ------------------------------------------------------------
 
   const [y, m, d] = selectedDate.split('-').map(Number);
+
   const currentDateObj = new Date(y, m - 1, d);
+
   const dayOfWeek = currentDateObj.getDay();
 
   const diffToMonday =
@@ -133,10 +135,12 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
   ).length;
 
   // ------------------------------------------------------------
-  // HELPERS
+  // HEATMAP COLOR
   // ------------------------------------------------------------
 
-  const getHeatmapClass = (completedCount: number) => {
+  const getHeatmapClass = (
+    completedCount: number
+  ) => {
     if (completedCount >= 5) {
       return 'bg-emerald-700';
     }
@@ -156,7 +160,13 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
     return 'bg-[#E8E1D6]';
   };
 
-  const getRingBackground = (percent: number) => {
+  // ------------------------------------------------------------
+  // CIRCULAR PERCENTAGE
+  // ------------------------------------------------------------
+
+  const getRingBackground = (
+    percent: number
+  ) => {
     if (percent <= 0) {
       return '#E5DDD0';
     }
@@ -175,154 +185,250 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
   return (
     <div
       id="analytics-view"
-      className="h-full min-h-0 flex flex-col font-handwriting text-[#1C1917]"
+      className="
+        h-full
+        min-h-0
+        flex
+        flex-col
+        font-handwriting
+        text-[#1C1917]
+      "
     >
-      {/* ======================================================
-          ANALYTICS CONTENT
-          ====================================================== */}
+      <div
+        className="
+          min-h-0
+          flex-1
+          overflow-y-auto
+          overscroll-contain
+          space-y-2
+          pb-1
+        "
+      >
 
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain space-y-2.5 pb-2">
-
-        {/* ====================================================
-            WEEKLY HABIT COMPLETION
-            ==================================================== */}
+        {/* =====================================================
+            HABIT COMPLETION
+            ===================================================== */}
 
         <section
           className="
             bg-[#FAF7F0]
             border border-[#E5DDD0]
             rounded-2xl
-            p-3
+            px-3
+            py-2.5
             shadow-sm
           "
         >
-          {/* Section heading */}
 
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-sm sm:text-base font-bold font-fancy">
+          {/* Heading */}
+
+          <div
+            className="
+              flex
+              items-center
+              justify-between
+              mb-1.5
+            "
+          >
+            <h2
+              className="
+                text-sm
+                sm:text-base
+                font-bold
+                font-fancy
+              "
+            >
               Habit Completion
             </h2>
 
-            <span className="text-[10px] sm:text-xs text-[#78716C] font-mono">
+            <span
+              className="
+                text-[10px]
+                sm:text-xs
+                text-[#78716C]
+                font-mono
+              "
+            >
               Mon – Sun
             </span>
           </div>
 
-          {/* Weekly matrix */}
+          {/* =================================================
+              WEEK TABLE
+              IMPORTANT:
+              NO HORIZONTAL SCROLL
+              ================================================= */}
 
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse min-w-[320px]">
-              <thead>
-                <tr>
-                  <th className="pb-1.5 pr-1 text-left text-[10px] sm:text-xs text-[#78716C] font-normal w-24">
-                    Habit
-                  </th>
+          <table
+            className="
+              w-full
+              table-fixed
+              border-collapse
+            "
+          >
+            <thead>
+              <tr>
+                <th
+                  className="
+                    w-[27%]
+                    pb-1
+                    pr-1
+                    text-left
+                    text-[10px]
+                    sm:text-xs
+                    text-[#78716C]
+                    font-normal
+                  "
+                >
+                  Habit
+                </th>
 
-                  {weekDates.map((day) => (
-                    <th
-                      key={day.dateStr}
-                      className="
-                        pb-1.5
-                        px-0.5
-                        text-center
-                        text-[9px]
-                        sm:text-[10px]
-                        text-[#78716C]
-                        font-semibold
-                        font-mono
-                      "
-                    >
-                      {day.label}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-
-              <tbody>
-                {habitRows.map((habit) => (
-                  <tr
-                    key={habit.id}
-                    className="border-t border-[#E5DDD0]"
+                {weekDates.map((day) => (
+                  <th
+                    key={day.dateStr}
+                    className="
+                      pb-1
+                      text-center
+                      text-[9px]
+                      sm:text-[10px]
+                      text-[#78716C]
+                      font-semibold
+                      font-mono
+                    "
                   >
-                    <td className="py-1 pr-1 text-[11px] sm:text-xs font-bold whitespace-nowrap">
-                      {habit.label}
-                    </td>
-
-                    {weekDates.map((day) => {
-                      const isCompleted =
-                        allRecords[
-                          day.dateStr
-                        ]?.goals?.[habit.id] === true;
-
-                      return (
-                        <td
-                          key={day.dateStr}
-                          className="py-1 px-0.5 text-center"
-                        >
-                          <div
-                            title={`${habit.label}: ${
-                              isCompleted
-                                ? 'Done'
-                                : 'Missed'
-                            } on ${day.label}`}
-                            className={`
-                              w-4 h-4
-                              sm:w-5 sm:h-5
-                              rounded-[5px]
-                              mx-auto
-                              flex
-                              items-center
-                              justify-center
-                              ${
-                                isCompleted
-                                  ? 'bg-emerald-600 text-white'
-                                  : 'bg-[#F1ECE2] border border-[#DDD5C7]'
-                              }
-                            `}
-                          >
-                            {isCompleted && (
-                              <span className="text-[9px] font-bold">
-                                ✓
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                      );
-                    })}
-                  </tr>
+                    {day.label}
+                  </th>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </tr>
+            </thead>
 
-          {/* ==================================================
-              WEEKLY PERCENTAGE INDICATORS
-              ================================================== */}
+            <tbody>
+              {habitRows.map((habit) => (
+                <tr
+                  key={habit.id}
+                  className="
+                    border-t
+                    border-[#E5DDD0]
+                  "
+                >
 
-          <div className="mt-2.5 pt-2.5 border-t border-[#E5DDD0]">
-            <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
+                  {/* Habit name */}
+
+                  <td
+                    className="
+                      py-1
+                      pr-1
+                      text-[10px]
+                      sm:text-xs
+                      font-bold
+                      leading-tight
+                      break-words
+                    "
+                  >
+                    {habit.label}
+                  </td>
+
+                  {/* Days */}
+
+                  {weekDates.map((day) => {
+                    const isCompleted =
+                      allRecords[
+                        day.dateStr
+                      ]?.goals?.[habit.id] === true;
+
+                    return (
+                      <td
+                        key={day.dateStr}
+                        className="
+                          py-1
+                          text-center
+                        "
+                      >
+                        <div
+                          title={`${habit.label}: ${
+                            isCompleted
+                              ? 'Done'
+                              : 'Missed'
+                          } on ${day.label}`}
+                          className={`
+                            w-4
+                            h-4
+                            sm:w-5
+                            sm:h-5
+                            rounded-[5px]
+                            mx-auto
+                            flex
+                            items-center
+                            justify-center
+                            ${
+                              isCompleted
+                                ? 'bg-emerald-600 text-white'
+                                : 'bg-[#F1ECE2] border border-[#DDD5C7]'
+                            }
+                          `}
+                        >
+                          {isCompleted && (
+                            <span
+                              className="
+                                text-[8px]
+                                sm:text-[9px]
+                                font-bold
+                              "
+                            >
+                              ✓
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* =================================================
+              CIRCULAR PERCENTAGES
+
+              Outer boxes removed to save space.
+              ================================================= */}
+
+          <div
+            className="
+              mt-2
+              pt-2
+              border-t
+              border-[#E5DDD0]
+            "
+          >
+            <div
+              className="
+                grid
+                grid-cols-5
+                gap-1
+                w-full
+              "
+            >
               {habitStats.map((stat) => (
                 <div
                   key={stat.id}
                   className="
                     min-w-0
-                    rounded-xl
-                    border border-[#E5DDD0]
-                    bg-[#F1ECE2]
-                    px-1
-                    py-2
                     flex
                     flex-col
                     items-center
                     justify-center
                   "
                 >
-                  {/* Circular percentage */}
+
+                  {/* Circle */}
 
                   <div
                     className="
-                      w-10 h-10
-                      sm:w-12 sm:h-12
+                      w-10
+                      h-10
+                      sm:w-11
+                      sm:h-11
                       rounded-full
                       flex
                       items-center
@@ -337,8 +443,10 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   >
                     <div
                       className="
-                        w-8 h-8
-                        sm:w-9 sm:h-9
+                        w-8
+                        h-8
+                        sm:w-9
+                        sm:h-9
                         rounded-full
                         bg-[#FAF7F0]
                         flex
@@ -346,7 +454,14 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                         justify-center
                       "
                     >
-                      <span className="text-[9px] sm:text-[10px] font-bold font-mono">
+                      <span
+                        className="
+                          text-[9px]
+                          sm:text-[10px]
+                          font-bold
+                          font-mono
+                        "
+                      >
                         {stat.percent}%
                       </span>
                     </div>
@@ -363,7 +478,8 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                       text-[#57534E]
                       leading-tight
                       text-center
-                      line-clamp-2
+                      break-words
+                      max-w-full
                     "
                   >
                     {stat.label}
@@ -374,42 +490,74 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
           </div>
         </section>
 
-        {/* ====================================================
+        {/* =====================================================
             LAST 30 DAYS
-            ==================================================== */}
+            ===================================================== */}
 
         <section
           className="
             bg-[#FAF7F0]
             border border-[#E5DDD0]
             rounded-2xl
-            p-3
+            px-3
+            py-2.5
             shadow-sm
           "
         >
+
           {/* Heading */}
 
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-sm sm:text-base font-bold font-fancy">
+          <div
+            className="
+              flex
+              items-center
+              justify-between
+              mb-1.5
+            "
+          >
+            <h2
+              className="
+                text-sm
+                sm:text-base
+                font-bold
+                font-fancy
+              "
+            >
               Last 30 Days
             </h2>
 
-            <span className="text-[10px] sm:text-xs text-[#78716C] font-mono">
+            <span
+              className="
+                text-[10px]
+                sm:text-xs
+                text-[#78716C]
+                font-mono
+              "
+            >
               30 days
             </span>
           </div>
 
-          {/* Handwritten-style heatmap */}
+          {/* =================================================
+              HEATMAP
+              ================================================= */}
 
           <div
             className="
               p-2
               bg-[#F1ECE2]
-              border border-[#DDD5C7]
+              border
+              border-[#DDD5C7]
               rounded-xl
             "
           >
-            <div className="grid grid-cols-10 gap-1.5 sm:gap-2">
+            <div
+              className="
+                grid
+                grid-cols-10
+                gap-1.5
+              "
+            >
               {last30Days.map((day) => (
                 <div
                   key={day.dateStr}
@@ -421,60 +569,136 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                     ${getHeatmapClass(
                       day.completedCount
                     )}
-                    transition-transform
-                    hover:scale-110
                   `}
                 />
               ))}
             </div>
           </div>
 
-          {/* Heatmap legend */}
+          {/* =================================================
+              LEGEND
+              ================================================= */}
 
-          <div className="flex items-center justify-center gap-3 mt-2 text-[9px] sm:text-[10px] text-[#78716C] font-mono">
+          <div
+            className="
+              flex
+              items-center
+              justify-center
+              gap-2.5
+              mt-1.5
+              text-[9px]
+              sm:text-[10px]
+              text-[#78716C]
+              font-mono
+            "
+          >
             <div className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-sm bg-[#E8E1D6]" />
+              <span
+                className="
+                  w-2.5
+                  h-2.5
+                  rounded-sm
+                  bg-[#E8E1D6]
+                "
+              />
               0
             </div>
 
             <div className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-sm bg-[#D6CEC0]" />
+              <span
+                className="
+                  w-2.5
+                  h-2.5
+                  rounded-sm
+                  bg-[#D6CEC0]
+                "
+              />
               1
             </div>
 
             <div className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-sm bg-emerald-300" />
+              <span
+                className="
+                  w-2.5
+                  h-2.5
+                  rounded-sm
+                  bg-emerald-300
+                "
+              />
               2–3
             </div>
 
             <div className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500" />
+              <span
+                className="
+                  w-2.5
+                  h-2.5
+                  rounded-sm
+                  bg-emerald-500
+                "
+              />
               4
             </div>
 
             <div className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-sm bg-emerald-700" />
+              <span
+                className="
+                  w-2.5
+                  h-2.5
+                  rounded-sm
+                  bg-emerald-700
+                "
+              />
               5
             </div>
           </div>
 
-          {/* 30-day statistics */}
+          {/* =================================================
+              30-DAY STATISTICS
+              ================================================= */}
 
-          <div className="grid grid-cols-3 gap-1.5 mt-2">
+          <div
+            className="
+              grid
+              grid-cols-3
+              gap-1.5
+              mt-1.5
+            "
+          >
+
             <div
               className="
                 rounded-xl
-                border border-[#E5DDD0]
+                border
+                border-[#E5DDD0]
                 bg-[#F1ECE2]
-                p-2
+                py-1.5
+                px-1
                 text-center
               "
             >
-              <span className="block text-lg sm:text-xl font-bold font-mono text-emerald-700">
+              <span
+                className="
+                  block
+                  text-lg
+                  sm:text-xl
+                  font-bold
+                  font-mono
+                  text-emerald-700
+                "
+              >
                 {fullDaysCount}
               </span>
 
-              <span className="block text-[9px] sm:text-[10px] text-[#78716C] leading-tight">
+              <span
+                className="
+                  block
+                  text-[9px]
+                  sm:text-[10px]
+                  text-[#78716C]
+                  leading-tight
+                "
+              >
                 Full days
               </span>
             </div>
@@ -482,17 +706,36 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
             <div
               className="
                 rounded-xl
-                border border-[#E5DDD0]
+                border
+                border-[#E5DDD0]
                 bg-[#F1ECE2]
-                p-2
+                py-1.5
+                px-1
                 text-center
               "
             >
-              <span className="block text-lg sm:text-xl font-bold font-mono text-emerald-600">
+              <span
+                className="
+                  block
+                  text-lg
+                  sm:text-xl
+                  font-bold
+                  font-mono
+                  text-emerald-600
+                "
+              >
                 {partialDaysCount}
               </span>
 
-              <span className="block text-[9px] sm:text-[10px] text-[#78716C] leading-tight">
+              <span
+                className="
+                  block
+                  text-[9px]
+                  sm:text-[10px]
+                  text-[#78716C]
+                  leading-tight
+                "
+              >
                 Partial days
               </span>
             </div>
@@ -500,17 +743,36 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
             <div
               className="
                 rounded-xl
-                border border-[#E5DDD0]
+                border
+                border-[#E5DDD0]
                 bg-[#F1ECE2]
-                p-2
+                py-1.5
+                px-1
                 text-center
               "
             >
-              <span className="block text-lg sm:text-xl font-bold font-mono text-[#78716C]">
+              <span
+                className="
+                  block
+                  text-lg
+                  sm:text-xl
+                  font-bold
+                  font-mono
+                  text-[#78716C]
+                "
+              >
                 {lowDaysCount}
               </span>
 
-              <span className="block text-[9px] sm:text-[10px] text-[#78716C] leading-tight">
+              <span
+                className="
+                  block
+                  text-[9px]
+                  sm:text-[10px]
+                  text-[#78716C]
+                  leading-tight
+                "
+              >
                 Low days
               </span>
             </div>
