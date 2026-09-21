@@ -1064,7 +1064,7 @@ export const GateView: React.FC<GateViewProps> = ({
               onClick={() =>
                 setSelectedModuleId(null)
               }
-              className="p-1.5 rounded-full text-[#64748B] shrink-0"
+              className="p-1.5 rounded-full text-[#1B3A57] hover:bg-[#EEF2F6] shrink-0"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
@@ -1087,14 +1087,14 @@ export const GateView: React.FC<GateViewProps> = ({
                 selectedModule
               )
             }
-            className="p-1.5 rounded-lg text-[#1B3A57] border border-[#D6DCE8] bg-[#EEF2F6] flex items-center gap-1 text-xs font-bold shrink-0"
+            className="p-1.5 rounded-lg text-[#1B3A57] border border-[#D6DCE8] bg-[#FAF7F0] flex items-center gap-1 text-xs font-bold shrink-0"
           >
             <Pencil className="w-3 h-3" />
             Edit
           </button>
         </div>
 
-        <div className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-3 shadow-sm space-y-1.5 text-[#1B3A57]">
+        <div className="bg-[#1B3A57] border border-[#1B3A57] rounded-2xl p-3 shadow-sm space-y-1.5 text-white">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">
               {selectedModule.title}
@@ -1117,7 +1117,7 @@ export const GateView: React.FC<GateViewProps> = ({
             </span>
           </div>
 
-          <div className="w-full bg-[#D6DCE8] h-2.5 rounded-full overflow-hidden">
+          <div className="w-full bg-[#6D879E] h-2.5 rounded-full overflow-hidden">
             <div
               className="h-full bg-[#9B1B30] rounded-full"
               style={{
@@ -1134,7 +1134,7 @@ export const GateView: React.FC<GateViewProps> = ({
                 selectedModule.id
               )
             }
-            className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-xl p-2.5 flex items-center justify-between cursor-pointer"
+            className="bg-[#1B3A57] border border-[#1B3A57] rounded-xl p-2.5 flex items-center justify-between cursor-pointer text-white"
           >
             <span className="text-sm font-bold">
               Revision
@@ -1160,7 +1160,7 @@ export const GateView: React.FC<GateViewProps> = ({
                 selectedModule.id
               )
             }
-            className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-xl p-2.5 flex items-center justify-between cursor-pointer"
+            className="bg-[#1B3A57] border border-[#1B3A57] rounded-xl p-2.5 flex items-center justify-between cursor-pointer text-white"
           >
             <span className="text-sm font-bold">
               PYQ
@@ -1181,9 +1181,9 @@ export const GateView: React.FC<GateViewProps> = ({
           </div>
         </div>
 
-        <div className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-3 shadow-sm space-y-2 text-[#1B3A57]">
-          <div className="flex items-center justify-between pb-1 border-b border-[#D6DCE8]">
-            <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">
+        <div className="bg-[#1B3A57] border border-[#1B3A57] rounded-2xl p-3 shadow-sm space-y-2 text-white">
+          <div className="flex items-center justify-between pb-1 border-b border-white/20">
+            <span className="text-[11px] font-bold text-white/80 uppercase tracking-wider">
               VIDEOS (
               {moduleProgress.completed}/
               {moduleProgress.total})
@@ -1203,7 +1203,7 @@ export const GateView: React.FC<GateViewProps> = ({
                   true
                 );
               }}
-              className="text-[11px] font-bold bg-[#E8EDF3] border border-[#D6DCE8] px-2 py-1 rounded-lg flex items-center gap-1"
+              className="text-[11px] font-bold bg-[#FAF7F0] text-[#1B3A57] border border-[#D6DCE8] px-2 py-1 rounded-lg flex items-center gap-1"
             >
               <Pencil className="w-3 h-3" />
               Count
@@ -1244,24 +1244,24 @@ export const GateView: React.FC<GateViewProps> = ({
                     }
                     className={`flex items-center justify-between p-2 rounded-lg cursor-pointer ${
                       video.completed
-                        ? 'bg-[#F5E4E7]/70'
-                        : 'hover:bg-[#F1ECE1]'
+                        ? 'bg-[#244A68]'
+                        : 'hover:bg-[#2B587A]'
                     }`}
                   >
                     <div className="flex items-center gap-2 min-w-0">
                       <HandwrittenPlayIcon
                         className={`w-3 h-3 ${
                           video.completed
-                            ? 'text-[#64748B]'
-                            : 'text-[#64748B]'
+                            ? 'text-[#F5E4E7]'
+                            : 'text-white/80'
                         }`}
                       />
 
                       <span
                         className={`text-sm ${
                           video.completed
-                            ? 'text-[#64748B] line-through'
-                            : 'text-[#1B3A57] font-semibold'
+                            ? 'text-white/60 line-through'
+                            : 'text-white font-semibold'
                         }`}
                       >
                         Video{' '}
@@ -1437,7 +1437,7 @@ export const GateView: React.FC<GateViewProps> = ({
               onClick={() =>
                 setSelectedSubjectId(null)
               }
-              className="p-1.5 rounded-full text-[#64748B] shrink-0"
+              className="p-1.5 rounded-full text-[#1B3A57] hover:bg-[#EEF2F6] shrink-0"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
@@ -1454,14 +1454,14 @@ export const GateView: React.FC<GateViewProps> = ({
                 selectedSubject
               )
             }
-            className="p-1.5 rounded-lg text-[#1B3A57] border border-[#D6DCE8] bg-[#EEF2F6] flex items-center gap-1 text-xs font-bold"
+            className="p-1.5 rounded-lg text-[#1B3A57] border border-[#D6DCE8] bg-[#FAF7F0] flex items-center gap-1 text-xs font-bold"
           >
             <Pencil className="w-3 h-3" />
             Edit
           </button>
         </div>
 
-        <div className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-3 shadow-sm flex items-center gap-3 text-[#1B3A57]">
+        <div className="bg-[#1B3A57] border border-[#1B3A57] rounded-2xl p-3 shadow-sm flex items-center gap-3 text-white">
           <div className="relative w-16 h-16 shrink-0 flex items-center justify-center">
             <svg
               className="w-full h-full -rotate-90"
@@ -1471,7 +1471,7 @@ export const GateView: React.FC<GateViewProps> = ({
                 cx="24"
                 cy="24"
                 r={radius}
-                stroke="#D6DCE8"
+                stroke="#6D879E"
                 strokeWidth="4"
                 fill="none"
               />
@@ -1501,23 +1501,23 @@ export const GateView: React.FC<GateViewProps> = ({
           </div>
 
           <div>
-            <div className="text-base font-mono font-bold">
+            <div className="text-base font-mono font-bold text-white">
               {subjectProgress.completed}{' '}
               /{' '}
               {subjectProgress.total}{' '}
               videos
             </div>
 
-            <div className="text-xs text-[#64748B]">
+            <div className="text-xs text-white/70">
               {subjectModules.length}{' '}
               modules
             </div>
           </div>
         </div>
 
-        <div className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-3 shadow-sm space-y-2 text-[#1B3A57]">
-          <div className="flex items-center justify-between pb-1 border-b border-[#D6DCE8]">
-            <span className="text-[11px] font-bold text-[#64748B] tracking-wider">
+        <div className="bg-[#1B3A57] border border-[#1B3A57] rounded-2xl p-3 shadow-sm space-y-2 text-white">
+          <div className="flex items-center justify-between pb-1 border-b border-white/20">
+            <span className="text-[11px] font-bold text-white/80 tracking-wider">
               MODULES
             </span>
 
@@ -1526,7 +1526,7 @@ export const GateView: React.FC<GateViewProps> = ({
               onClick={() =>
                 setIsAddingModule(true)
               }
-              className="text-[11px] font-bold flex items-center gap-1"
+              className="text-[11px] font-bold text-[#F5E4E7] flex items-center gap-1"
             >
               <Plus className="w-3.5 h-3.5" />
               Add Module
@@ -1550,7 +1550,7 @@ export const GateView: React.FC<GateViewProps> = ({
                 return (
                   <div
                     key={module.id}
-                    className="p-2.5 bg-[#EEF2F6] border border-[#D6DCE8] rounded-xl"
+                    className="p-2.5 bg-[#1B3A57] border border-[#1B3A57] rounded-xl shadow-sm text-white"
                   >
                     <div className="flex items-center justify-between">
                       <div
@@ -1580,7 +1580,7 @@ export const GateView: React.FC<GateViewProps> = ({
                               module
                             )
                           }
-                          className="p-1 text-[#64748B]"
+                          className="p-1 text-white/80 hover:text-white"
                         >
                           <Pencil className="w-3 h-3" />
                         </button>
@@ -1607,7 +1607,7 @@ export const GateView: React.FC<GateViewProps> = ({
                         </span>
                       </div>
 
-                      <div className="w-full bg-[#D6DCE8] h-1.5 rounded-full overflow-hidden mt-1">
+                      <div className="w-full bg-[#6D879E] h-1.5 rounded-full overflow-hidden mt-1">
                         <div
                           className="h-full bg-[#9B1B30] rounded-full"
                           style={{
@@ -1706,7 +1706,7 @@ return (
         </div>
 
         <div className="flex items-center justify-between mt-0.5">
-          <span className="text-base font-mono font-bold">
+          <span className="text-base font-mono font-bold text-white">
             {overallProgress.completed} /{' '}
             {overallProgress.total}
           </span>
@@ -1716,7 +1716,7 @@ return (
           </span>
         </div>
 
-        <div className="w-full bg-[#D6DCE8] h-1.5 rounded-full overflow-hidden mt-1">
+        <div className="w-full bg-[#6D879E] h-1.5 rounded-full overflow-hidden mt-1">
           <div
             className="h-full bg-[#9B1B30] rounded-full transition-all duration-300"
             style={{
@@ -1773,16 +1773,16 @@ return (
       <div className="h-full min-h-0 bg-[#1B3A57] border border-[#1B3A57] rounded-2xl shadow-sm text-white flex flex-col overflow-hidden">
 
         {/* Fixed Subjects header */}
-        <div className="shrink-0 px-3 pt-2.5 pb-2 border-b border-white/20">
+        <div className="shrink-0 px-3 pt-2.5 pb-2 bg-[#FAF7F0] border-b border-[#D6DCE8]">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-[#64748B] tracking-wider uppercase">
+            <span className="text-[11px] font-bold text-[#1B3A57] tracking-wider uppercase">
               SUBJECTS ({gateStore.subjects.length})
             </span>
 
             <button
               type="button"
               onClick={() => setIsAddingSubject(true)}
-              className="text-[11px] font-bold flex items-center gap-1"
+              className="text-[11px] font-bold text-[#9B1B30] flex items-center gap-1"
             >
               <Plus className="w-3.5 h-3.5" />
               Add Subject
@@ -1803,7 +1803,7 @@ return (
               return (
                 <div
                   key={subject.id}
-                  className="p-2.5 bg-[#EEF2F6] border border-[#D6DCE8] rounded-xl"
+                  className="p-2.5 bg-[#1B3A57] border border-[#1B3A57] rounded-xl shadow-sm text-white"
                 >
                   <div className="flex items-center justify-between">
                     <div
@@ -1822,7 +1822,7 @@ return (
                       onClick={() =>
                         handleOpenEditSubject(subject)
                       }
-                      className="p-1 text-[#64748B]"
+                      className="p-1 text-white/80 hover:text-white"
                     >
                       <Pencil className="w-3.5 h-3.5" />
                     </button>
@@ -1844,7 +1844,7 @@ return (
                       </span>
                     </div>
 
-                    <div className="w-full bg-[#D6DCE8] h-1.5 rounded-full overflow-hidden mt-1">
+                    <div className="w-full bg-[#6D879E] h-1.5 rounded-full overflow-hidden mt-1">
                       <div
                         className="h-full bg-[#9B1B30] rounded-full transition-all duration-300"
                         style={{
