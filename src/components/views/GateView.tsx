@@ -1182,8 +1182,8 @@ export const GateView: React.FC<GateViewProps> = ({
         </div>
 
         <div className="bg-[#1B3A57] border border-[#1B3A57] rounded-2xl p-3 shadow-sm space-y-2 text-white">
-          <div className="flex items-center justify-between pb-1 border-b border-[#D6DCE8] bg-[#FAF7F0] -mx-3 -mt-3 px-3 pt-3 rounded-t-2xl">
-            <span className="text-[11px] font-bold text-[#9B1B30] uppercase tracking-wider">
+          <div className="flex items-center justify-between pb-1 border-b border-[#1B3A57] bg-[#1B3A57] -mx-3 -mt-3 px-3 pt-3 rounded-t-2xl">
+            <span className="text-[11px] font-bold text-white uppercase tracking-wider">
               VIDEOS (
               {moduleProgress.completed}/
               {moduleProgress.total})
@@ -1244,24 +1244,24 @@ export const GateView: React.FC<GateViewProps> = ({
                     }
                     className={`flex items-center justify-between p-2 rounded-lg cursor-pointer ${
                       video.completed
-                        ? 'bg-[#244A68]'
-                        : 'hover:bg-[#2B587A]'
+                        ? 'bg-[#FAF7F0]'
+                        : 'hover:bg-[#F1ECE1]'
                     }`}
                   >
                     <div className="flex items-center gap-2 min-w-0">
                       <HandwrittenPlayIcon
                         className={`w-3 h-3 ${
                           video.completed
-                            ? 'text-[#F5E4E7]'
-                            : 'text-white/80'
+                            ? 'text-[#9B1B30]/60'
+                            : 'text-[#9B1B30]/80'
                         }`}
                       />
 
                       <span
                         className={`text-sm ${
                           video.completed
-                            ? 'text-white/60 line-through'
-                            : 'text-white font-semibold'
+                            ? 'text-[#9B1B30]/60 line-through'
+                            : 'text-[#9B1B30] font-semibold'
                         }`}
                       >
                         Video{' '}
@@ -1526,7 +1526,7 @@ export const GateView: React.FC<GateViewProps> = ({
               onClick={() =>
                 setIsAddingModule(true)
               }
-              className="text-[11px] font-bold text-[#9B1B30] flex items-center gap-1"
+              className="text-[11px] font-bold text-white flex items-center gap-1"
             >
               <Plus className="w-3.5 h-3.5" />
               Add Module
@@ -1550,7 +1550,7 @@ export const GateView: React.FC<GateViewProps> = ({
                 return (
                   <div
                     key={module.id}
-                    className="p-2.5 bg-[#1B3A57] border border-[#1B3A57] rounded-xl shadow-sm text-white"
+                    className="p-2.5 bg-[#FAF7F0] border border-[#D6DCE8] rounded-xl shadow-sm text-[#9B1B30]"
                   >
                     <div className="flex items-center justify-between">
                       <div
@@ -1580,7 +1580,7 @@ export const GateView: React.FC<GateViewProps> = ({
                               module
                             )
                           }
-                          className="p-1 text-[#9B1B30] hover:text-[#761523] bg-[#FAF7F0] border border-[#D6DCE8] rounded-md"
+                          className="p-1 text-[#9B1B30] hover:text-[#761523] bg-[#F1ECE1] border border-[#D6DCE8] rounded-md"
                         >
                           <Pencil className="w-3 h-3" />
                         </button>
@@ -1607,7 +1607,7 @@ export const GateView: React.FC<GateViewProps> = ({
                         </span>
                       </div>
 
-                      <div className="w-full bg-[#6D879E] h-1.5 rounded-full overflow-hidden mt-1">
+                      <div className="w-full bg-[#E5DDD0] h-1.5 rounded-full overflow-hidden mt-1">
                         <div
                           className="h-full bg-[#9B1B30] rounded-full"
                           style={{
@@ -1716,7 +1716,7 @@ return (
           </span>
         </div>
 
-        <div className="w-full bg-[#6D879E] h-1.5 rounded-full overflow-hidden mt-1">
+        <div className="w-full bg-[#E5DDD0] h-1.5 rounded-full overflow-hidden mt-1">
           <div
             className="h-full bg-[#9B1B30] rounded-full transition-all duration-300"
             style={{
@@ -1773,16 +1773,16 @@ return (
       <div className="h-full min-h-0 bg-[#1B3A57] border border-[#1B3A57] rounded-2xl shadow-sm text-white flex flex-col overflow-hidden">
 
         {/* Fixed Subjects header */}
-        <div className="shrink-0 px-3 pt-2.5 pb-2 bg-[#FAF7F0] border-b border-[#D6DCE8]">
+        <div className="shrink-0 px-3 pt-2.5 pb-2 bg-[#1B3A57] border-b border-[#1B3A57]">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-[#9B1B30] tracking-wider uppercase">
+            <span className="text-[11px] font-bold text-white tracking-wider uppercase">
               SUBJECTS ({gateStore.subjects.length})
             </span>
 
             <button
               type="button"
               onClick={() => setIsAddingSubject(true)}
-              className="text-[11px] font-bold text-[#9B1B30] flex items-center gap-1"
+              className="text-[11px] font-bold text-white flex items-center gap-1"
             >
               <Plus className="w-3.5 h-3.5" />
               Add Subject
@@ -1803,7 +1803,7 @@ return (
               return (
                 <div
                   key={subject.id}
-                  className="p-2.5 bg-[#1B3A57] border border-[#1B3A57] rounded-xl shadow-sm text-white"
+                  className="p-2.5 bg-[#FAF7F0] border border-[#D6DCE8] rounded-xl shadow-sm text-[#9B1B30]"
                 >
                   <div className="flex items-center justify-between">
                     <div
@@ -1822,7 +1822,7 @@ return (
                       onClick={() =>
                         handleOpenEditSubject(subject)
                       }
-                      className="p-1 text-white/80 hover:text-white"
+                      className="p-1 text-[#9B1B30] hover:text-[#761523] bg-[#F1ECE1] border border-[#D6DCE8] rounded-md"
                     >
                       <Pencil className="w-3.5 h-3.5" />
                     </button>
