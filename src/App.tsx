@@ -476,21 +476,7 @@ export default function App() {
         id="android-phone-frame"
         className="w-full h-full sm:max-w-[430px] sm:max-h-[920px] bg-[#0C0C12] sm:rounded-[40px] sm:shadow-2xl sm:border-[8px] sm:border-[#1E1E28] flex flex-col overflow-hidden relative text-zinc-100"
       >
-        {/* Android Simulated Status Bar */}
-        <div className="w-full bg-[#0C0C12] px-5 pt-2.5 pb-1 flex items-center justify-between text-[11px] font-mono font-bold text-zinc-400 z-30 shrink-0">
-          <span>9:41</span>
-
-          <div className="w-16 h-4 bg-zinc-800/80 rounded-full mx-auto hidden sm:block" />
-
-          <div className="flex items-center gap-1.5">
-            <span>5G</span>
-
-            <span className="w-4 h-2 rounded-[2px] border border-zinc-500 inline-block p-0.5">
-              <span className="w-full h-full bg-zinc-400 block rounded-[1px]" />
-            </span>
-          </div>
-        </div>
-
+        
         {/* Top App Bar */}
         <AndroidTopBar
           title={viewTitles[activeTab]}
