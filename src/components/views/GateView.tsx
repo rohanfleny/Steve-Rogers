@@ -1134,7 +1134,7 @@ export const GateView: React.FC<GateViewProps> = ({
                 selectedModule.id
               )
             }
-            className="bg-[#1B3A57] border border-[#1B3A57] rounded-xl p-2.5 flex items-center justify-between cursor-pointer text-white"
+            className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-xl p-2.5 flex items-center justify-between cursor-pointer text-[#1B3A57]"
           >
             <span className="text-sm font-bold">
               Revision
@@ -1160,7 +1160,7 @@ export const GateView: React.FC<GateViewProps> = ({
                 selectedModule.id
               )
             }
-            className="bg-[#1B3A57] border border-[#1B3A57] rounded-xl p-2.5 flex items-center justify-between cursor-pointer text-white"
+            className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-xl p-2.5 flex items-center justify-between cursor-pointer text-[#1B3A57]"
           >
             <span className="text-sm font-bold">
               PYQ
@@ -1181,9 +1181,9 @@ export const GateView: React.FC<GateViewProps> = ({
           </div>
         </div>
 
-        <div className="bg-[#1B3A57] border border-[#1B3A57] rounded-2xl p-3 shadow-sm space-y-2 text-white">
-          <div className="flex items-center justify-between pb-1 border-b border-[#1B3A57] bg-[#1B3A57] -mx-3 -mt-3 px-3 pt-3 rounded-t-2xl">
-            <span className="text-[11px] font-bold text-white uppercase tracking-wider">
+        <div className="bg-[#1B3A57] rounded-2xl p-3 shadow-sm space-y-2 text-white">
+          <div className="flex items-center justify-between pb-1 bg-[#1B3A57] -mx-3 -mt-3 px-3 pt-3 rounded-t-2xl">
+            <span className="text-[11px] font-bold text-[#FAF7F0] uppercase tracking-wider">
               VIDEOS (
               {moduleProgress.completed}/
               {moduleProgress.total})
@@ -1211,8 +1211,8 @@ export const GateView: React.FC<GateViewProps> = ({
           </div>
 
           {moduleVideos.length === 0 ? (
-            <div className="py-4 text-center space-y-2">
-              <p className="text-xs text-[#64748B]">
+            <div className="py-4 text-center space-y-2 bg-[#FAF7F0] rounded-xl">
+              <p className="text-xs text-[#9B1B30]">
                 No videos added yet.
               </p>
 
@@ -1508,16 +1508,16 @@ export const GateView: React.FC<GateViewProps> = ({
               videos
             </div>
 
-            <div className="text-xs text-white/70">
+            <div className="text-xs text-[#9B1B30]">
               {subjectModules.length}{' '}
               modules
             </div>
           </div>
         </div>
 
-        <div className="bg-[#1B3A57] border border-[#1B3A57] rounded-2xl p-3 shadow-sm space-y-2 text-white">
-          <div className="flex items-center justify-between pb-1 border-b border-white/20">
-            <span className="text-[11px] font-bold text-white/80 tracking-wider">
+        <div className="bg-[#1B3A57] rounded-2xl p-3 shadow-sm space-y-2 text-[#FAF7F0]">
+          <div className="flex items-center justify-between pb-1 bg-[#1B3A57] -mx-3 -mt-3 px-3 pt-3 rounded-t-2xl">
+            <span className="text-[11px] font-bold text-white tracking-wider">
               MODULES
             </span>
 
@@ -1595,7 +1595,7 @@ export const GateView: React.FC<GateViewProps> = ({
                       }
                       className="cursor-pointer"
                     >
-                      <div className="flex items-center justify-between mt-0.5 text-xs font-mono">
+                      <div className="flex items-center justify-between mt-0.5 text-xs font-mono text-[#9B1B30]">
                         <span>
                           {progress.completed}{' '}
                           /{' '}
@@ -1706,7 +1706,7 @@ return (
         </div>
 
         <div className="flex items-center justify-between mt-0.5">
-          <span className="text-base font-mono font-bold text-white">
+          <span className="text-base font-mono font-bold text-[#9B1B30]">
             {overallProgress.completed} /{' '}
             {overallProgress.total}
           </span>
@@ -1835,7 +1835,7 @@ return (
                     className="cursor-pointer"
                   >
                     <div className="flex items-center justify-between mt-0.5 text-xs font-mono">
-                      <span className="font-bold">
+                      <span className="font-bold text-[#9B1B30]">
                         {progress.completed} / {progress.total}
                       </span>
 
