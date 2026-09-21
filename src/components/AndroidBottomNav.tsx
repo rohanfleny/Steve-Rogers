@@ -32,7 +32,7 @@ export const AndroidBottomNav: React.FC<AndroidBottomNavProps> = ({
   return (
     <nav
       id="android-bottom-nav"
-      className="w-full bg-[#121218]/95 backdrop-blur-md border-t border-zinc-800/80 py-1.5 px-3 flex items-center justify-around z-30 shrink-0 select-none"
+      className="w-full bg-[#1B3A57] border-t border-[#9B1B30] py-1.5 px-3 flex items-center justify-around z-30 shrink-0 select-none"
     >
       {tabs.map((tab) => {
         const Icon = tab.icon;
@@ -46,15 +46,15 @@ export const AndroidBottomNav: React.FC<AndroidBottomNavProps> = ({
             onClick={() => onSelectTab(tab.id)}
             className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all cursor-pointer ${
               isActive
-                ? 'text-white font-bold bg-zinc-800/50'
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/30'
+                ? 'text-white font-bold bg-[#9B1B30] shadow-sm'
+                : 'text-[#FAF7F0] font-normal hover:bg-white/10'
             }`}
           >
             <Icon
               className={`w-5 h-5 transition-transform ${
                 isActive
-                  ? 'scale-110 stroke-[2.4] text-emerald-400'
-                  : 'stroke-[1.6]'
+                  ? 'scale-110 stroke-[2.4] text-white'
+                  : 'stroke-[1.6] text-[#FAF7F0]'
               }`}
             />
 
@@ -62,7 +62,7 @@ export const AndroidBottomNav: React.FC<AndroidBottomNavProps> = ({
               className={`text-[12px] font-handwriting mt-0.5 leading-none ${
                 isActive
                   ? 'font-bold text-white'
-                  : 'font-normal text-zinc-400'
+                  : 'font-normal text-[#FAF7F0]'
               }`}
             >
               {tab.label}
