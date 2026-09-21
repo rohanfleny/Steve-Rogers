@@ -142,22 +142,22 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
     completedCount: number
   ) => {
     if (completedCount >= 5) {
-      return 'bg-emerald-700';
+      return 'bg-[#9B1B30]';
     }
 
     if (completedCount >= 4) {
-      return 'bg-emerald-500';
+      return 'bg-[#9B1B30]';
     }
 
     if (completedCount >= 2) {
-      return 'bg-emerald-300';
+      return 'bg-[#E4B9C0]';
     }
 
     if (completedCount === 1) {
-      return 'bg-[#D6CEC0]';
+      return 'bg-[#D6DCE8]';
     }
 
-    return 'bg-[#E8E1D6]';
+    return 'bg-[#EEF2F6]';
   };
 
   // ------------------------------------------------------------
@@ -168,17 +168,17 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
     percent: number
   ) => {
     if (percent <= 0) {
-      return '#E5DDD0';
+      return '#D6DCE8';
     }
 
     if (percent >= 100) {
-      return '#059669';
+      return '#9B1B30';
     }
 
     return `conic-gradient(
       from 0deg,
-      #059669 0% ${percent}%,
-      #E5DDD0 ${percent}% 100%
+      #9B1B30 0% ${percent}%,
+      #D6DCE8 ${percent}% 100%
     )`;
   };
 
@@ -191,7 +191,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
         flex
         flex-col
         font-handwriting
-        text-[#1C1917]
+        text-[#1B3A57]
       "
     >
       <div
@@ -211,12 +211,13 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
 
         <section
           className="
-            bg-[#FAF7F0]
-            border border-[#E5DDD0]
+            bg-[#1B3A57]
+            border border-[#1B3A57]
             rounded-2xl
             px-3
             py-2.5
             shadow-sm
+            text-white
           "
         >
 
@@ -245,7 +246,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               className="
                 text-[10px]
                 sm:text-xs
-                text-[#78716C]
+                text-[#64748B]
                 font-mono
               "
             >
@@ -276,7 +277,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                     text-left
                     text-[10px]
                     sm:text-xs
-                    text-[#78716C]
+                    text-[#64748B]
                     font-normal
                   "
                 >
@@ -291,7 +292,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                       text-center
                       text-[9px]
                       sm:text-[10px]
-                      text-[#78716C]
+                      text-[#64748B]
                       font-semibold
                       font-mono
                     "
@@ -308,7 +309,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   key={habit.id}
                   className="
                     border-t
-                    border-[#E5DDD0]
+                    border-white/15
                   "
                 >
 
@@ -362,8 +363,8 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                             justify-center
                             ${
                               isCompleted
-                                ? 'bg-emerald-600 text-white'
-                                : 'bg-[#F1ECE2] border border-[#DDD5C7]'
+                                ? 'bg-[#9B1B30] text-white'
+                                : 'bg-[#EEF2F6] border border-[#D6DCE8]'
                             }
                           `}
                         >
@@ -398,7 +399,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               mt-2
               pt-2
               border-t
-              border-[#E5DDD0]
+              border-[#D6DCE8]
             "
           >
             <div
@@ -475,7 +476,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                       text-[9px]
                       sm:text-[10px]
                       font-semibold
-                      text-[#57534E]
+                      text-[#1B3A57]
                       leading-tight
                       text-center
                       break-words
@@ -496,12 +497,13 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
 
         <section
           className="
-            bg-[#FAF7F0]
-            border border-[#E5DDD0]
+            bg-[#1B3A57]
+            border border-[#1B3A57]
             rounded-2xl
             px-3
             py-2.5
             shadow-sm
+            text-white
           "
         >
 
@@ -530,7 +532,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               className="
                 text-[10px]
                 sm:text-xs
-                text-[#78716C]
+                text-[#64748B]
                 font-mono
               "
             >
@@ -545,9 +547,9 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
           <div
             className="
               p-2
-              bg-[#F1ECE2]
+              bg-[#EEF2F6]
               border
-              border-[#DDD5C7]
+              border-[#D6DCE8]
               rounded-xl
             "
           >
@@ -588,7 +590,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               mt-1.5
               text-[9px]
               sm:text-[10px]
-              text-[#78716C]
+              text-[#64748B]
               font-mono
             "
           >
@@ -598,7 +600,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   w-2.5
                   h-2.5
                   rounded-sm
-                  bg-[#E8E1D6]
+                  bg-[#EEF2F6]
                 "
               />
               0
@@ -610,7 +612,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   w-2.5
                   h-2.5
                   rounded-sm
-                  bg-[#D6CEC0]
+                  bg-[#D6DCE8]
                 "
               />
               1
@@ -622,7 +624,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   w-2.5
                   h-2.5
                   rounded-sm
-                  bg-emerald-300
+                  bg-[#E4B9C0]
                 "
               />
               2–3
@@ -634,7 +636,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   w-2.5
                   h-2.5
                   rounded-sm
-                  bg-emerald-500
+                  bg-[#9B1B30]
                 "
               />
               4
@@ -646,7 +648,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   w-2.5
                   h-2.5
                   rounded-sm
-                  bg-emerald-700
+                  bg-[#9B1B30]
                 "
               />
               5
@@ -670,8 +672,8 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               className="
                 rounded-xl
                 border
-                border-[#E5DDD0]
-                bg-[#F1ECE2]
+                border-[#D6DCE8]
+                bg-[#EEF2F6]
                 py-1.5
                 px-1
                 text-center
@@ -684,7 +686,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   sm:text-xl
                   font-bold
                   font-mono
-                  text-emerald-700
+                  text-[#9B1B30]
                 "
               >
                 {fullDaysCount}
@@ -695,7 +697,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   block
                   text-[9px]
                   sm:text-[10px]
-                  text-[#78716C]
+                  text-[#64748B]
                   leading-tight
                 "
               >
@@ -707,8 +709,8 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               className="
                 rounded-xl
                 border
-                border-[#E5DDD0]
-                bg-[#F1ECE2]
+                border-[#D6DCE8]
+                bg-[#EEF2F6]
                 py-1.5
                 px-1
                 text-center
@@ -721,7 +723,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   sm:text-xl
                   font-bold
                   font-mono
-                  text-emerald-600
+                  text-[#9B1B30]
                 "
               >
                 {partialDaysCount}
@@ -732,7 +734,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   block
                   text-[9px]
                   sm:text-[10px]
-                  text-[#78716C]
+                  text-[#64748B]
                   leading-tight
                 "
               >
@@ -744,8 +746,8 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               className="
                 rounded-xl
                 border
-                border-[#E5DDD0]
-                bg-[#F1ECE2]
+                border-[#D6DCE8]
+                bg-[#EEF2F6]
                 py-1.5
                 px-1
                 text-center
@@ -758,7 +760,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   sm:text-xl
                   font-bold
                   font-mono
-                  text-[#78716C]
+                  text-[#64748B]
                 "
               >
                 {lowDaysCount}
@@ -769,7 +771,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   block
                   text-[9px]
                   sm:text-[10px]
-                  text-[#78716C]
+                  text-[#64748B]
                   leading-tight
                 "
               >
