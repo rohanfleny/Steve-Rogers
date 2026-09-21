@@ -50,131 +50,135 @@ export const AndroidTopBar: React.FC<AndroidTopBarProps> = ({
     };
   }, [isMenuOpen]);
 
-  return (
-    <header
-      id="android-top-bar"
-      className="w-full bg-[#121218] px-4 py-3 flex items-center justify-between border-b border-zinc-800/80 select-none sticky top-0 z-20 shrink-0"
-    >
-      {/* Left icon: Hamburger or Back */}
-      <div className="flex items-center gap-2.5">
-        {showBack ? (
-          <button
-            type="button"
-            id="top-bar-back-btn"
-            onClick={onBack}
-            className="p-1.5 -ml-1 rounded-full text-zinc-200 hover:bg-zinc-800/70 transition-colors focus:outline-none"
-            aria-label="Back"
-          >
-            <ArrowLeft className="w-5 h-5 stroke-[2]" />
-          </button>
-        ) : (
-          <button
-            type="button"
-            id="top-bar-drawer-btn"
-            onClick={onOpenDrawer}
-            className="p-1.5 -ml-1 rounded-full text-zinc-200 hover:bg-zinc-800/70 transition-colors focus:outline-none"
-            aria-label="Open Navigation Drawer"
-          >
-            <Menu className="w-5 h-5 stroke-[2]" />
-          </button>
-        )}
-
-        <div className="flex items-center gap-1.5">
-          {icon}
-          <h1 className="text-xl font-handwriting font-bold text-zinc-100 leading-none">
-            {title}
-          </h1>
-        </div>
-      </div>
-
-      {/* Right controls */}
-      <div className="flex items-center gap-1 relative" ref={menuRef}>
-        {!showBack && (
-          <button
-            type="button"
-            title="Study focus mode"
-            onClick={() => {
-              // gentle toast / visual indicator
-            }}
-            className="p-1.5 rounded-full text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/70 transition-colors focus:outline-none"
-          >
-            <Sun className="w-4 h-4 stroke-[1.8]" />
-          </button>
-        )}
-
+ return (
+  <header
+    id="android-top-bar"
+    className="w-full bg-white px-4 py-3 flex items-center justify-between border-b-2 border-[#C1121F] select-none sticky top-0 z-20 shrink-0 shadow-sm"
+  >
+    {/* Left icon: Hamburger or Back */}
+    <div className="flex items-center gap-2.5">
+      {showBack ? (
         <button
           type="button"
-          id="top-bar-overflow-btn"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="p-1.5 rounded-full text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/70 transition-colors focus:outline-none"
-          aria-label="Menu options"
+          id="top-bar-back-btn"
+          onClick={onBack}
+          className="p-1.5 -ml-1 rounded-full text-[#0B3D91] hover:bg-[#EAF1FF] transition-colors focus:outline-none"
+          aria-label="Back"
         >
-          <MoreVertical className="w-4 h-4 stroke-[2]" />
+          <ArrowLeft className="w-5 h-5 stroke-[2.2]" />
         </button>
+      ) : (
+        <button
+          type="button"
+          id="top-bar-drawer-btn"
+          onClick={onOpenDrawer}
+          className="p-1.5 -ml-1 rounded-full text-[#0B3D91] hover:bg-[#EAF1FF] transition-colors focus:outline-none"
+          aria-label="Open Navigation Drawer"
+        >
+          <Menu className="w-5 h-5 stroke-[2.2]" />
+        </button>
+      )}
 
-        {/* Overflow Menu */}
-        {isMenuOpen && (
-          <div className="absolute right-0 top-9 w-48 bg-[#181824] border border-zinc-800 rounded-xl shadow-2xl py-1.5 z-40 text-sm font-handwriting text-zinc-200 animate-in fade-in duration-100">
-            {onOpenSettings && (
-              <button
-                type="button"
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  onOpenSettings();
-                }}
-                className="w-full px-3 py-2 text-left flex items-center gap-2.5 hover:bg-zinc-800/60 transition-colors text-zinc-200"
-              >
-                <Settings className="w-4 h-4 text-zinc-400" />
-                <span>Settings &amp; Goals</span>
-              </button>
-            )}
+      <div className="flex items-center gap-1.5">
+        {icon}
 
-            {onExportData && (
-              <button
-                type="button"
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  onExportData();
-                }}
-                className="w-full px-3 py-2 text-left flex items-center gap-2.5 hover:bg-zinc-800/60 transition-colors text-zinc-200"
-              >
-                <Download className="w-4 h-4 text-zinc-400" />
-                <span>Backup Data (JSON)</span>
-              </button>
-            )}
-
-            {onImportData && (
-              <button
-                type="button"
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  onImportData();
-                }}
-                className="w-full px-3 py-2 text-left flex items-center gap-2.5 hover:bg-zinc-800/60 transition-colors text-zinc-200"
-              >
-                <Upload className="w-4 h-4 text-zinc-400" />
-                <span>Restore Data</span>
-              </button>
-            )}
-
-            {onResetData && (
-              <div className="border-t border-zinc-800 mt-1 pt-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    onResetData();
-                  }}
-                  className="w-full px-3 py-2 text-left flex items-center gap-2.5 text-rose-400 hover:bg-rose-950/40 transition-colors"
-                >
-                  <RotateCcw className="w-4 h-4 text-rose-400" />
-                  <span>Reset All Data</span>
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+        <h1 className="text-xl font-handwriting font-bold text-[#071F4A] leading-none">
+          {title}
+        </h1>
       </div>
-    </header>
-  );
+    </div>
+
+    {/* Right controls */}
+    <div
+      className="flex items-center gap-1 relative"
+      ref={menuRef}
+    >
+      {!showBack && (
+        <button
+          type="button"
+          title="Study focus mode"
+          onClick={() => {
+            // gentle toast / visual indicator
+          }}
+          className="p-1.5 rounded-full text-[#0B3D91] hover:bg-[#EAF1FF] transition-colors focus:outline-none"
+        >
+          <Sun className="w-4 h-4 stroke-[1.8]" />
+        </button>
+      )}
+
+      <button
+        type="button"
+        id="top-bar-overflow-btn"
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        className="p-1.5 rounded-full text-[#0B3D91] hover:bg-[#EAF1FF] transition-colors focus:outline-none"
+        aria-label="Menu options"
+      >
+        <MoreVertical className="w-4 h-4 stroke-[2]" />
+      </button>
+
+      {/* Overflow Menu */}
+      {isMenuOpen && (
+        <div className="absolute right-0 top-9 w-48 bg-white border border-[#D6DCE8] rounded-xl shadow-xl py-1.5 z-40 text-sm font-handwriting text-[#111827] animate-in fade-in duration-100">
+          {onOpenSettings && (
+            <button
+              type="button"
+              onClick={() => {
+                setIsMenuOpen(false);
+                onOpenSettings();
+              }}
+              className="w-full px-3 py-2 text-left flex items-center gap-2.5 hover:bg-[#EAF1FF] transition-colors text-[#111827]"
+            >
+              <Settings className="w-4 h-4 text-[#0B3D91]" />
+              <span>Settings &amp; Goals</span>
+            </button>
+          )}
+
+          {onExportData && (
+            <button
+              type="button"
+              onClick={() => {
+                setIsMenuOpen(false);
+                onExportData();
+              }}
+              className="w-full px-3 py-2 text-left flex items-center gap-2.5 hover:bg-[#EAF1FF] transition-colors text-[#111827]"
+            >
+              <Download className="w-4 h-4 text-[#0B3D91]" />
+              <span>Backup Data (JSON)</span>
+            </button>
+          )}
+
+          {onImportData && (
+            <button
+              type="button"
+              onClick={() => {
+                setIsMenuOpen(false);
+                onImportData();
+              }}
+              className="w-full px-3 py-2 text-left flex items-center gap-2.5 hover:bg-[#EAF1FF] transition-colors text-[#111827]"
+            >
+              <Upload className="w-4 h-4 text-[#0B3D91]" />
+              <span>Restore Data</span>
+            </button>
+          )}
+
+          {onResetData && (
+            <div className="border-t border-[#D6DCE8] mt-1 pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  onResetData();
+                }}
+                className="w-full px-3 py-2 text-left flex items-center gap-2.5 text-[#C1121F] hover:bg-[#FDECEE] transition-colors"
+              >
+                <RotateCcw className="w-4 h-4 text-[#C1121F]" />
+                <span>Reset All Data</span>
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  </header>
+);
 };
