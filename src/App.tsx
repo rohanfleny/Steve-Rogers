@@ -9,7 +9,7 @@ import { AnalyticsView } from './components/views/AnalyticsView';
 import { SettingsGoalsView } from './components/views/SettingsGoalsView';
 import { GateHomeNoticeModal } from './components/gate/GateHomeNoticeModal';
 import { TodayGateSelectionModal } from './components/gate/TodayGateSelectionModal';
-import { DailyGoalId, DailyRecord, UserSettings } from './types/daily';
+import { DailyGoalId, DailyRecord, UserSettings, getGoalTitle } from './types/daily';
 import { GateStoreState, GateVideo } from './types/gate';
 import {
   getTodayDateString,
@@ -463,7 +463,7 @@ export default function App() {
   // Titles for the Top Bar
   const viewTitles: Record<AndroidNavTab, string> = {
     home: 'Dashboard',
-    gate: 'GATE',
+    gate: getGoalTitle('gate',settings),
     sleep: 'Sleep Tracker',
     analytics: 'Analytics',
     settings: 'Settings & Goals',
