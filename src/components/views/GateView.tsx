@@ -1763,7 +1763,7 @@ return (
 
     {/* Scrollable subjects only */}
 
-    <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pr-0.5">
+    <div className="min-h-0 flex-1 pr-0.5">
       <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-3 shadow-sm text-[#1C1917]">
         <div className="flex items-center justify-between pb-1.5 border-b border-[#E5DDD0]">
           <span className="text-[11px] font-bold text-[#78716C] tracking-wider uppercase">
@@ -1780,7 +1780,7 @@ return (
           </button>
         </div>
 
-        <div className="space-y-1.5 pt-2">
+        <div className="space-y-1.5 pt-2 max-h-[360px] overflow-y-auto overscroll-contain pr-1">
           {gateStore.subjects.map((subject) => {
             const progress = calculateSubjectProgress(
               subject.id,
