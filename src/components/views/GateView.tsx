@@ -1064,7 +1064,7 @@ export const GateView: React.FC<GateViewProps> = ({
               onClick={() =>
                 setSelectedModuleId(null)
               }
-              className="p-1.5 rounded-full text-[#1B3A57] hover:bg-[#EEF2F6] shrink-0"
+              className="w-8 h-8 rounded-full text-[#9B1B30] bg-[#FAF7F0] border border-[#D6DCE8] hover:bg-[#F5E4E7] flex items-center justify-center shrink-0 shadow-sm"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
@@ -1094,7 +1094,7 @@ export const GateView: React.FC<GateViewProps> = ({
           </button>
         </div>
 
-        <div className="bg-[#1B3A57] border border-[#1B3A57] rounded-2xl p-3 shadow-sm space-y-1.5 text-white">
+        <div className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-3 shadow-sm space-y-1.5 text-[#9B1B30]">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">
               {selectedModule.title}
@@ -1105,19 +1105,19 @@ export const GateView: React.FC<GateViewProps> = ({
             </span>
           </div>
 
-          <div className="flex items-center justify-between text-sm font-mono font-bold">
+          <div className="flex items-center justify-between text-sm font-mono font-bold text-[#9B1B30]">
             <span>
               {moduleProgress.completed} /{' '}
               {moduleProgress.total}
             </span>
 
-            <span className="text-xs font-normal text-[#64748B]">
+            <span className="text-xs font-normal text-[#9B1B30]">
               {moduleProgress.remaining}{' '}
               remaining
             </span>
           </div>
 
-          <div className="w-full bg-[#6D879E] h-2.5 rounded-full overflow-hidden">
+          <div className="w-full bg-[#E5DDD0] h-2.5 rounded-full overflow-hidden">
             <div
               className="h-full bg-[#9B1B30] rounded-full"
               style={{
@@ -1182,8 +1182,8 @@ export const GateView: React.FC<GateViewProps> = ({
         </div>
 
         <div className="bg-[#1B3A57] border border-[#1B3A57] rounded-2xl p-3 shadow-sm space-y-2 text-white">
-          <div className="flex items-center justify-between pb-1 border-b border-white/20">
-            <span className="text-[11px] font-bold text-white/80 uppercase tracking-wider">
+          <div className="flex items-center justify-between pb-1 border-b border-[#D6DCE8] bg-[#FAF7F0] -mx-3 -mt-3 px-3 pt-3 rounded-t-2xl">
+            <span className="text-[11px] font-bold text-[#9B1B30] uppercase tracking-wider">
               VIDEOS (
               {moduleProgress.completed}/
               {moduleProgress.total})
@@ -1203,7 +1203,7 @@ export const GateView: React.FC<GateViewProps> = ({
                   true
                 );
               }}
-              className="text-[11px] font-bold bg-[#FAF7F0] text-[#1B3A57] border border-[#D6DCE8] px-2 py-1 rounded-lg flex items-center gap-1"
+              className="text-[11px] font-bold bg-[#FAF7F0] text-[#9B1B30] border border-[#D6DCE8] px-2 py-1 rounded-lg flex items-center gap-1"
             >
               <Pencil className="w-3 h-3" />
               Count
@@ -1437,7 +1437,7 @@ export const GateView: React.FC<GateViewProps> = ({
               onClick={() =>
                 setSelectedSubjectId(null)
               }
-              className="p-1.5 rounded-full text-[#1B3A57] hover:bg-[#EEF2F6] shrink-0"
+              className="w-8 h-8 rounded-full text-[#9B1B30] bg-[#FAF7F0] border border-[#D6DCE8] hover:bg-[#F5E4E7] flex items-center justify-center shrink-0 shadow-sm"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
@@ -1461,7 +1461,7 @@ export const GateView: React.FC<GateViewProps> = ({
           </button>
         </div>
 
-        <div className="bg-[#1B3A57] border border-[#1B3A57] rounded-2xl p-3 shadow-sm flex items-center gap-3 text-white">
+        <div className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-3 shadow-sm flex items-center gap-3 text-[#9B1B30]">
           <div className="relative w-16 h-16 shrink-0 flex items-center justify-center">
             <svg
               className="w-full h-full -rotate-90"
@@ -1501,7 +1501,7 @@ export const GateView: React.FC<GateViewProps> = ({
           </div>
 
           <div>
-            <div className="text-base font-mono font-bold text-white">
+            <div className="text-base font-mono font-bold text-[#9B1B30]">
               {subjectProgress.completed}{' '}
               /{' '}
               {subjectProgress.total}{' '}
@@ -1526,7 +1526,7 @@ export const GateView: React.FC<GateViewProps> = ({
               onClick={() =>
                 setIsAddingModule(true)
               }
-              className="text-[11px] font-bold text-[#F5E4E7] flex items-center gap-1"
+              className="text-[11px] font-bold text-[#9B1B30] flex items-center gap-1"
             >
               <Plus className="w-3.5 h-3.5" />
               Add Module
@@ -1580,7 +1580,7 @@ export const GateView: React.FC<GateViewProps> = ({
                               module
                             )
                           }
-                          className="p-1 text-white/80 hover:text-white"
+                          className="p-1 text-[#9B1B30] hover:text-[#761523] bg-[#FAF7F0] border border-[#D6DCE8] rounded-md"
                         >
                           <Pencil className="w-3 h-3" />
                         </button>
@@ -1775,7 +1775,7 @@ return (
         {/* Fixed Subjects header */}
         <div className="shrink-0 px-3 pt-2.5 pb-2 bg-[#FAF7F0] border-b border-[#D6DCE8]">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-[#1B3A57] tracking-wider uppercase">
+            <span className="text-[11px] font-bold text-[#9B1B30] tracking-wider uppercase">
               SUBJECTS ({gateStore.subjects.length})
             </span>
 
