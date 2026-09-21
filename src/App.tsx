@@ -621,6 +621,7 @@ export default function App() {
           activeTab={activeTab}
           onSelectTab={setActiveTab}
           userName={settings.name || 'Rohan'}
+          settings={settings}
           onOpenAcademics={() => {
             setActiveTab('home');
           }}
