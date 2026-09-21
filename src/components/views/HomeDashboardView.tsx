@@ -317,9 +317,8 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
         </div>
       </div>
 
-      <div className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-[#EAF1FF] border border-[#B8C7E6]">
+      <div className="flex items-center justify-center gap-2 py-2">
   <Shield className="w-5 h-5 text-blue-700 shrink-0" />
-
   <p className="text-sm sm:text-base font-fancy font-bold text-[#1C1917] text-center">
     “I can do this all day.”
   </p>
