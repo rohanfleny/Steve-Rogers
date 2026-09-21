@@ -1880,7 +1880,8 @@ return (
           </form>
         </div>
       </div>
-    )}
+    );
+};
 
     {renderEditSubjectModal()}
     {renderEditModuleModal()}
