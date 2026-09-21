@@ -53,7 +53,7 @@ export const AndroidTopBar: React.FC<AndroidTopBarProps> = ({
  return (
   <header
     id="android-top-bar"
-    className="w-full bg-white px-4 py-3 flex items-center justify-between border-b-2 border-[#C1121F] select-none sticky top-0 z-20 shrink-0 shadow-sm"
+    className="w-full bg-[#1B3A57] px-4 py-3 flex items-center justify-between border-b-2 border-[#9B1B30] select-none sticky top-0 z-20 shrink-0 shadow-sm"
   >
     {/* Left icon: Hamburger or Back */}
     <div className="flex items-center gap-2.5">
@@ -82,7 +82,7 @@ export const AndroidTopBar: React.FC<AndroidTopBarProps> = ({
       <div className="flex items-center gap-1.5">
         {icon}
 
-        <h1 className="text-xl font-handwriting font-bold text-[#071F4A] leading-none">
+        <h1 className="text-xl font-handwriting font-bold text-white leading-none">
           {title}
         </h1>
       </div>
@@ -128,7 +128,7 @@ export const AndroidTopBar: React.FC<AndroidTopBarProps> = ({
               }}
               className="w-full px-3 py-2 text-left flex items-center gap-2.5 hover:bg-[#EAF1FF] transition-colors text-[#111827]"
             >
-              <Settings className="w-4 h-4 text-[#0B3D91]" />
+              <Settings className="w-4 h-4 text-white" />
               <span>Settings &amp; Goals</span>
             </button>
           )}
@@ -142,7 +142,7 @@ export const AndroidTopBar: React.FC<AndroidTopBarProps> = ({
               }}
               className="w-full px-3 py-2 text-left flex items-center gap-2.5 hover:bg-[#EAF1FF] transition-colors text-[#111827]"
             >
-              <Download className="w-4 h-4 text-[#0B3D91]" />
+              <Download className="w-4 h-4 text-white" />
               <span>Backup Data (JSON)</span>
             </button>
           )}
@@ -156,7 +156,7 @@ export const AndroidTopBar: React.FC<AndroidTopBarProps> = ({
               }}
               className="w-full px-3 py-2 text-left flex items-center gap-2.5 hover:bg-[#EAF1FF] transition-colors text-[#111827]"
             >
-              <Upload className="w-4 h-4 text-[#0B3D91]" />
+              <Upload className="w-4 h-4 text-white" />
               <span>Restore Data</span>
             </button>
           )}
