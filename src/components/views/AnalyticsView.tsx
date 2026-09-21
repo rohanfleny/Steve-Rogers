@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   DailyRecord,
   DAILY_GOALS_DEFINITION,
@@ -24,248 +24,498 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
   settings,
 }) => {
   const today = getTodayDateString();
-  const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-  // Find Monday of the current week (or week around selectedDate)
+  const weekDays = [
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat',
+    'Sun',
+  ];
+
+  // ------------------------------------------------------------
+  // CURRENT WEEK
+  // ------------------------------------------------------------
+
   const [y, m, d] = selectedDate.split('-').map(Number);
   const currentDateObj = new Date(y, m - 1, d);
   const dayOfWeek = currentDateObj.getDay();
-  const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-  const mondayDateStr = shiftDate(selectedDate, diffToMonday);
 
-  // Generate the 7 dates of the week
-  const weekDates = weekDays.map((label, idx) => ({
+  const diffToMonday =
+    dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+
+  const mondayDateStr = shiftDate(
+    selectedDate,
+    diffToMonday
+  );
+
+  const weekDates = weekDays.map((label, index) => ({
     label,
-    dateStr: shiftDate(mondayDateStr, idx),
+    dateStr: shiftDate(mondayDateStr, index),
   }));
 
-  // Matrix of habits for the week
-  // Display names come from Settings while internal IDs remain unchanged.
-  const habitRows: { id: DailyGoalId; label: string }[] =
-    DAILY_GOALS_DEFINITION.map((goal) => ({
-      id: goal.id,
-      label: getGoalTitle(goal.id, settings),
-    }));
+  // ------------------------------------------------------------
+  // DYNAMIC GOAL NAMES
+  // ------------------------------------------------------------
 
-  // Calculate habit stats for this week
-  const habitStats = habitRows.map((h) => {
+  const habitRows: {
+    id: DailyGoalId;
+    label: string;
+  }[] = DAILY_GOALS_DEFINITION.map((goal) => ({
+    id: goal.id,
+    label: getGoalTitle(goal.id, settings),
+  }));
+
+  // ------------------------------------------------------------
+  // WEEKLY HABIT STATS
+  // ------------------------------------------------------------
+
+  const habitStats = habitRows.map((habit) => {
     let completedCount = 0;
 
-    weekDates.forEach((d) => {
-      const rec = allRecords[d.dateStr];
+    weekDates.forEach((day) => {
+      const record = allRecords[day.dateStr];
 
-      if (rec?.goals?.[h.id] === true) {
+      if (record?.goals?.[habit.id] === true) {
         completedCount++;
       }
     });
 
-    const percent = Math.round((completedCount / 7) * 100);
+    const percent = Math.round(
+      (completedCount / 7) * 100
+    );
 
     return {
-      ...h,
+      ...habit,
       completedCount,
       percent,
     };
   });
 
-  // 30 Days Heatmap calculations
-  const last30Days = Array.from({ length: 30 }, (_, i) => {
-    const dateStr = shiftDate(today, -(29 - i));
-    const rec = allRecords[dateStr];
-    const { completedCount } = calculateDailyProgress(rec?.goals);
+  // ------------------------------------------------------------
+  // LAST 30 DAYS
+  // ------------------------------------------------------------
 
-    return {
-      dateStr,
-      completedCount,
-    };
-  });
+  const last30Days = Array.from(
+    { length: 30 },
+    (_, index) => {
+      const dateStr = shiftDate(
+        today,
+        -(29 - index)
+      );
+
+      const record = allRecords[dateStr];
+
+      const { completedCount } =
+        calculateDailyProgress(record?.goals);
+
+      return {
+        dateStr,
+        completedCount,
+      };
+    }
+  );
 
   const fullDaysCount = last30Days.filter(
-    (d) => d.completedCount >= 4
+    (day) => day.completedCount >= 4
   ).length;
 
   const partialDaysCount = last30Days.filter(
-    (d) => d.completedCount >= 2 && d.completedCount <= 3
+    (day) =>
+      day.completedCount >= 2 &&
+      day.completedCount <= 3
   ).length;
 
   const lowDaysCount = last30Days.filter(
-    (d) => d.completedCount <= 1
+    (day) => day.completedCount <= 1
   ).length;
+
+  // ------------------------------------------------------------
+  // HELPERS
+  // ------------------------------------------------------------
+
+  const getHeatmapClass = (completedCount: number) => {
+    if (completedCount >= 5) {
+      return 'bg-emerald-700';
+    }
+
+    if (completedCount >= 4) {
+      return 'bg-emerald-500';
+    }
+
+    if (completedCount >= 2) {
+      return 'bg-emerald-300';
+    }
+
+    if (completedCount === 1) {
+      return 'bg-[#D6CEC0]';
+    }
+
+    return 'bg-[#E8E1D6]';
+  };
+
+  const getRingBackground = (percent: number) => {
+    if (percent <= 0) {
+      return '#E5DDD0';
+    }
+
+    if (percent >= 100) {
+      return '#059669';
+    }
+
+    return `conic-gradient(
+      from 0deg,
+      #059669 0% ${percent}%,
+      #E5DDD0 ${percent}% 100%
+    )`;
+  };
 
   return (
     <div
       id="analytics-view"
-      className="space-y-4 sm:space-y-5 font-handwriting text-[#1C1917]"
+      className="h-full min-h-0 flex flex-col font-handwriting text-[#1C1917]"
     >
-      {/* 1. Habit Completion (Full 7-Day Week: Mon - Sun) */}
-      <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 sm:p-5 shadow-sm space-y-4 text-[#1C1917]">
-        <div className="flex items-center justify-between">
-          <h3 className="text-base sm:text-lg font-bold text-[#1C1917] font-fancy">
-            Habit Completion (This Week)
-          </h3>
+      {/* ======================================================
+          ANALYTICS CONTENT
+          ====================================================== */}
 
-          <span className="text-xs sm:text-sm text-[#78716C] font-mono">
-            Mon – Sun
-          </span>
-        </div>
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain space-y-2.5 pb-2">
 
-        {/* 7-Day Matrix Table */}
-        <div className="overflow-x-auto pb-1">
-          <table className="w-full border-collapse text-left min-w-[320px]">
-            <thead>
-              <tr>
-                <th className="pb-2 pr-2 text-xs sm:text-sm text-[#78716C] font-normal w-24">
-                  Habit
-                </th>
+        {/* ====================================================
+            WEEKLY HABIT COMPLETION
+            ==================================================== */}
 
-                {weekDates.map((d) => (
-                  <th
-                    key={d.dateStr}
-                    className="pb-2 px-1 text-center text-xs sm:text-sm text-[#78716C] font-semibold font-mono"
-                  >
-                    {d.label}
+        <section
+          className="
+            bg-[#FAF7F0]
+            border border-[#E5DDD0]
+            rounded-2xl
+            p-3
+            shadow-sm
+          "
+        >
+          {/* Section heading */}
+
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-sm sm:text-base font-bold font-fancy">
+              Habit Completion
+            </h2>
+
+            <span className="text-[10px] sm:text-xs text-[#78716C] font-mono">
+              Mon – Sun
+            </span>
+          </div>
+
+          {/* Weekly matrix */}
+
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse min-w-[320px]">
+              <thead>
+                <tr>
+                  <th className="pb-1.5 pr-1 text-left text-[10px] sm:text-xs text-[#78716C] font-normal w-24">
+                    Habit
                   </th>
-                ))}
-              </tr>
-            </thead>
 
-            <tbody className="space-y-2">
-              {habitRows.map((habit) => (
-                <tr
-                  key={habit.id}
-                  className="h-8 border-t border-[#E5DDD0]"
-                >
-                  <td className="pr-2 text-sm sm:text-base font-bold text-[#1C1917] whitespace-nowrap">
-                    {habit.label}
-                  </td>
-
-                  {weekDates.map((d) => {
-                    const isCompleted =
-                      allRecords[d.dateStr]?.goals?.[habit.id] === true;
-
-                    return (
-                      <td
-                        key={d.dateStr}
-                        className="px-1 text-center"
-                      >
-                        <div
-                          className={`w-5 h-5 sm:w-6 sm:h-6 rounded-md mx-auto transition-colors flex items-center justify-center ${
-                            isCompleted
-                              ? 'bg-emerald-600 text-white shadow-xs'
-                              : 'bg-[#F1ECE2] border border-[#DDD5C7] text-transparent'
-                          }`}
-                          title={`${habit.label}: ${
-                            isCompleted ? 'Done' : 'Missed'
-                          } on ${d.label}`}
-                        >
-                          {isCompleted && (
-                            <span className="text-[11px] font-bold">
-                              ✓
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                    );
-                  })}
+                  {weekDates.map((day) => (
+                    <th
+                      key={day.dateStr}
+                      className="
+                        pb-1.5
+                        px-0.5
+                        text-center
+                        text-[9px]
+                        sm:text-[10px]
+                        text-[#78716C]
+                        font-semibold
+                        font-mono
+                      "
+                    >
+                      {day.label}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
 
-        {/* Circular Completion Rates - Full width across 5 habits */}
-        <div className="pt-3 border-t border-[#E5DDD0]">
-          <div className="grid grid-cols-5 gap-1 sm:gap-2 text-center w-full">
-            {habitStats.map((stat) => (
-              <div
-                key={stat.id}
-                className="flex flex-col items-center"
-              >
-                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full border border-[#DDD5C7] bg-[#F1ECE2] flex items-center justify-center mb-1 transition-transform hover:scale-105 shadow-xs">
-                  <span className="text-xs sm:text-sm font-bold font-mono text-[#1C1917]">
-                    {stat.percent}%
+              <tbody>
+                {habitRows.map((habit) => (
+                  <tr
+                    key={habit.id}
+                    className="border-t border-[#E5DDD0]"
+                  >
+                    <td className="py-1 pr-1 text-[11px] sm:text-xs font-bold whitespace-nowrap">
+                      {habit.label}
+                    </td>
+
+                    {weekDates.map((day) => {
+                      const isCompleted =
+                        allRecords[
+                          day.dateStr
+                        ]?.goals?.[habit.id] === true;
+
+                      return (
+                        <td
+                          key={day.dateStr}
+                          className="py-1 px-0.5 text-center"
+                        >
+                          <div
+                            title={`${habit.label}: ${
+                              isCompleted
+                                ? 'Done'
+                                : 'Missed'
+                            } on ${day.label}`}
+                            className={`
+                              w-4 h-4
+                              sm:w-5 sm:h-5
+                              rounded-[5px]
+                              mx-auto
+                              flex
+                              items-center
+                              justify-center
+                              ${
+                                isCompleted
+                                  ? 'bg-emerald-600 text-white'
+                                  : 'bg-[#F1ECE2] border border-[#DDD5C7]'
+                              }
+                            `}
+                          >
+                            {isCompleted && (
+                              <span className="text-[9px] font-bold">
+                                ✓
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* ==================================================
+              WEEKLY PERCENTAGE INDICATORS
+              ================================================== */}
+
+          <div className="mt-2.5 pt-2.5 border-t border-[#E5DDD0]">
+            <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
+              {habitStats.map((stat) => (
+                <div
+                  key={stat.id}
+                  className="
+                    min-w-0
+                    rounded-xl
+                    border border-[#E5DDD0]
+                    bg-[#F1ECE2]
+                    px-1
+                    py-2
+                    flex
+                    flex-col
+                    items-center
+                    justify-center
+                  "
+                >
+                  {/* Circular percentage */}
+
+                  <div
+                    className="
+                      w-10 h-10
+                      sm:w-12 sm:h-12
+                      rounded-full
+                      flex
+                      items-center
+                      justify-center
+                    "
+                    style={{
+                      background:
+                        getRingBackground(
+                          stat.percent
+                        ),
+                    }}
+                  >
+                    <div
+                      className="
+                        w-8 h-8
+                        sm:w-9 sm:h-9
+                        rounded-full
+                        bg-[#FAF7F0]
+                        flex
+                        items-center
+                        justify-center
+                      "
+                    >
+                      <span className="text-[9px] sm:text-[10px] font-bold font-mono">
+                        {stat.percent}%
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Goal name */}
+
+                  <span
+                    className="
+                      mt-1
+                      text-[9px]
+                      sm:text-[10px]
+                      font-semibold
+                      text-[#57534E]
+                      leading-tight
+                      text-center
+                      line-clamp-2
+                    "
+                  >
+                    {stat.label}
                   </span>
                 </div>
-
-                <span className="text-[11px] sm:text-xs font-semibold text-[#78716C] leading-tight block text-center">
-                  {stat.label}
-                </span>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </div>
+        </section>
 
-      {/* Daily Completion Rate (Last 30 Days) Heatmap */}
-      <div className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 sm:p-5 shadow-sm space-y-4 text-[#1C1917]">
-        <div className="flex items-center justify-between">
-          <h3 className="text-base sm:text-lg font-bold text-[#1C1917] font-fancy">
-            Daily Completion Rate (Last 30 Days)
-          </h3>
-        </div>
+        {/* ====================================================
+            LAST 30 DAYS
+            ==================================================== */}
 
-        {/* 30-Day Heatmap Grid */}
-        <div className="p-3 bg-[#F1ECE2] border border-[#DDD5C7] rounded-xl">
-          <div className="grid grid-cols-10 gap-2">
-            {last30Days.map((day) => {
-              let bg = 'bg-[#DDD5C7]';
+        <section
+          className="
+            bg-[#FAF7F0]
+            border border-[#E5DDD0]
+            rounded-2xl
+            p-3
+            shadow-sm
+          "
+        >
+          {/* Heading */}
 
-              if (day.completedCount >= 4) {
-                bg = 'bg-emerald-600';
-              } else if (day.completedCount >= 2) {
-                bg = 'bg-emerald-400';
-              }
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-sm sm:text-base font-bold font-fancy">
+              Last 30 Days
+            </h2>
 
-              return (
+            <span className="text-[10px] sm:text-xs text-[#78716C] font-mono">
+              30 days
+            </span>
+          </div>
+
+          {/* Handwritten-style heatmap */}
+
+          <div
+            className="
+              p-2
+              bg-[#F1ECE2]
+              border border-[#DDD5C7]
+              rounded-xl
+            "
+          >
+            <div className="grid grid-cols-10 gap-1.5 sm:gap-2">
+              {last30Days.map((day) => (
                 <div
                   key={day.dateStr}
-                  className={`w-full aspect-square rounded-sm ${bg} transition-transform hover:scale-110 shadow-2xs`}
                   title={`${day.dateStr}: ${day.completedCount}/5 completed`}
+                  className={`
+                    w-full
+                    aspect-square
+                    rounded-[4px]
+                    ${getHeatmapClass(
+                      day.completedCount
+                    )}
+                    transition-transform
+                    hover:scale-110
+                  `}
                 />
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Legend & Stats */}
-        <div className="grid grid-cols-3 gap-2 text-center pt-1">
-          <div className="p-2 bg-[#F1ECE2] rounded-xl border border-[#DDD5C7]">
-            <span className="text-xl font-bold font-mono text-emerald-700 block">
-              {fullDaysCount}
-            </span>
-
-            <span className="text-[11px] text-[#78716C] leading-tight block">
-              Days completed (≥ 4/5)
-            </span>
+              ))}
+            </div>
           </div>
 
-          <div className="p-2 bg-[#F1ECE2] rounded-xl border border-[#DDD5C7]">
-            <span className="text-xl font-bold font-mono text-emerald-600 block">
-              {partialDaysCount}
-            </span>
+          {/* Heatmap legend */}
 
-            <span className="text-[11px] text-[#78716C] leading-tight block">
-              Partial days (2–3/5)
-            </span>
+          <div className="flex items-center justify-center gap-3 mt-2 text-[9px] sm:text-[10px] text-[#78716C] font-mono">
+            <div className="flex items-center gap-1">
+              <span className="w-2.5 h-2.5 rounded-sm bg-[#E8E1D6]" />
+              0
+            </div>
+
+            <div className="flex items-center gap-1">
+              <span className="w-2.5 h-2.5 rounded-sm bg-[#D6CEC0]" />
+              1
+            </div>
+
+            <div className="flex items-center gap-1">
+              <span className="w-2.5 h-2.5 rounded-sm bg-emerald-300" />
+              2–3
+            </div>
+
+            <div className="flex items-center gap-1">
+              <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500" />
+              4
+            </div>
+
+            <div className="flex items-center gap-1">
+              <span className="w-2.5 h-2.5 rounded-sm bg-emerald-700" />
+              5
+            </div>
           </div>
 
-          <div className="p-2 bg-[#F1ECE2] rounded-xl border border-[#DDD5C7]">
-            <span className="text-xl font-bold font-mono text-[#78716C] block">
-              {lowDaysCount}
-            </span>
+          {/* 30-day statistics */}
 
-            <span className="text-[11px] text-[#78716C] leading-tight block">
-              Low days (0–1/5)
-            </span>
+          <div className="grid grid-cols-3 gap-1.5 mt-2">
+            <div
+              className="
+                rounded-xl
+                border border-[#E5DDD0]
+                bg-[#F1ECE2]
+                p-2
+                text-center
+              "
+            >
+              <span className="block text-lg sm:text-xl font-bold font-mono text-emerald-700">
+                {fullDaysCount}
+              </span>
+
+              <span className="block text-[9px] sm:text-[10px] text-[#78716C] leading-tight">
+                Full days
+              </span>
+            </div>
+
+            <div
+              className="
+                rounded-xl
+                border border-[#E5DDD0]
+                bg-[#F1ECE2]
+                p-2
+                text-center
+              "
+            >
+              <span className="block text-lg sm:text-xl font-bold font-mono text-emerald-600">
+                {partialDaysCount}
+              </span>
+
+              <span className="block text-[9px] sm:text-[10px] text-[#78716C] leading-tight">
+                Partial days
+              </span>
+            </div>
+
+            <div
+              className="
+                rounded-xl
+                border border-[#E5DDD0]
+                bg-[#F1ECE2]
+                p-2
+                text-center
+              "
+            >
+              <span className="block text-lg sm:text-xl font-bold font-mono text-[#78716C]">
+                {lowDaysCount}
+              </span>
+
+              <span className="block text-[9px] sm:text-[10px] text-[#78716C] leading-tight">
+                Low days
+              </span>
+            </div>
           </div>
-        </div>
-
-        {/* Motivational quote */}
-        <div className="text-center pt-2">
-          <p className="text-sm font-notes text-[#78716C] italic">
-            "Progress, not perfection."
-          </p>
-        </div>
+        </section>
       </div>
     </div>
   );
