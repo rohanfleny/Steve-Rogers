@@ -150,14 +150,14 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
     }
 
     if (completedCount >= 2) {
-      return 'bg-[#E4B9C0]';
+      return 'bg-[#D98A98]';
     }
 
     if (completedCount === 1) {
-      return 'bg-[#D6DCE8]';
+      return 'bg-[#E8D5D9]';
     }
 
-    return 'bg-[#EEF2F6]';
+    return 'bg-[#F1ECEC]';
   };
 
   // ------------------------------------------------------------
@@ -274,13 +274,13 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               <tr>
                 <th
                   className="
-                    w-[27%]
+                    w-[32%]
                     pb-1
-                    pr-1
+                    pr-2
                     text-left
                     text-[10px]
                     sm:text-xs
-                    text-[#9B1B30]
+                    text-black
                     font-normal
                   "
                 >
@@ -295,7 +295,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                       text-center
                       text-[9px]
                       sm:text-[10px]
-                      text-[#9B1B30]
+                      text-black
                       font-semibold
                       font-mono
                     "
@@ -344,7 +344,8 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                       <td
                         key={day.dateStr}
                         className="
-                          py-1
+                          py-1.5
+                          px-0.5
                           text-center
                         "
                       >
@@ -490,7 +491,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                       max-w-full
                     "
                   >
-                    {stat.label}
+                    {stat.id === 'english' ? 'English' : stat.label}
                   </span>
                 </div>
               ))}
@@ -550,122 +551,6 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
           </div>
 
           {/* =================================================
-              HEATMAP
-              ================================================= */}
-
-          <div
-            className="
-              p-2
-              bg-[#FAF7F0]
-              border
-              border-[#D6DCE8]
-              rounded-xl
-            "
-          >
-            <div
-              className="
-                grid
-                grid-cols-10
-                gap-1.5
-                w-full
-              "
-            >
-              {last30Days.map((day) => (
-                <div
-                  key={day.dateStr}
-                  title={`${day.dateStr}: ${day.completedCount}/5 completed`}
-                  className={`
-                    w-full
-                    aspect-square
-                    rounded-[4px]
-                    ${getHeatmapClass(
-                      day.completedCount
-                    )}
-                  `}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* =================================================
-              LEGEND
-              ================================================= */}
-
-          <div
-            className="
-              flex
-              items-center
-              justify-center
-              gap-2.5
-              mt-1.5
-              text-[9px]
-              sm:text-[10px]
-              text-[#9B1B30]
-              font-mono
-            "
-          >
-            <div className="flex items-center gap-1">
-              <span
-                className="
-                  w-2.5
-                  h-2.5
-                  rounded-sm
-                  bg-[#EEF2F6]
-                "
-              />
-              0
-            </div>
-
-            <div className="flex items-center gap-1">
-              <span
-                className="
-                  w-2.5
-                  h-2.5
-                  rounded-sm
-                  bg-[#D6DCE8]
-                "
-              />
-              1
-            </div>
-
-            <div className="flex items-center gap-1">
-              <span
-                className="
-                  w-2.5
-                  h-2.5
-                  rounded-sm
-                  bg-[#E4B9C0]
-                "
-              />
-              2–3
-            </div>
-
-            <div className="flex items-center gap-1">
-              <span
-                className="
-                  w-2.5
-                  h-2.5
-                  rounded-sm
-                  bg-[#9B1B30]
-                "
-              />
-              4
-            </div>
-
-            <div className="flex items-center gap-1">
-              <span
-                className="
-                  w-2.5
-                  h-2.5
-                  rounded-sm
-                  bg-[#9B1B30]
-                "
-              />
-              5
-            </div>
-          </div>
-
-          {/* =================================================
               30-DAY STATISTICS
               ================================================= */}
 
@@ -674,7 +559,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               grid
               grid-cols-3
               gap-1.5
-              mt-1.5
+              mb-2
             "
           >
 
@@ -789,6 +674,124 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               </span>
             </div>
           </div>
+
+          {/* =================================================
+              HEATMAP
+              ================================================= */}
+
+          <div
+            className="
+              p-2
+              bg-[#FAF7F0]
+              border
+              border-[#D6DCE8]
+              rounded-xl
+            "
+          >
+            <div
+              className="
+                grid
+                grid-cols-10
+                gap-1.5
+                w-full
+              "
+            >
+              {last30Days.map((day) => (
+                <div
+                  key={day.dateStr}
+                  title={`${day.dateStr}: ${day.completedCount}/5 completed`}
+                  className={`
+                    w-full
+                    aspect-square
+                    rounded-[4px]
+                    ${getHeatmapClass(
+                      day.completedCount
+                    )}
+                  `}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* =================================================
+              LEGEND
+              ================================================= */}
+
+          <div
+            className="
+              flex
+              items-center
+              justify-center
+              gap-2.5
+              mt-2
+              text-[9px]
+              sm:text-[10px]
+              text-[#9B1B30]
+              font-mono
+            "
+          >
+            <div className="flex items-center gap-1">
+              <span
+                className="
+                  w-2.5
+                  h-2.5
+                  rounded-sm
+                  bg-[#EEF2F6]
+                "
+              />
+              0
+            </div>
+
+            <div className="flex items-center gap-1">
+              <span
+                className="
+                  w-2.5
+                  h-2.5
+                  rounded-sm
+                  bg-[#D6DCE8]
+                "
+              />
+              1
+            </div>
+
+            <div className="flex items-center gap-1">
+              <span
+                className="
+                  w-2.5
+                  h-2.5
+                  rounded-sm
+                  bg-[#E4B9C0]
+                "
+              />
+              2–3
+            </div>
+
+            <div className="flex items-center gap-1">
+              <span
+                className="
+                  w-2.5
+                  h-2.5
+                  rounded-sm
+                  bg-[#9B1B30]
+                "
+              />
+              4
+            </div>
+
+            <div className="flex items-center gap-1">
+              <span
+                className="
+                  w-2.5
+                  h-2.5
+                  rounded-sm
+                  bg-[#9B1B30]
+                "
+              />
+              5
+            </div>
+          </div>
+
+
         </section>
       </div>
     </div>
