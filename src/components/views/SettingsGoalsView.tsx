@@ -1159,15 +1159,6 @@ export const SettingsGoalsView: React.FC<
         </div>
       </section>
 
-      {/* ================================
-          QUOTE
-      ================================= */}
-
-      <div className="text-center px-6 py-4 text-[#9B1B30]">
-        <p className="text-sm text-[#9B1B30] italic">
-          “Small progress every day becomes a big change.”
-        </p>
-      </div>
     </div>
   );
 };
