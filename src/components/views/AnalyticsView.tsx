@@ -514,7 +514,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
             shadow-sm
             text-[#9B1B30]
             overflow-hidden
-            pb-3
+            pb-4
           "
         >
 
@@ -522,7 +522,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
 
           <div
             className="
-              bg-[#1B3A57]
+              bg-[#9B1B30]
               px-3
               py-2.5
               flex
@@ -681,7 +681,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
             className="
               grid
               grid-cols-3
-              gap-2
+              gap-2 px-5 sm:px-8
               mt-2
               mb-0
             "
@@ -691,10 +691,13 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               className="
                 rounded-md
                 border
-                border-[#9B1B30]
-                bg-[#9B1B30]
+                border-[#1B3A57]
+                bg-[#1B3A57]
                 py-1
-                px-1.5
+                px-1
+                w-full
+                max-w-[88px]
+                mx-auto
                 text-center
               "
             >
@@ -728,10 +731,13 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               className="
                 rounded-md
                 border
-                border-[#9B1B30]
-                bg-[#9B1B30]
+                border-[#1B3A57]
+                bg-[#1B3A57]
                 py-1
-                px-1.5
+                px-1
+                w-full
+                max-w-[88px]
+                mx-auto
                 text-center
               "
             >
@@ -765,10 +771,13 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               className="
                 rounded-md
                 border
-                border-[#9B1B30]
-                bg-[#9B1B30]
+                border-[#1B3A57]
+                bg-[#1B3A57]
                 py-1
-                px-1.5
+                px-1
+                w-full
+                max-w-[88px]
+                mx-auto
                 text-center
               "
             >
