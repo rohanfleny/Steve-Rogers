@@ -629,14 +629,14 @@ export const SettingsGoalsView: React.FC<
   return (
     <div
       id="settings-goals-view"
-      className="space-y-4 font-handwriting text-[#1C1917] pb-8"
+      className="space-y-4 font-handwriting text-[#9B1B30] pb-8"
     >
       {/* ================================
           SAVED MESSAGE
       ================================= */}
 
       {savedSuccess && (
-        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-[#1C1917] text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg">
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-[#1B3A57] text-[#FAF7F0] px-4 py-2 rounded-xl text-sm font-bold shadow-lg">
           Saved
         </div>
       )}
@@ -646,7 +646,7 @@ export const SettingsGoalsView: React.FC<
       ================================= */}
 
       {importStatus && (
-        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-[#1C1917] text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg max-w-[90%] text-center">
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-[#1B3A57] text-[#FAF7F0] px-4 py-2 rounded-xl text-sm font-bold shadow-lg max-w-[90%] text-center">
           {importStatus}
         </div>
       )}
@@ -655,13 +655,13 @@ export const SettingsGoalsView: React.FC<
           PERSONAL PROFILE
       ================================= */}
 
-      <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm">
-        <h3 className="text-base sm:text-lg font-bold font-fancy mb-3">
+      <section className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-4 shadow-sm">
+        <h3 className="text-base sm:text-lg font-bold font-fancy text-[#FAF7F0] bg-[#1B3A57] px-4 py-2.5 -mx-4 -mt-4 mb-3 rounded-t-2xl">
           Personal Profile
         </h3>
 
         <div className="flex items-center gap-3">
-          <label className="text-sm text-[#78716C] w-20 shrink-0">
+          <label className="text-sm text-[#9B1B30] w-20 shrink-0">
             Your Name
           </label>
 
@@ -674,7 +674,7 @@ export const SettingsGoalsView: React.FC<
               )
             }
             placeholder="Rohan"
-            className="flex-1 min-w-0 bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base text-[#1C1917] focus:outline-none focus:border-[#1C1917]"
+            className="flex-1 min-w-0 bg-[#F1ECE1] border border-[#D6DCE8] rounded-xl px-3 py-2 text-base text-[#9B1B30] focus:outline-none focus:border-[#1C1917]"
           />
         </div>
       </section>
@@ -683,13 +683,13 @@ export const SettingsGoalsView: React.FC<
           DAILY GOALS
       ================================= */}
 
-      <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm">
+      <section className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-4 shadow-sm">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-base sm:text-lg font-bold font-fancy">
+          <h3 className="text-base sm:text-lg font-bold font-fancy text-[#FAF7F0] bg-[#1B3A57] px-4 py-2.5 -mx-4 -mt-4 rounded-t-2xl">
             Daily Goals
           </h3>
 
-          <span className="text-xs text-[#78716C]">
+          <span className="text-xs text-[#9B1B30] font-semibold">
             Customize
           </span>
         </div>
@@ -716,7 +716,7 @@ export const SettingsGoalsView: React.FC<
               return (
                 <div
                   key={goal.id}
-                  className="border-b border-[#E5DDD0] last:border-b-0"
+                  className="border-b border-[#D6DCE8] last:border-b-0"
                 >
                   {!isEditing && (
                     <div className="flex items-center justify-between py-2">
@@ -729,7 +729,7 @@ export const SettingsGoalsView: React.FC<
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-xs text-[#78716C]">
+                        <span className="text-xs text-[#9B1B30]">
                           {target}{' '}
                           / day
                         </span>
@@ -744,7 +744,7 @@ export const SettingsGoalsView: React.FC<
                           className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-[#F1ECE1] active:bg-[#E8E1D4] cursor-pointer"
                           aria-label={`Edit ${title}`}
                         >
-                          <Pencil className="w-3.5 h-3.5 text-[#78716C]" />
+                          <Pencil className="w-3.5 h-3.5 text-[#9B1B30]" />
                         </button>
                       </div>
                     </div>
@@ -778,7 +778,7 @@ export const SettingsGoalsView: React.FC<
                       {/* NAME */}
 
                       <div>
-                        <label className="block text-xs font-bold text-[#78716C] mb-1">
+                        <label className="block text-xs font-bold text-[#9B1B30] mb-1">
                           Goal Name
                         </label>
 
@@ -796,14 +796,14 @@ export const SettingsGoalsView: React.FC<
                                 .value
                             )
                           }
-                          className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base text-[#1C1917] focus:outline-none focus:border-[#1C1917]"
+                          className="w-full bg-[#F1ECE1] border border-[#D6DCE8] rounded-xl px-3 py-2 text-base text-[#9B1B30] focus:outline-none focus:border-[#1C1917]"
                         />
                       </div>
 
                       {/* TARGET */}
 
                       <div>
-                        <label className="block text-xs font-bold text-[#78716C] mb-1">
+                        <label className="block text-xs font-bold text-[#9B1B30] mb-1">
                           Daily Target
                         </label>
 
@@ -816,20 +816,20 @@ export const SettingsGoalsView: React.FC<
                                 -1
                               )
                             }
-                            className="w-11 h-11 rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] flex items-center justify-center hover:bg-[#E8E1D4] active:bg-[#DDD5C7] cursor-pointer"
+                            className="w-11 h-11 rounded-xl bg-[#F1ECE1] border border-[#D6DCE8] flex items-center justify-center hover:bg-[#E8E1D4] active:bg-[#DDD5C7] cursor-pointer"
                             aria-label="Decrease target"
                           >
                             <Minus className="w-4 h-4" />
                           </button>
 
-                          <div className="flex-1 h-11 rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] flex items-center justify-center gap-2">
+                          <div className="flex-1 h-11 rounded-xl bg-[#F1ECE1] border border-[#D6DCE8] flex items-center justify-center gap-2">
                             <span className="text-xl font-bold">
                               {
                                 editingTarget
                               }
                             </span>
 
-                            <span className="text-sm text-[#78716C]">
+                            <span className="text-sm text-[#9B1B30]">
                               {
                                 goal.unit
                               }
@@ -849,7 +849,7 @@ export const SettingsGoalsView: React.FC<
                                 1
                               )
                             }
-                            className="w-11 h-11 rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] flex items-center justify-center hover:bg-[#E8E1D4] active:bg-[#DDD5C7] cursor-pointer"
+                            className="w-11 h-11 rounded-xl bg-[#F1ECE1] border border-[#D6DCE8] flex items-center justify-center hover:bg-[#E8E1D4] active:bg-[#DDD5C7] cursor-pointer"
                             aria-label="Increase target"
                           >
                             <Plus className="w-4 h-4" />
@@ -867,7 +867,7 @@ export const SettingsGoalsView: React.FC<
                               goal
                             )
                           }
-                          className="flex-1 rounded-xl bg-[#1C1917] text-white px-4 py-2.5 font-bold flex items-center justify-center gap-2 hover:bg-black cursor-pointer"
+                          className="flex-1 rounded-xl bg-[#1B3A57] text-[#FAF7F0] px-4 py-2.5 font-bold flex items-center justify-center gap-2 hover:bg-[#142C42] cursor-pointer"
                         >
                           <Check className="w-4 h-4" />
                           Save
@@ -878,7 +878,7 @@ export const SettingsGoalsView: React.FC<
                           onClick={
                             cancelEdit
                           }
-                          className="rounded-xl bg-[#F1ECE1] border border-[#DDD5C7] px-4 py-2.5 font-bold cursor-pointer hover:bg-[#E8E1D4]"
+                          className="rounded-xl bg-[#F1ECE1] border border-[#D6DCE8] px-4 py-2.5 font-bold cursor-pointer hover:bg-[#E8E1D4]"
                         >
                           Cancel
                         </button>
@@ -897,16 +897,16 @@ export const SettingsGoalsView: React.FC<
       ================================= */}
 
       {gateStore && (
-        <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm">
+        <section className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-4 shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-base sm:text-lg font-bold font-fancy">
+            <h3 className="text-base sm:text-lg font-bold font-fancy text-[#FAF7F0] bg-[#1B3A57] px-4 py-2.5 -mx-4 -mt-4 rounded-t-2xl">
               Active GATE Subject & Module
             </h3>
 
-            <GraduationCap className="w-5 h-5 text-[#78716C]" />
+            <GraduationCap className="w-5 h-5 text-[#FAF7F0]" />
           </div>
 
-          <p className="text-xs text-[#78716C] mb-3">
+          <p className="text-xs text-[#9B1B30] mb-3">
             Choose the subject and module used for future daily GATE progress.
           </p>
 
@@ -914,7 +914,7 @@ export const SettingsGoalsView: React.FC<
 
           <div className="space-y-3">
             <div>
-              <label className="block text-xs font-bold text-[#78716C] mb-1">
+              <label className="block text-xs font-bold text-[#9B1B30] mb-1">
                 Current Subject
               </label>
 
@@ -928,7 +928,7 @@ export const SettingsGoalsView: React.FC<
                       .value
                   )
                 }
-                className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base text-[#1C1917] focus:outline-none focus:border-[#1C1917]"
+                className="w-full bg-[#F1ECE1] border border-[#D6DCE8] rounded-xl px-3 py-2 text-base text-[#9B1B30] focus:outline-none focus:border-[#1C1917]"
               >
                 {gateStore.subjects
                   .length ===
@@ -960,7 +960,7 @@ export const SettingsGoalsView: React.FC<
             {/* MODULE */}
 
             <div>
-              <label className="block text-xs font-bold text-[#78716C] mb-1">
+              <label className="block text-xs font-bold text-[#9B1B30] mb-1">
                 Current Module
               </label>
 
@@ -978,7 +978,7 @@ export const SettingsGoalsView: React.FC<
                       .value
                   )
                 }
-                className="w-full bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-3 py-2 text-base text-[#1C1917] focus:outline-none focus:border-[#1C1917] disabled:opacity-50"
+                className="w-full bg-[#F1ECE1] border border-[#D6DCE8] rounded-xl px-3 py-2 text-base text-[#9B1B30] focus:outline-none focus:border-[#1C1917] disabled:opacity-50"
               >
                 {modulesForSubject.length ===
                 0 ? (
@@ -1013,14 +1013,14 @@ export const SettingsGoalsView: React.FC<
           SLEEP GOAL
       ================================= */}
 
-      <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm">
-        <h3 className="text-base sm:text-lg font-bold font-fancy mb-3">
+      <section className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-4 shadow-sm">
+        <h3 className="text-base sm:text-lg font-bold font-fancy text-[#FAF7F0] bg-[#1B3A57] px-4 py-2.5 -mx-4 -mt-4 mb-3 rounded-t-2xl">
           Sleep Goal
         </h3>
 
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <Bed className="w-4 h-4 text-[#78716C]" />
+            <Bed className="w-4 h-4 text-[#9B1B30]" />
 
             <span className="text-sm">
               Target
@@ -1033,13 +1033,13 @@ export const SettingsGoalsView: React.FC<
               onClick={
                 decreaseSleep
               }
-              className="w-9 h-9 rounded-lg bg-[#F1ECE1] border border-[#DDD5C7] flex items-center justify-center hover:bg-[#E8E1D4] cursor-pointer"
+              className="w-9 h-9 rounded-lg bg-[#F1ECE1] border border-[#D6DCE8] flex items-center justify-center hover:bg-[#E8E1D4] cursor-pointer"
               aria-label="Decrease sleep target"
             >
               <Minus className="w-4 h-4" />
             </button>
 
-            <div className="min-w-[90px] h-9 rounded-lg bg-[#F1ECE1] border border-[#DDD5C7] flex items-center justify-center px-3">
+            <div className="min-w-[90px] h-9 rounded-lg bg-[#F1ECE1] border border-[#D6DCE8] flex items-center justify-center px-3">
               <span className="font-bold">
                 {sleepTarget}
                 h
@@ -1051,7 +1051,7 @@ export const SettingsGoalsView: React.FC<
               onClick={
                 increaseSleep
               }
-              className="w-9 h-9 rounded-lg bg-[#F1ECE1] border border-[#DDD5C7] flex items-center justify-center hover:bg-[#E8E1D4] cursor-pointer"
+              className="w-9 h-9 rounded-lg bg-[#F1ECE1] border border-[#D6DCE8] flex items-center justify-center hover:bg-[#E8E1D4] cursor-pointer"
               aria-label="Increase sleep target"
             >
               <Plus className="w-4 h-4" />
@@ -1069,7 +1069,7 @@ export const SettingsGoalsView: React.FC<
         onClick={
           savePreferences
         }
-        className="w-full rounded-2xl bg-[#1C1917] text-white py-3.5 font-bold text-base flex items-center justify-center gap-2 hover:bg-black active:scale-[0.99] transition-transform cursor-pointer"
+        className="w-full rounded-2xl bg-[#1B3A57] text-[#FAF7F0] py-3.5 font-bold text-base flex items-center justify-center gap-2 hover:bg-[#142C42] active:scale-[0.99] transition-transform cursor-pointer"
       >
         <Check className="w-4 h-4" />
         Save Preferences
@@ -1079,8 +1079,8 @@ export const SettingsGoalsView: React.FC<
           DATA MANAGEMENT
       ================================= */}
 
-      <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-2xl p-4 shadow-sm">
-        <h3 className="text-base sm:text-lg font-bold font-fancy mb-3">
+      <section className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-4 shadow-sm">
+        <h3 className="text-base sm:text-lg font-bold font-fancy text-[#FAF7F0] bg-[#1B3A57] px-4 py-2.5 -mx-4 -mt-4 mb-3 rounded-t-2xl">
           Data Management
         </h3>
 
@@ -1092,7 +1092,7 @@ export const SettingsGoalsView: React.FC<
             onClick={
               exportBackup
             }
-            className="w-full flex items-center justify-between gap-3 bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-4 py-3 hover:bg-[#E8E1D4] cursor-pointer"
+            className="w-full flex items-center justify-between gap-3 bg-[#F1ECE1] border border-[#D6DCE8] rounded-xl px-4 py-3 hover:bg-[#E8E1D4] cursor-pointer"
           >
             <div className="flex items-center gap-3">
               <Download className="w-4 h-4" />
@@ -1102,7 +1102,7 @@ export const SettingsGoalsView: React.FC<
                   Export Backup
                 </div>
 
-                <div className="text-xs text-[#78716C]">
+                <div className="text-xs text-[#9B1B30]">
                   Download your local data
                 </div>
               </div>
@@ -1111,7 +1111,7 @@ export const SettingsGoalsView: React.FC<
 
           {/* IMPORT */}
 
-          <label className="w-full flex items-center justify-between gap-3 bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-4 py-3 hover:bg-[#E8E1D4] cursor-pointer">
+          <label className="w-full flex items-center justify-between gap-3 bg-[#F1ECE1] border border-[#D6DCE8] rounded-xl px-4 py-3 hover:bg-[#E8E1D4] cursor-pointer">
             <div className="flex items-center gap-3">
               <Upload className="w-4 h-4" />
 
@@ -1120,7 +1120,7 @@ export const SettingsGoalsView: React.FC<
                   Restore Backup
                 </div>
 
-                <div className="text-xs text-[#78716C]">
+                <div className="text-xs text-[#9B1B30]">
                   Import previously saved data
                 </div>
               </div>
@@ -1143,7 +1143,7 @@ export const SettingsGoalsView: React.FC<
             onClick={
               resetData
             }
-            className="w-full flex items-center justify-between gap-3 bg-[#F1ECE1] border border-[#DDD5C7] rounded-xl px-4 py-3 hover:bg-[#E8E1D4] cursor-pointer"
+            className="w-full flex items-center justify-between gap-3 bg-[#F1ECE1] border border-[#D6DCE8] rounded-xl px-4 py-3 hover:bg-[#E8E1D4] cursor-pointer"
           >
             <div className="flex items-center gap-3">
               <RotateCcw className="w-4 h-4" />
@@ -1153,7 +1153,7 @@ export const SettingsGoalsView: React.FC<
                   Reset All Data
                 </div>
 
-                <div className="text-xs text-[#78716C]">
+                <div className="text-xs text-[#9B1B30]">
                   Permanently clear local progress
                 </div>
               </div>
@@ -1166,8 +1166,8 @@ export const SettingsGoalsView: React.FC<
           QUOTE
       ================================= */}
 
-      <div className="text-center px-6 py-4">
-        <p className="text-sm text-[#78716C] italic">
+      <div className="text-center px-6 py-4 text-[#9B1B30]">
+        <p className="text-sm text-[#9B1B30] italic">
           “Small progress every day becomes a big change.”
         </p>
       </div>
