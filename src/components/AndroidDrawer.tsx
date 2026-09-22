@@ -53,7 +53,12 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
       />
 
       {/* Drawer surface */}
-      <div className="relative w-4/5 max-w-[280px] bg-[#FAF7F0] h-full shadow-2xl flex flex-col p-5 border-r border-[#D6DCE8] z-10 overflow-y-auto text-[#9B1B30]">
+      <div
+        className="relative w-4/5 max-w-[280px] bg-[#FAF7F0] h-full shadow-2xl flex flex-col px-5 pb-5 border-r border-[#D6DCE8] z-10 overflow-y-auto text-[#9B1B30]"
+        style={{
+          paddingTop: 'max(16px, env(safe-area-inset-top, 0px))',
+        }}
+      >
         {/* Main drawer content */}
         <div className="flex-1">
           {/* Close button */}
@@ -61,7 +66,7 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="p-1 rounded-full text-[#6B7280] hover:text-[#9B1B30] hover:bg-[#F1ECE1] focus:outline-none cursor-pointer"
+              className="p-2 rounded-full text-[#6B7280] hover:text-[#9B1B30] hover:bg-[#F1ECE1] focus:outline-none cursor-pointer touch-manipulation"
               aria-label="Close menu"
             >
               <X className="w-5 h-5" />
