@@ -41,11 +41,8 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
   const gateTitle = getGoalTitle('gate', settings);
   const academicsTitle = getGoalTitle('academics', settings);
 
-  const activeItemClass =
-    'bg-[#1B3A57] text-[#FAF7F0] font-semibold shadow-sm';
-
-  const inactiveItemClass =
-    'text-[#6B7280] hover:bg-[#F1ECE1] hover:text-[#9B1B30]';
+  const navItemClass =
+    'text-[#9B1B30] hover:bg-[#F1ECE1]';
 
   return (
     <div className="fixed inset-0 z-50 flex">
@@ -73,10 +70,8 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
 
           {/* Greeting Header */}
           <div className="mb-3">
-            <h2 className="text-2xl font-fancy font-bold text-[#9B1B30] leading-tight">
-              HI {userName.toUpperCase()},
-              <br />
-              SCHOLAR
+            <h2 className="text-2xl font-fancy font-bold text-[#1B3A57] leading-tight">
+              WELCOME, {userName.toUpperCase()}
             </h2>
           </div>
 
@@ -85,16 +80,16 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
             <img
               src="/captain-america-drawer.jpg"
               alt="Captain America"
-              className="w-full h-[150px] object-contain rounded-xl"
+              className="w-full h-[165px] object-contain rounded-xl block"
             />
           </div>
 
           {/* Captain America quote */}
-          <div className="mb-5 text-center px-2">
-            <p className="text-xs font-notes text-[#9B1B30] italic">
+          <div className="mb-5 px-2">
+            <p className="text-xs font-notes text-[#9B1B30] italic text-center">
               "I can do this all day."
             </p>
-            <p className="text-[10px] font-notes text-[#9B1B30] mt-1">
+            <p className="text-[10px] font-notes text-[#9B1B30] mt-1 text-right pr-1">
               — Steve Rogers
             </p>
           </div>
@@ -108,11 +103,7 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
                 onSelectTab('home');
                 onClose();
               }}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors cursor-pointer ${
-                activeTab === 'home'
-                  ? activeItemClass
-                  : inactiveItemClass
-              }`}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors cursor-pointer ${navItemClass}`}
             >
               <Home className="w-4 h-4 shrink-0" />
               <span>Dashboard</span>
@@ -125,11 +116,7 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
                 onSelectTab('gate');
                 onClose();
               }}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors cursor-pointer ${
-                activeTab === 'gate'
-                  ? activeItemClass
-                  : inactiveItemClass
-              }`}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors cursor-pointer ${navItemClass}`}
             >
               <BookOpen className="w-4 h-4 shrink-0" />
               <span>{gateTitle}</span>
@@ -143,7 +130,7 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
                 onClose();
                 if (onOpenAcademics) onOpenAcademics();
               }}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-[#6B7280] hover:bg-[#F1ECE1] hover:text-[#9B1B30] transition-colors cursor-pointer"
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-[#9B1B30] hover:bg-[#F1ECE1] transition-colors cursor-pointer"
             >
               <GraduationCap className="w-4 h-4 shrink-0" />
               <span>{academicsTitle}</span>
@@ -156,11 +143,7 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
                 onSelectTab('sleep');
                 onClose();
               }}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors cursor-pointer ${
-                activeTab === 'sleep'
-                  ? activeItemClass
-                  : inactiveItemClass
-              }`}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors cursor-pointer ${navItemClass}`}
             >
               <Moon className="w-4 h-4 shrink-0" />
               <span>Sleep</span>
@@ -173,11 +156,7 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
                 onSelectTab('analytics');
                 onClose();
               }}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors cursor-pointer ${
-                activeTab === 'analytics'
-                  ? activeItemClass
-                  : inactiveItemClass
-              }`}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors cursor-pointer ${navItemClass}`}
             >
               <BarChart2 className="w-4 h-4 shrink-0" />
               <span>Analytics</span>
@@ -190,11 +169,7 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
                 onSelectTab('settings');
                 onClose();
               }}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors cursor-pointer ${
-                activeTab === 'settings'
-                  ? activeItemClass
-                  : inactiveItemClass
-              }`}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors cursor-pointer ${navItemClass}`}
             >
               <Settings className="w-4 h-4 shrink-0" />
               <span>Settings</span>
