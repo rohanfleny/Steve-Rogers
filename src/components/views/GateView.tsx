@@ -1070,14 +1070,10 @@ export const GateView: React.FC<GateViewProps> = ({
             </button>
 
             <div className="min-w-0">
-              <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider block truncate">
-                {selectedSubject.title}
-              </span>
-
-              <h2 className="text-lg font-bold text-[#9B1B30] truncate">
-                {selectedModule.title}
-              </h2>
-            </div>
+  <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider block truncate">
+    {selectedSubject.title}
+  </span>
+</div>
           </div>
 
           <button
@@ -1100,10 +1096,9 @@ export const GateView: React.FC<GateViewProps> = ({
               {selectedModule.title}
             </span>
 
-            <span className="text-2xl font-bold font-mono text-[#9B1B30]">
-              {moduleProgress.percentage}%
-            </span>
-          </div>
+            <span className="text-[11px] font-bold text-[#9B1B30] uppercase tracking-wider">
+  {selectedModule.title}
+</span>
 
           <div className="flex items-center justify-between text-sm font-mono font-bold text-[#9B1B30]">
             <span>
