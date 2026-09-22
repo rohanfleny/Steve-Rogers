@@ -276,12 +276,13 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   className="
                     w-[32%]
                     pb-1
+                    pl-2
                     pr-2
                     text-left
                     text-[10px]
                     sm:text-xs
                     text-black
-                    font-normal
+                    font-bold
                   "
                 >
                   Habit
@@ -296,7 +297,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                       text-[9px]
                       sm:text-[10px]
                       text-black
-                      font-semibold
+                      font-bold
                       font-mono
                     "
                   >
@@ -321,12 +322,14 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   <td
                     className="
                       py-1
-                      pr-1
+                      pl-2
+                      pr-2
                       text-[10px]
                       sm:text-xs
                       font-bold
                       leading-tight
                       break-words
+                      text-left
                     "
                   >
                     {habit.label}
@@ -565,11 +568,11 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
 
             <div
               className="
-                rounded-xl
+                rounded-lg
                 border
                 border-[#9B1B30]
                 bg-[#9B1B30]
-                py-1.5
+                py-1
                 px-1
                 text-center
               "
@@ -577,8 +580,8 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               <span
                 className="
                   block
-                  text-lg
-                  sm:text-xl
+                  text-base
+                  sm:text-lg
                   font-bold
                   font-mono
                   text-[#FAF7F0]
@@ -602,11 +605,11 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
 
             <div
               className="
-                rounded-xl
+                rounded-lg
                 border
                 border-[#9B1B30]
                 bg-[#9B1B30]
-                py-1.5
+                py-1
                 px-1
                 text-center
               "
@@ -614,8 +617,8 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               <span
                 className="
                   block
-                  text-lg
-                  sm:text-xl
+                  text-base
+                  sm:text-lg
                   font-bold
                   font-mono
                   text-[#FAF7F0]
@@ -639,11 +642,11 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
 
             <div
               className="
-                rounded-xl
+                rounded-lg
                 border
                 border-[#9B1B30]
                 bg-[#9B1B30]
-                py-1.5
+                py-1
                 px-1
                 text-center
               "
@@ -651,8 +654,8 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               <span
                 className="
                   block
-                  text-lg
-                  sm:text-xl
+                  text-base
+                  sm:text-lg
                   font-bold
                   font-mono
                   text-[#FAF7F0]
@@ -724,6 +727,9 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               justify-center
               gap-2.5
               mt-2
+              pt-1
+              border-t
+              border-[#D6DCE8]
               text-[9px]
               sm:text-[10px]
               text-[#9B1B30]
