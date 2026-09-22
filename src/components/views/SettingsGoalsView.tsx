@@ -684,12 +684,12 @@ export const SettingsGoalsView: React.FC<
       ================================= */}
 
       <section className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-4 shadow-sm">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-base sm:text-lg font-bold font-fancy text-[#FAF7F0] bg-[#1B3A57] px-4 py-2.5 -mx-4 -mt-4 rounded-t-2xl">
+        <div className="flex items-center justify-between bg-[#1B3A57] text-[#FAF7F0] px-4 py-2.5 -mx-4 -mt-4 mb-3 rounded-t-2xl">
+          <h3 className="text-base sm:text-lg font-bold font-fancy text-[#FAF7F0]">
             Daily Goals
           </h3>
 
-          <span className="text-xs text-[#9B1B30] font-semibold">
+          <span className="text-xs text-[#FAF7F0] font-semibold">
             Customize
           </span>
         </div>
@@ -898,9 +898,9 @@ export const SettingsGoalsView: React.FC<
 
       {gateStore && (
         <section className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl p-4 shadow-sm">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-base sm:text-lg font-bold font-fancy text-[#FAF7F0] bg-[#1B3A57] px-4 py-2.5 -mx-4 -mt-4 rounded-t-2xl">
-              Active GATE Subject & Module
+          <div className="flex items-center justify-between bg-[#1B3A57] text-[#FAF7F0] px-4 py-2.5 -mx-4 -mt-4 mb-3 rounded-t-2xl">
+            <h3 className="text-base sm:text-lg font-bold font-fancy text-[#FAF7F0]">
+              Active Subject & Module
             </h3>
 
             <GraduationCap className="w-5 h-5 text-[#FAF7F0]" />
