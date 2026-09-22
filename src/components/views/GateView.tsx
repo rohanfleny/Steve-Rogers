@@ -1068,13 +1068,6 @@ export const GateView: React.FC<GateViewProps> = ({
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
-
-            <div className="min-w-0">
-              <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider block truncate">
-                {selectedSubject.title}
-              </span>
-
-            </div>
           </div>
 
           <button
