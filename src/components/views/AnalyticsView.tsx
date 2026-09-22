@@ -514,6 +514,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
             shadow-sm
             text-[#9B1B30]
             overflow-hidden
+            pb-3
           "
         >
 
@@ -551,131 +552,6 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
             >
               30 days
             </span>
-          </div>
-
-          {/* =================================================
-              30-DAY STATISTICS
-              ================================================= */}
-
-          <div
-            className="
-              grid
-              grid-cols-3
-              gap-1.5
-              mb-2
-            "
-          >
-
-            <div
-              className="
-                rounded-lg
-                border
-                border-[#9B1B30]
-                bg-[#9B1B30]
-                py-1
-                px-1
-                text-center
-              "
-            >
-              <span
-                className="
-                  block
-                  text-base
-                  sm:text-lg
-                  font-bold
-                  font-mono
-                  text-[#FAF7F0]
-                "
-              >
-                {fullDaysCount}
-              </span>
-
-              <span
-                className="
-                  block
-                  text-[9px]
-                  sm:text-[10px]
-                  text-[#FAF7F0]
-                  leading-tight
-                "
-              >
-                Full days
-              </span>
-            </div>
-
-            <div
-              className="
-                rounded-lg
-                border
-                border-[#9B1B30]
-                bg-[#9B1B30]
-                py-1
-                px-1
-                text-center
-              "
-            >
-              <span
-                className="
-                  block
-                  text-base
-                  sm:text-lg
-                  font-bold
-                  font-mono
-                  text-[#FAF7F0]
-                "
-              >
-                {partialDaysCount}
-              </span>
-
-              <span
-                className="
-                  block
-                  text-[9px]
-                  sm:text-[10px]
-                  text-[#FAF7F0]
-                  leading-tight
-                "
-              >
-                Partial days
-              </span>
-            </div>
-
-            <div
-              className="
-                rounded-lg
-                border
-                border-[#9B1B30]
-                bg-[#9B1B30]
-                py-1
-                px-1
-                text-center
-              "
-            >
-              <span
-                className="
-                  block
-                  text-base
-                  sm:text-lg
-                  font-bold
-                  font-mono
-                  text-[#FAF7F0]
-                "
-              >
-                {lowDaysCount}
-              </span>
-
-              <span
-                className="
-                  block
-                  text-[9px]
-                  sm:text-[10px]
-                  text-[#FAF7F0]
-                  leading-tight
-                "
-              >
-                Low days
-              </span>
-            </div>
           </div>
 
           {/* =================================================
@@ -725,9 +601,9 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               flex
               items-center
               justify-center
-              gap-2.5
+              gap-2
               mt-2
-              pt-1
+              pt-1.5
               border-t
               border-[#D6DCE8]
               text-[9px]
@@ -794,6 +670,132 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                 "
               />
               5
+            </div>
+          </div>
+
+          {/* =================================================
+              30-DAY STATISTICS
+              ================================================= */}
+
+          <div
+            className="
+              grid
+              grid-cols-3
+              gap-2
+              mt-2
+              mb-0
+            "
+          >
+
+            <div
+              className="
+                rounded-md
+                border
+                border-[#9B1B30]
+                bg-[#9B1B30]
+                py-1
+                px-1.5
+                text-center
+              "
+            >
+              <span
+                className="
+                  block
+                  text-sm
+                  sm:text-base
+                  font-bold
+                  font-mono
+                  text-[#FAF7F0]
+                "
+              >
+                {fullDaysCount}
+              </span>
+
+              <span
+                className="
+                  block
+                  text-[9px]
+                  sm:text-[10px]
+                  text-[#FAF7F0]
+                  leading-tight
+                "
+              >
+                Full days
+              </span>
+            </div>
+
+            <div
+              className="
+                rounded-md
+                border
+                border-[#9B1B30]
+                bg-[#9B1B30]
+                py-1
+                px-1.5
+                text-center
+              "
+            >
+              <span
+                className="
+                  block
+                  text-sm
+                  sm:text-base
+                  font-bold
+                  font-mono
+                  text-[#FAF7F0]
+                "
+              >
+                {partialDaysCount}
+              </span>
+
+              <span
+                className="
+                  block
+                  text-[9px]
+                  sm:text-[10px]
+                  text-[#FAF7F0]
+                  leading-tight
+                "
+              >
+                Partial days
+              </span>
+            </div>
+
+            <div
+              className="
+                rounded-md
+                border
+                border-[#9B1B30]
+                bg-[#9B1B30]
+                py-1
+                px-1.5
+                text-center
+              "
+            >
+              <span
+                className="
+                  block
+                  text-sm
+                  sm:text-base
+                  font-bold
+                  font-mono
+                  text-[#FAF7F0]
+                "
+              >
+                {lowDaysCount}
+              </span>
+
+              <span
+                className="
+                  block
+                  text-[9px]
+                  sm:text-[10px]
+                  text-[#FAF7F0]
+                  leading-tight
+                "
+              >
+                Low days
+              </span>
             </div>
           </div>
 
