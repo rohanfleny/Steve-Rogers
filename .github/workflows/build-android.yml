@@ -36,13 +36,15 @@ jobs:
       - name: Check Capacitor
         run: npx cap --version
 
-      # 6. Add Android platform
-      - name: Add Android platform
-        run: npx cap add android
+        # 6. Add Android platform
+  - name: Add Android platform
+    run: npx cap add android
 
-      # 7. Sync web app to Android
-      - name: Sync web app to Android
-        run: npx cap sync android
+  # 6.5 Generate Android app icons
+  - name: Generate Android app icons
+    run: npx @capacitor/assets generate --android
+
+  # 7. Sync web app to Android
 
       # 7.5 Configure Gradle wrapper for reliable download
       - name: Configure Gradle wrapper
