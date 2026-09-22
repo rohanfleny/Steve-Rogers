@@ -80,7 +80,8 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
             <img
               src="/captain-america-drawer.jpg"
               alt="Captain America"
-              className="w-full h-[165px] object-contain rounded-xl block"
+              className="w-full h-[170px] object-contain object-center block"
+              loading="eager"
             />
           </div>
 
