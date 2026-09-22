@@ -8,7 +8,6 @@ import {
   Settings,
   X,
 } from 'lucide-react';
-import { MountainDoodle } from './HandwrittenDoodles';
 import { UserSettings, getGoalTitle } from '../types/daily';
 
 export type AndroidNavTab =
@@ -42,6 +41,12 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
   const gateTitle = getGoalTitle('gate', settings);
   const academicsTitle = getGoalTitle('academics', settings);
 
+  const activeItemClass =
+    'bg-[#1B3A57] text-[#FAF7F0] font-semibold shadow-sm';
+
+  const inactiveItemClass =
+    'text-[#6B7280] hover:bg-[#F1ECE1] hover:text-[#9B1B30]';
+
   return (
     <div className="fixed inset-0 z-50 flex">
       {/* Backdrop */}
@@ -51,37 +56,46 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
       />
 
       {/* Drawer surface */}
-      <div className="relative w-4/5 max-w-[280px] bg-[#FAF7F0] h-full shadow-2xl flex flex-col justify-between p-5 border-r border-[#E5DDD0] z-10 overflow-y-auto text-[#1C1917]">
-        <div>
+      <div className="relative w-4/5 max-w-[280px] bg-[#FAF7F0] h-full shadow-2xl flex flex-col p-5 border-r border-[#D6DCE8] z-10 overflow-y-auto text-[#9B1B30]">
+        {/* Main drawer content */}
+        <div className="flex-1">
           {/* Close button */}
           <div className="flex justify-end mb-2">
             <button
               type="button"
               onClick={onClose}
-              className="p-1 rounded-full text-[#78716C] hover:text-[#1C1917] hover:bg-[#E8E1D4] focus:outline-none cursor-pointer"
+              className="p-1 rounded-full text-[#6B7280] hover:text-[#9B1B30] hover:bg-[#F1ECE1] focus:outline-none cursor-pointer"
+              aria-label="Close menu"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Greeting Header */}
-          <div className="mb-4">
-            <h2 className="text-2xl font-fancy font-bold text-[#1C1917] leading-tight">
-              Good Day,
+          <div className="mb-3">
+            <h2 className="text-2xl font-fancy font-bold text-[#9B1B30] leading-tight">
+              HI {userName.toUpperCase()},
               <br />
-              {userName}
+              SCHOLAR
             </h2>
           </div>
 
-          {/* Mountain sketch */}
-          <div className="my-3 py-1 flex justify-center">
-            <MountainDoodle className="w-28 h-14 text-[#A8A29E]" />
+          {/* Captain America image */}
+          <div className="my-3 flex justify-center">
+            <img
+              src="/captain-america-drawer.jpg"
+              alt="Captain America"
+              className="w-full h-[150px] object-contain rounded-xl"
+            />
           </div>
 
-          {/* Quote */}
-          <div className="mb-6 text-center">
-            <p className="text-xs font-notes text-[#78716C] italic">
-              "Same Effort, Better Tomorrow."
+          {/* Captain America quote */}
+          <div className="mb-5 text-center px-2">
+            <p className="text-xs font-notes text-[#9B1B30] italic">
+              "I can do this all day."
+            </p>
+            <p className="text-[10px] font-notes text-[#9B1B30] mt-1">
+              — Steve Rogers
             </p>
           </div>
 
@@ -94,13 +108,13 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
                 onSelectTab('home');
                 onClose();
               }}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors cursor-pointer ${
                 activeTab === 'home'
-                  ? 'bg-[#1C1917] text-white font-semibold shadow-xs'
-                  : 'text-[#57534E] hover:bg-[#E8E1D4] hover:text-[#1C1917]'
+                  ? activeItemClass
+                  : inactiveItemClass
               }`}
             >
-              <Home className="w-4 h-4" />
+              <Home className="w-4 h-4 shrink-0" />
               <span>Dashboard</span>
             </button>
 
@@ -111,13 +125,13 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
                 onSelectTab('gate');
                 onClose();
               }}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors cursor-pointer ${
                 activeTab === 'gate'
-                  ? 'bg-[#1C1917] text-white font-semibold shadow-xs'
-                  : 'text-[#57534E] hover:bg-[#E8E1D4] hover:text-[#1C1917]'
+                  ? activeItemClass
+                  : inactiveItemClass
               }`}
             >
-              <BookOpen className="w-4 h-4" />
+              <BookOpen className="w-4 h-4 shrink-0" />
               <span>{gateTitle}</span>
             </button>
 
@@ -129,9 +143,9 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
                 onClose();
                 if (onOpenAcademics) onOpenAcademics();
               }}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left text-[#57534E] hover:bg-[#E8E1D4] hover:text-[#1C1917] transition-colors cursor-pointer"
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-[#6B7280] hover:bg-[#F1ECE1] hover:text-[#9B1B30] transition-colors cursor-pointer"
             >
-              <GraduationCap className="w-4 h-4" />
+              <GraduationCap className="w-4 h-4 shrink-0" />
               <span>{academicsTitle}</span>
             </button>
 
@@ -142,13 +156,13 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
                 onSelectTab('sleep');
                 onClose();
               }}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors cursor-pointer ${
                 activeTab === 'sleep'
-                  ? 'bg-[#1C1917] text-white font-semibold shadow-xs'
-                  : 'text-[#57534E] hover:bg-[#E8E1D4] hover:text-[#1C1917]'
+                  ? activeItemClass
+                  : inactiveItemClass
               }`}
             >
-              <Moon className="w-4 h-4" />
+              <Moon className="w-4 h-4 shrink-0" />
               <span>Sleep</span>
             </button>
 
@@ -159,13 +173,13 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
                 onSelectTab('analytics');
                 onClose();
               }}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors cursor-pointer ${
                 activeTab === 'analytics'
-                  ? 'bg-[#1C1917] text-white font-semibold shadow-xs'
-                  : 'text-[#57534E] hover:bg-[#E8E1D4] hover:text-[#1C1917]'
+                  ? activeItemClass
+                  : inactiveItemClass
               }`}
             >
-              <BarChart2 className="w-4 h-4" />
+              <BarChart2 className="w-4 h-4 shrink-0" />
               <span>Analytics</span>
             </button>
 
@@ -176,31 +190,20 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
                 onSelectTab('settings');
                 onClose();
               }}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors cursor-pointer ${
                 activeTab === 'settings'
-                  ? 'bg-[#1C1917] text-white font-semibold shadow-xs'
-                  : 'text-[#57534E] hover:bg-[#E8E1D4] hover:text-[#1C1917]'
+                  ? activeItemClass
+                  : inactiveItemClass
               }`}
             >
-              <Settings className="w-4 h-4" />
+              <Settings className="w-4 h-4 shrink-0" />
               <span>Settings</span>
             </button>
           </nav>
-        </div>
-
-        {/* Pinned sticky note */}
-        <div className="mt-6 pt-4">
-          <div className="p-3.5 bg-[#F1ECE2] border border-[#DDD5C7] rounded-xl shadow-xs rotate-[-1deg]">
-            <p className="text-xs font-notes text-[#57534E] leading-relaxed text-center">
-              "Discipline today
-              <br />
-              is freedom
-              <br />
-              tomorrow."
-            </p>
-          </div>
         </div>
       </div>
     </div>
   );
 };
+
+export default AndroidDrawer;
