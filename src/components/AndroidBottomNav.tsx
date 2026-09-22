@@ -15,13 +15,21 @@ export const AndroidBottomNav: React.FC<AndroidBottomNavProps> = ({
   settings,
 }) => {
   const tabs = [
-    { id: 'home' as AndroidNavTab, label: 'Home', icon: Home },
+    {
+      id: 'home' as AndroidNavTab,
+      label: 'Home',
+      icon: Home,
+    },
     {
       id: 'gate' as AndroidNavTab,
       label: getGoalTitle('gate', settings),
       icon: BookOpen,
     },
-    { id: 'sleep' as AndroidNavTab, label: 'Sleep', icon: Moon },
+    {
+      id: 'sleep' as AndroidNavTab,
+      label: 'Sleep',
+      icon: Moon,
+    },
     {
       id: 'analytics' as AndroidNavTab,
       label: 'Analytics',
@@ -32,7 +40,10 @@ export const AndroidBottomNav: React.FC<AndroidBottomNavProps> = ({
   return (
     <nav
       id="android-bottom-nav"
-      className="w-full bg-[#1B3A57] border-t border-[#9B1B30] py-1.5 px-3 flex items-center justify-around z-30 shrink-0 select-none"
+      className="w-full bg-[#1B3A57] border-t border-[#9B1B30] px-3 pt-2 flex items-center justify-around z-30 shrink-0 select-none"
+      style={{
+        paddingBottom: 'max(10px, env(safe-area-inset-bottom, 0px))',
+      }}
     >
       {tabs.map((tab) => {
         const Icon = tab.icon;
@@ -44,25 +55,25 @@ export const AndroidBottomNav: React.FC<AndroidBottomNavProps> = ({
             type="button"
             id={`bottom-nav-${tab.id}`}
             onClick={() => onSelectTab(tab.id)}
-            className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all cursor-pointer ${
+            className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all cursor-pointer bg-transparent shadow-none ${
               isActive
-                ? 'text-white font-bold bg-[#9B1B30] shadow-sm'
-                : 'text-[#FAF7F0] font-normal hover:bg-white/10'
+                ? 'text-[#9B1B30] font-bold'
+                : 'text-white font-normal'
             }`}
           >
             <Icon
               className={`w-5 h-5 transition-transform ${
                 isActive
-                  ? 'scale-110 stroke-[2.4] text-white'
-                  : 'stroke-[1.6] text-[#FAF7F0]'
+                  ? 'scale-110 stroke-[2.5] text-[#9B1B30]'
+                  : 'stroke-[1.6] text-white'
               }`}
             />
 
             <span
-              className={`text-[12px] font-handwriting mt-0.5 leading-none ${
+              className={`text-[12px] font-handwriting mt-1 leading-none ${
                 isActive
-                  ? 'font-bold text-white'
-                  : 'font-normal text-[#FAF7F0]'
+                  ? 'font-bold text-[#9B1B30]'
+                  : 'font-normal text-white'
               }`}
             >
               {tab.label}
