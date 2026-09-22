@@ -27,6 +27,7 @@ jobs:
         run: |
           npm install --include=optional
           npm install @rolldown/binding-linux-x64-gnu
+          npm install --no-save @capacitor/assets
 
       # 4. Build web application
       - name: Build web app
@@ -36,42 +37,44 @@ jobs:
       - name: Check Capacitor
         run: npx cap --version
 
-        # 6. Add Android platform
-  - name: Add Android platform
-    run: npx cap add android
+      # 6. Add Android platform
+      - name: Add Android platform
+        run: npx cap add android
 
-  # 6.5 Generate Android app icons
-  - name: Generate Android app icons
-    run: npx @capacitor/assets generate --android
+      # 7. Generate Android app icons
+      - name: Generate Android app icons
+        run: npx @capacitor/assets generate --android
 
-  # 7. Sync web app to Android
+      # 8. Sync web app to Android
+      - name: Sync web app to Android
+        run: npx cap sync android
 
-      # 7.5 Configure Gradle wrapper for reliable download
+      # 9. Configure Gradle wrapper for reliable download
       - name: Configure Gradle wrapper
         working-directory: android
         run: |
           sed -i 's/gradle-8.11.1-all.zip/gradle-8.11.1-bin.zip/' gradle/wrapper/gradle-wrapper.properties
           echo "networkTimeout=120000" >> gradle/wrapper/gradle-wrapper.properties
 
-      # 8. Setup Java
+      # 10. Setup Java
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
 
-      # 9. Setup Android SDK
+      # 11. Setup Android SDK
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
         with:
           packages: 'platform-tools'
 
-      # 10. Build debug APK
+      # 12. Build debug APK
       - name: Build debug APK
         working-directory: android
         run: ./gradlew assembleDebug
 
-      # 11. Upload APK
+      # 13. Upload APK
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
