@@ -1074,7 +1074,7 @@ export const GateView: React.FC<GateViewProps> = ({
                 {selectedSubject.title}
               </span>
 
-              <h2 className="text-lg font-bold text-[#1B3A57] truncate">
+              <h2 className="text-lg font-bold text-[#9B1B30] truncate">
                 {selectedModule.title}
               </h2>
             </div>
@@ -1087,7 +1087,7 @@ export const GateView: React.FC<GateViewProps> = ({
                 selectedModule
               )
             }
-            className="p-1.5 rounded-lg text-[#1B3A57] border border-[#D6DCE8] bg-[#FAF7F0] flex items-center gap-1 text-xs font-bold shrink-0"
+            className="p-1.5 rounded-lg text-[#9B1B30] border border-[#D6DCE8] bg-[#FAF7F0] flex items-center gap-1 text-xs font-bold shrink-0"
           >
             <Pencil className="w-3 h-3" />
             Edit
@@ -1181,7 +1181,7 @@ export const GateView: React.FC<GateViewProps> = ({
           </div>
         </div>
 
-        <div className="bg-[#1B3A57] rounded-2xl p-3 shadow-sm space-y-2 text-white">
+        <div className="bg-[#FAF7F0] rounded-2xl p-3 shadow-sm space-y-2 text-[#9B1B30]">
           <div className="flex items-center justify-between pb-1 bg-[#1B3A57] -mx-3 -mt-3 px-3 pt-3 rounded-t-2xl">
             <span className="text-[11px] font-bold text-[#FAF7F0] uppercase tracking-wider">
               VIDEOS (
@@ -1454,7 +1454,7 @@ export const GateView: React.FC<GateViewProps> = ({
                 selectedSubject
               )
             }
-            className="p-1.5 rounded-lg text-[#1B3A57] border border-[#D6DCE8] bg-[#FAF7F0] flex items-center gap-1 text-xs font-bold"
+            className="p-1.5 rounded-lg text-[#9B1B30] border border-[#D6DCE8] bg-[#FAF7F0] flex items-center gap-1 text-xs font-bold"
           >
             <Pencil className="w-3 h-3" />
             Edit
@@ -1515,9 +1515,9 @@ export const GateView: React.FC<GateViewProps> = ({
           </div>
         </div>
 
-        <div className="bg-[#1B3A57] rounded-2xl p-3 shadow-sm space-y-2 text-[#FAF7F0]">
+        <div className="bg-[#FAF7F0] rounded-2xl p-3 shadow-sm space-y-2 text-[#9B1B30]">
           <div className="flex items-center justify-between pb-1 bg-[#1B3A57] -mx-3 -mt-3 px-3 pt-3 rounded-t-2xl">
-            <span className="text-[11px] font-bold text-white tracking-wider">
+            <span className="text-[11px] font-bold text-[#FAF7F0] tracking-wider">
               MODULES
             </span>
 
@@ -1526,7 +1526,7 @@ export const GateView: React.FC<GateViewProps> = ({
               onClick={() =>
                 setIsAddingModule(true)
               }
-              className="text-[11px] font-bold text-white flex items-center gap-1"
+              className="text-[11px] font-bold text-[#FAF7F0] flex items-center gap-1"
             >
               <Plus className="w-3.5 h-3.5" />
               Add Module
