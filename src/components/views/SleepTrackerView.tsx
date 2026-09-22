@@ -169,49 +169,52 @@ export const SleepTrackerView: React.FC<SleepTrackerViewProps> = ({
       </div>
 
       {/* 2. Weekly Average Card */}
-      <div className="bg-[#1B3A57] border border-[#1B3A57] rounded-2xl p-4 sm:p-5 shadow-sm text-white">
-        <div className="flex items-center justify-between">
+      <div className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl shadow-sm text-[#1B3A57] overflow-hidden">
+        <div className="bg-[#1B3A57] px-4 sm:px-5 py-2.5">
+          <span className="text-xs sm:text-sm font-bold text-[#FAF7F0] uppercase tracking-wider block font-fancy">
+            Weekly Average
+          </span>
+        </div>
+
+        <div className="p-4 sm:p-5 flex items-center justify-between">
           <div>
-            <span className="text-xs sm:text-sm font-bold text-white/80 uppercase tracking-wider block font-fancy">
-              Weekly Average
-            </span>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-3xl sm:text-4xl font-bold font-mono text-white">
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl sm:text-4xl font-bold font-mono text-[#1B3A57]">
                 {weeklyAvg.toFixed(1)}
               </span>
-              <span className="text-base text-white/80 font-mono">hours</span>
+              <span className="text-base text-[#1B3A57] font-mono">hours</span>
             </div>
-            <p className="text-sm sm:text-base font-notes text-[#F5E4E7] mt-1 font-semibold">
+            <p className="text-sm sm:text-base font-notes text-[#1B3A57] mt-1 font-semibold">
               {weeklyAvg >= sleepTargetHours
                 ? 'Good recovery this week.'
                 : 'Aim for 7+ hours for optimal recovery.'}
             </p>
           </div>
-          <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-white shrink-0">
+          <div className="w-12 h-12 rounded-2xl bg-[#EEF2F6] border border-[#D6DCE8] flex items-center justify-center text-[#1B3A57] shrink-0">
             <Moon className="w-6 h-6 stroke-[2]" />
           </div>
         </div>
       </div>
 
       {/* 3. This Week Graph Card */}
-      <div className="bg-[#9B1B30] border border-[#9B1B30] rounded-2xl p-4 sm:p-5 shadow-sm space-y-4 text-white">
-        <div className="flex items-center justify-between">
-          <h3 className="text-base sm:text-lg font-bold text-white font-fancy">
+      <div className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-2xl shadow-sm space-y-0 text-[#1B3A57] overflow-hidden">
+        <div className="bg-[#9B1B30] px-4 sm:px-5 py-2.5 flex items-center justify-between">
+          <h3 className="text-base sm:text-lg font-bold text-[#FAF7F0] font-fancy">
             This Week
           </h3>
-          <span className="text-xs sm:text-sm text-white/80">
+          <span className="text-xs sm:text-sm text-[#FAF7F0]">
             Target: {sleepTargetHours}h / night
           </span>
         </div>
 
-        <div className="bg-[#FAF7F0] rounded-xl p-3">
+        <div className="bg-[#FAF7F0] p-3 sm:p-4">
           <div className="pt-2 pb-2">
             <div className="relative h-36 border-b-2 border-[#D6DCE8]">
               <div
                 className="absolute left-0 right-0 border-b border-dashed border-[#9AA8BE] z-0 pointer-events-none flex justify-end"
                 style={{ bottom: `${(sleepTargetHours / 10) * 100}%` }}
               >
-                <span className="text-[10px] font-mono text-[#64748B] bg-[#FAF7F0] px-1 -translate-y-1/2">
+                <span className="text-[10px] font-mono text-[#1B3A57] bg-[#FAF7F0] px-1 -translate-y-1/2">
                   Target {sleepTargetHours}h
                 </span>
               </div>
