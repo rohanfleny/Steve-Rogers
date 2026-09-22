@@ -211,13 +211,12 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
 
         <section
           className="
-            bg-[#1B3A57]
-            border border-[#1B3A57]
+            bg-[#FAF7F0]
+            border border-[#D6DCE8]
             rounded-2xl
-            px-3
-            py-2.5
             shadow-sm
-            text-white
+            text-[#9B1B30]
+            overflow-hidden
           "
         >
 
@@ -225,10 +224,13 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
 
           <div
             className="
+              bg-[#1B3A57]
+              px-3
+              py-2.5
+              -mx-0
               flex
               items-center
               justify-between
-              mb-1.5
             "
           >
             <h2
@@ -237,6 +239,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                 sm:text-base
                 font-bold
                 font-fancy
+                text-[#FAF7F0]
               "
             >
               Habit Completion
@@ -246,7 +249,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               className="
                 text-[10px]
                 sm:text-xs
-                text-[#64748B]
+                text-[#FAF7F0]
                 font-mono
               "
             >
@@ -277,7 +280,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                     text-left
                     text-[10px]
                     sm:text-xs
-                    text-[#64748B]
+                    text-[#9B1B30]
                     font-normal
                   "
                 >
@@ -292,7 +295,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                       text-center
                       text-[9px]
                       sm:text-[10px]
-                      text-[#64748B]
+                      text-[#9B1B30]
                       font-semibold
                       font-mono
                     "
@@ -309,7 +312,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   key={habit.id}
                   className="
                     border-t
-                    border-white/15
+                    border-[#D6DCE8]
                   "
                 >
 
@@ -408,6 +411,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                 grid-cols-5
                 gap-1
                 w-full
+                items-start
               "
             >
               {habitStats.map((stat) => (
@@ -418,7 +422,9 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                     flex
                     flex-col
                     items-center
-                    justify-center
+                    justify-start
+                    text-center
+                    min-h-[72px]
                   "
                 >
 
@@ -461,6 +467,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                           sm:text-[10px]
                           font-bold
                           font-mono
+                          text-[#9B1B30]
                         "
                       >
                         {stat.percent}%
@@ -476,7 +483,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                       text-[9px]
                       sm:text-[10px]
                       font-semibold
-                      text-[#1B3A57]
+                      text-[#9B1B30]
                       leading-tight
                       text-center
                       break-words
@@ -497,13 +504,12 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
 
         <section
           className="
-            bg-[#1B3A57]
-            border border-[#1B3A57]
+            bg-[#FAF7F0]
+            border border-[#D6DCE8]
             rounded-2xl
-            px-3
-            py-2.5
             shadow-sm
-            text-white
+            text-[#9B1B30]
+            overflow-hidden
           "
         >
 
@@ -511,10 +517,12 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
 
           <div
             className="
+              bg-[#1B3A57]
+              px-3
+              py-2.5
               flex
               items-center
               justify-between
-              mb-1.5
             "
           >
             <h2
@@ -523,6 +531,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                 sm:text-base
                 font-bold
                 font-fancy
+                text-[#FAF7F0]
               "
             >
               Last 30 Days
@@ -532,7 +541,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               className="
                 text-[10px]
                 sm:text-xs
-                text-[#64748B]
+                text-[#FAF7F0]
                 font-mono
               "
             >
@@ -547,7 +556,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
           <div
             className="
               p-2
-              bg-[#EEF2F6]
+              bg-[#FAF7F0]
               border
               border-[#D6DCE8]
               rounded-xl
@@ -558,6 +567,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                 grid
                 grid-cols-10
                 gap-1.5
+                w-full
               "
             >
               {last30Days.map((day) => (
@@ -590,7 +600,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               mt-1.5
               text-[9px]
               sm:text-[10px]
-              text-[#64748B]
+              text-[#9B1B30]
               font-mono
             "
           >
@@ -672,8 +682,8 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               className="
                 rounded-xl
                 border
-                border-[#D6DCE8]
-                bg-[#EEF2F6]
+                border-[#9B1B30]
+                bg-[#9B1B30]
                 py-1.5
                 px-1
                 text-center
@@ -686,7 +696,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   sm:text-xl
                   font-bold
                   font-mono
-                  text-[#9B1B30]
+                  text-[#FAF7F0]
                 "
               >
                 {fullDaysCount}
@@ -697,7 +707,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   block
                   text-[9px]
                   sm:text-[10px]
-                  text-[#64748B]
+                  text-[#FAF7F0]
                   leading-tight
                 "
               >
@@ -709,8 +719,8 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               className="
                 rounded-xl
                 border
-                border-[#D6DCE8]
-                bg-[#EEF2F6]
+                border-[#9B1B30]
+                bg-[#9B1B30]
                 py-1.5
                 px-1
                 text-center
@@ -723,7 +733,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   sm:text-xl
                   font-bold
                   font-mono
-                  text-[#9B1B30]
+                  text-[#FAF7F0]
                 "
               >
                 {partialDaysCount}
@@ -734,7 +744,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   block
                   text-[9px]
                   sm:text-[10px]
-                  text-[#64748B]
+                  text-[#FAF7F0]
                   leading-tight
                 "
               >
@@ -746,8 +756,8 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
               className="
                 rounded-xl
                 border
-                border-[#D6DCE8]
-                bg-[#EEF2F6]
+                border-[#9B1B30]
+                bg-[#9B1B30]
                 py-1.5
                 px-1
                 text-center
@@ -760,7 +770,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   sm:text-xl
                   font-bold
                   font-mono
-                  text-[#64748B]
+                  text-[#FAF7F0]
                 "
               >
                 {lowDaysCount}
@@ -771,7 +781,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                   block
                   text-[9px]
                   sm:text-[10px]
-                  text-[#64748B]
+                  text-[#FAF7F0]
                   leading-tight
                 "
               >
