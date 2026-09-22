@@ -324,14 +324,14 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
 
       {/* =====================================================
           TODAY'S WORK
-          Blue outer section + warm/white inner area
+          Blue title bar + warm individual goal area
           ===================================================== */}
       <div
         id="daily-checklist-card"
-        className="bg-[#1B3A57] border border-[#1B3A57] rounded-xl p-2.5 sm:p-3 shadow-sm space-y-0.5 text-white"
+        className="bg-[#FAF7F0] rounded-xl shadow-sm space-y-0.5 text-[#1B3A57]"
       >
-        <div className="pb-1.5 border-b border-white/20">
-          <h2 className="text-xs font-bold text-white tracking-wider uppercase font-fancy">
+        <div className="bg-[#1B3A57] rounded-t-xl px-2.5 sm:px-3 py-2.5">
+          <h2 className="text-xs font-bold text-[#FAF7F0] tracking-wider uppercase font-fancy">
             TODAY'S WORK
           </h2>
         </div>
@@ -506,15 +506,15 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
 
       {/* =====================================================
           TODAY'S PROGRESS
-          Red outer section + warm/white inner area
+          Warm section + red text/progress
           ===================================================== */}
-      <div className="bg-[#9B1B30] border border-[#9B1B30] rounded-xl p-2.5 sm:p-3 shadow-sm space-y-1.5 text-white">
+      <div className="bg-[#FAF7F0] border border-[#D6DCE8] rounded-xl p-2.5 sm:p-3 shadow-sm space-y-1.5 text-[#9B1B30]">
         <div className="flex items-center justify-between">
-          <span className="text-sm sm:text-base font-bold text-white">
+          <span className="text-sm sm:text-base font-bold text-[#9B1B30]">
             Today's Progress
           </span>
 
-          <div className="flex items-center gap-2 text-sm sm:text-base font-mono font-bold text-white">
+          <div className="flex items-center gap-2 text-sm sm:text-base font-mono font-bold text-[#9B1B30]">
             <span>
               {completedGoalsCount} / 5
             </span>
@@ -529,7 +529,7 @@ export const HomeDashboardView: React.FC<HomeDashboardViewProps> = ({
         <div className="bg-[#FAF7F0] rounded-lg p-1.5">
           <div className="w-full bg-[#E5DDD0] h-2.5 rounded-full overflow-hidden p-0.5 border border-[#D6DCE8]">
             <div
-              className="h-full rounded-full transition-all duration-300 bg-[#1B3A57]"
+              className="h-full rounded-full transition-all duration-300 bg-[#9B1B30]"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
