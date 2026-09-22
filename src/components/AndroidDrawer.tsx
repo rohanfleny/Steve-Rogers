@@ -78,7 +78,7 @@ export const AndroidDrawer: React.FC<AndroidDrawerProps> = ({
           {/* Captain America image */}
           <div className="my-3 flex justify-center">
             <img
-              src="/captain-america-drawer.jpg"
+              src="/captain-america-drawer.jpeg"
               alt="Captain America"
               className="w-full h-[170px] object-contain object-center block"
               loading="eager"
