@@ -57,7 +57,10 @@ export const AndroidTopBar: React.FC<AndroidTopBarProps> = ({
   return (
     <header
       id="android-top-bar"
-      className="w-full bg-[#1B3A57] px-4 py-3 flex items-center justify-between border-b-2 border-[#9B1B30] select-none sticky top-0 z-20 shrink-0 shadow-sm"
+      className="w-full bg-[#1B3A57] flex items-center justify-between border-b-2 border-[#9B1B30] select-none sticky top-0 z-20 shrink-0 shadow-sm px-4 pb-3"
+      style={{
+        paddingTop: 'max(8px, env(safe-area-inset-top, 0px))',
+      }}
     >
       {/* Left icon: Hamburger or Back */}
       <div className="flex items-center gap-2.5">
@@ -97,7 +100,7 @@ export const AndroidTopBar: React.FC<AndroidTopBarProps> = ({
         className="flex items-center gap-1 relative"
         ref={menuRef}
       >
-        {/* Three-dot menu only */}
+        {/* Three-dot menu */}
         <button
           type="button"
           id="top-bar-overflow-btn"
