@@ -906,9 +906,6 @@ export const SettingsGoalsView: React.FC<
             <GraduationCap className="w-5 h-5 text-[#FAF7F0]" />
           </div>
 
-          <p className="text-xs text-[#9B1B30] mb-3">
-            Choose the subject and module used for future daily GATE progress.
-          </p>
 
           {/* SUBJECT */}
 
