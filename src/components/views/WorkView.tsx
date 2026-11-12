@@ -1,15 +1,13 @@
 import React, { useMemo, useRef, useState } from 'react';
 import {
   CalendarDays, ChevronLeft, ChevronRight, Plus, Pencil, Trash2,
-  CheckCircle2, Circle, Bell, BookOpen, Trophy, Laptop, User, Users,
-  Briefcase, Clock, X, RotateCcw,
+  Bell, Clock, X, RotateCcw,
 } from 'lucide-react';
 import { WorkCategory, WorkPriority, WorkStore, WorkTask } from '../../../types/work';
 import { shiftDate, getTodayDateString } from '../../logic/calculations';
 import { HandwrittenCheckbox } from '../HandwrittenDoodles';
 
 interface Props { store: WorkStore; onChange: (next: WorkStore) => void; }
-const iconMap: Record<string, React.ElementType> = { book: BookOpen, trophy: Trophy, laptop: Laptop, user: User, users: Users, work: Briefcase };
 const newId = () => `work-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 const emptyTask = (date: string, categoryId: string): WorkTask => ({
   id: newId(), title: '', description: '', date, time: '', categoryId, priority: 'Medium',
@@ -44,8 +42,6 @@ export const WorkView: React.FC<Props> = ({ store, onChange }) => {
     return {dateStr,dayName:d.toLocaleDateString('en-US',{weekday:'short'}),dayNum:d.getDate(),isSelected:dateStr===selectedDate,isDayToday:dateStr===today,hasSomeDone:completed>0,isAllDone:dayTasks.length>0&&completed===dayTasks.length,hasTasks:dayTasks.length>0};
   });
   const dateTasks = useMemo(() => store.tasks.filter(t => t.date === selectedDate), [store.tasks, selectedDate]);
-  const groups = store.categories.map(c => ({category:c,tasks:dateTasks.filter(t=>t.categoryId===c.id)})).filter(g=>g.tasks.length>0);
-  const uncategorized = dateTasks.filter(t=>!store.categories.some(c=>c.id===t.categoryId));
 
   const handleOpenDatePicker = () => {
     try { if (dateInputRef.current && 'showPicker' in dateInputRef.current) dateInputRef.current.showPicker(); else { dateInputRef.current?.focus(); dateInputRef.current?.click(); } }
@@ -96,13 +92,12 @@ export const WorkView: React.FC<Props> = ({ store, onChange }) => {
     </div>
 
     <section className="bg-[#FAF7F0] rounded-xl shadow-sm text-[#1B3A57] overflow-hidden">
-      <div className="bg-[#1B3A57] rounded-t-xl px-3 py-2.5 flex items-center justify-between gap-2">
-        <h2 className="text-xs font-bold text-[#FAF7F0] tracking-wider uppercase font-fancy">{dateObj.toLocaleDateString('en-US',{weekday:'long'})} WORK</h2>
+      <div className="bg-[#1B3A57] rounded-t-xl px-2.5 sm:px-3 py-2.5 flex items-center justify-between gap-2">
+        <h2 className="text-xs font-bold text-[#FAF7F0] tracking-wider uppercase font-fancy">{dateObj.toLocaleDateString('en-US',{weekday:'long'})}'S WORK</h2>
         <button type="button" onClick={openNewTask} className="flex items-center gap-1 text-[11px] font-bold text-white rounded-lg px-2 py-1 border border-white/30 hover:bg-white/10"><Plus className="w-3.5 h-3.5"/> Add Task</button>
       </div>
-      <div className="p-3 space-y-3">
-        {groups.map(({category,tasks})=>{const Icon=iconMap[category.icon]||Briefcase;return <div key={category.id} className="space-y-1.5"><div className="flex items-center gap-2 font-bold text-sm text-[#1B3A57]"><Icon className="w-4 h-4 text-[#9B1B30]"/>{category.name}</div>{tasks.map(task=><TaskRow key={task.id} task={task} onDone={()=>toggleDone(task)} onEdit={()=>setEditing(task)} onDelete={()=>deleteTask(task)}/>)}</div>;})}
-        {uncategorized.map(task=><TaskRow key={task.id} task={task} onDone={()=>toggleDone(task)} onEdit={()=>setEditing(task)} onDelete={()=>deleteTask(task)}/>)}
+      <div className="bg-[#FAF7F0] rounded-lg mt-1.5 p-1.5 space-y-0.5">
+        {dateTasks.map(task=><TaskRow key={task.id} task={task} onDone={()=>toggleDone(task)} onEdit={()=>setEditing(task)} onDelete={()=>deleteTask(task)}/>)}
         {dateTasks.length===0&&<div className="py-7 text-center space-y-1"><CalendarDays className="w-8 h-8 mx-auto text-[#B8AE9E]"/><p className="font-bold text-[#1B3A57]">No tasks scheduled</p><p className="text-xs text-[#8C8271]">Add a task for this date.</p></div>}
       </div>
     </section>
@@ -129,8 +124,27 @@ export const WorkView: React.FC<Props> = ({ store, onChange }) => {
 };
 
 const Field: React.FC<{label:string;children:React.ReactNode}> = ({label,children}) => <label className="block space-y-1"><span className="block text-xs font-bold text-[#5A5347]">{label}</span>{children}</label>;
-const TaskRow: React.FC<{task:WorkTask;onDone:()=>void;onEdit:()=>void;onDelete:()=>void}> = ({task,onDone,onEdit,onDelete}) => <div className={`flex items-center gap-2 px-2.5 py-2 rounded-xl transition-colors ${task.completed?'bg-[#F5E4E7]/70':'bg-[#FAF7F0]'}`}>
-  <div className="shrink-0"><HandwrittenCheckbox checked={task.completed} onChange={onDone} color="sage" size="sm"/></div>
-  <button onClick={onEdit} className="flex-1 min-w-0 text-left"><span className={`block text-sm font-bold truncate ${task.completed?'line-through text-[#8C8271]':'text-[#1B3A57]'}`}>{task.title}</span><span className="flex items-center gap-2 text-[10px] text-[#8C8271]"><Clock className="w-3 h-3"/>{task.time||'No time set'} <span className={`rounded-full border px-1.5 py-0.5 ${priorityStyle[task.priority]}`}>{task.priority}</span>{task.remindersEnabled?'· Reminder':''}</span></button>
-  <button onClick={onEdit} aria-label="Edit task" className="p-1 text-[#9B1B30]"><Pencil className="w-4 h-4"/></button><button onClick={onDelete} aria-label="Delete task" className="p-1 text-[#9B1B30]"><Trash2 className="w-4 h-4"/></button>
+const TaskRow: React.FC<{task:WorkTask;onDone:()=>void;onEdit:()=>void;onDelete:()=>void}> = ({task,onDone,onEdit,onDelete}) => <div
+  onClick={onDone}
+  role="button"
+  tabIndex={0}
+  onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onDone();}}}
+  className={`flex items-center justify-between gap-2 p-1.5 rounded-lg transition-all cursor-pointer min-h-[42px] ${task.completed?'bg-[#F5E4E7]':'hover:bg-[#EEF2F6]'}`}
+>
+  <div className="flex items-center gap-2.5 min-w-0 flex-1">
+    <div className="shrink-0"><HandwrittenCheckbox checked={task.completed} onChange={onDone} color="sage" size="sm"/></div>
+    <div className="min-w-0 flex-1">
+      <span className={`block text-sm sm:text-base font-bold leading-tight truncate ${task.completed?'text-[#9B1B30] line-through decoration-[#9B1B30]':'text-[#1B3A57]'}`}>{task.title}</span>
+      <span className="flex items-center gap-2 text-[11px] sm:text-xs text-[#64748B] leading-tight mt-0.5">
+        {task.time ? <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3 shrink-0"/>{task.time}</span> : null}
+        <span aria-label={`${task.priority} priority`} title={`${task.priority} priority`} className={`inline-block w-2.5 h-2.5 rounded-[2px] border ${task.priority==='Low'?'bg-[#5C9B69] border-[#477E53]':task.priority==='Medium'?'bg-[#E6BD45] border-[#C59B2C]':'bg-[#C84B55] border-[#A93440]'}`}/>
+        {task.remindersEnabled && <span aria-label="Reminder enabled" title="Reminder enabled" className="inline-block w-2 h-2 rounded-full bg-[#C3263D]"/>}
+      </span>
+    </div>
+  </div>
+  <div className="flex items-center gap-2 shrink-0">
+    <button type="button" onClick={e=>{e.stopPropagation();onEdit();}} aria-label="Edit task" className="p-1 text-[#9B1B30]"><Pencil className="w-4 h-4"/></button>
+    <button type="button" onClick={e=>{e.stopPropagation();onDelete();}} aria-label="Delete task" className="p-1 text-[#9B1B30]"><Trash2 className="w-4 h-4"/></button>
+  </div>
 </div>;
+
