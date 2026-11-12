@@ -193,3 +193,18 @@ select:focus-visible {
 .cap-red-border {
   border-color: var(--cap-red);
 }
+
+/* Work module form controls - keep the existing Steve Rogers paper theme */
+.work-input {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #DDD6C8;
+  background: #FAF7F0;
+  color: #1B3A57;
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  font: inherit;
+  font-size: 0.875rem;
+  outline: none;
+}
+.work-input:focus { border-color: #9B1B30; box-shadow: 0 0 0 2px rgba(155,27,48,.10); }
