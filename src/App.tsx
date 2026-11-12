@@ -6,6 +6,8 @@ import { HomeDashboardView } from './components/views/HomeDashboardView';
 import { GateView } from './components/views/GateView';
 import { SleepTrackerView } from './components/views/SleepTrackerView';
 import { AnalyticsView } from './components/views/AnalyticsView';
+import { WorkView } from './components/views/WorkView';
+import { WorkStore, DEFAULT_WORK_STORE } from './types/work';
 import { SettingsGoalsView } from './components/views/SettingsGoalsView';
 import { GateHomeNoticeModal } from './components/gate/GateHomeNoticeModal';
 import { TodayGateSelectionModal } from './components/gate/TodayGateSelectionModal';
@@ -28,6 +30,8 @@ import {
   exportAppDataJSON,
   importAppDataJSON,
   clearAllAppData,
+  loadWorkStore,
+  saveWorkStore,
   DEFAULT_USER_SETTINGS,
   DEFAULT_GATE_STORE,
 } from './storage/storage';
@@ -37,6 +41,7 @@ export default function App() {
   const [allRecords, setAllRecords] = useState<Record<string, DailyRecord>>({});
   const [settings, setSettings] = useState<UserSettings>(DEFAULT_USER_SETTINGS);
   const [gateStore, setGateStore] = useState<GateStoreState>(DEFAULT_GATE_STORE);
+  const [workStore, setWorkStore] = useState<WorkStore>(DEFAULT_WORK_STORE);
   const [activeTab, setActiveTab] = useState<AndroidNavTab>('home');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -58,10 +63,12 @@ export default function App() {
     const loadedRecords = loadAllDailyRecords();
     const loadedSettings = loadUserSettings();
     const loadedGateStore = loadGateStore();
+    const loadedWorkStore = loadWorkStore();
 
     setAllRecords(loadedRecords);
     setSettings(loadedSettings);
     setGateStore(loadedGateStore);
+    setWorkStore(loadedWorkStore);
     setIsLoaded(true);
   }, []);
 
@@ -76,6 +83,11 @@ export default function App() {
     },
     []
   );
+
+  const handleUpdateWorkStore = useCallback((next: WorkStore) => {
+    setWorkStore(next);
+    saveWorkStore(next);
+  }, []);
 
   // Get active record for selectedDate
   const currentRecord: DailyRecord = useMemo(() => {
@@ -409,6 +421,7 @@ export default function App() {
     setAllRecords({});
     setSettings(DEFAULT_USER_SETTINGS);
     setGateStore(DEFAULT_GATE_STORE);
+    setWorkStore(DEFAULT_WORK_STORE);
   }, []);
 
   // Import JSON data
@@ -420,6 +433,7 @@ export default function App() {
         setAllRecords(loadAllDailyRecords());
         setSettings(loadUserSettings());
         setGateStore(loadGateStore());
+        setWorkStore(loadWorkStore());
       }
 
       return res;
@@ -463,6 +477,7 @@ export default function App() {
   // Titles for the Top Bar
   const viewTitles: Record<AndroidNavTab, string> = {
     home: 'Dashboard',
+    work: 'Work',
     gate: getGoalTitle('gate',settings),
     sleep: 'Sleep Tracker',
     analytics: 'Analytics',
@@ -536,6 +551,10 @@ export default function App() {
               dailyNote={currentRecord.note}
               allRecords={allRecords}
             />
+          )}
+
+          {activeTab === 'work' && (
+            <WorkView store={workStore} onChange={handleUpdateWorkStore} />
           )}
 
           {activeTab === 'gate' && (
