@@ -5,7 +5,7 @@ import {
   Briefcase, Clock, X, Settings2, Repeat2, ListChecks,
 } from 'lucide-react';
 import { WorkCategory, WorkPriority, WorkRepeat, WorkStore, WorkTask } from '../../../types/work';
-import { shiftDate, getTodayDateString } from '../../../logic/calculations';
+import { shiftDate, getTodayDateString } from '../../logic/calculations';
 
 interface Props { store: WorkStore; onChange: (next: WorkStore) => void; }
 const iconMap: Record<string, React.ElementType> = { book: BookOpen, trophy: Trophy, laptop: Laptop, user: User, users: Users, work: Briefcase };
