@@ -1,10 +1,10 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   CalendarDays, ChevronLeft, ChevronRight, RotateCcw, Plus, Pencil, Trash2,
   CheckCircle2, Circle, Bell, BellOff, BookOpen, Trophy, Laptop, User, Users,
   Briefcase, Clock, X, Settings2, Repeat2, ListChecks,
 } from 'lucide-react';
-import { WorkCategory, WorkPriority, WorkRepeat, WorkStore, WorkTask } from '../../../types/work';
+import { WorkCategory, WorkPriority, WorkRepeat, WorkStore, WorkTask } from '../../types/work';
 import { shiftDate, getTodayDateString } from '../../logic/calculations';
 
 interface Props { store: WorkStore; onChange: (next: WorkStore) => void; }
@@ -23,18 +23,43 @@ export const WorkView: React.FC<Props> = ({ store, onChange }) => {
   const [editing, setEditing] = useState<WorkTask | null>(null);
   const [categoryManager, setCategoryManager] = useState(false);
   const [newCategory, setNewCategory] = useState('');
-  const [filter, setFilter] = useState<'day'|'upcoming'|'overdue'|'completed'>('day');
   const [showReminders, setShowReminders] = useState(false);
   const [reminderCustom, setReminderCustom] = useState('');
 
-  const weekStart = (() => { const dt = new Date(`${selectedDate}T12:00:00`); const dow = dt.getDay(); return shiftDate(selectedDate, dow === 0 ? -6 : 1-dow); })();
-  const week = Array.from({length:7},(_,i)=>shiftDate(weekStart,i));
-  const dateTasks = useMemo(() => store.tasks.filter(t => filter === 'completed' ? t.completed : filter === 'upcoming' ? !t.completed && t.date > today : filter === 'overdue' ? !t.completed && t.date < today : !t.completed && t.date === selectedDate), [store.tasks,filter,selectedDate,today]);
+  const dateInputRef = useRef<HTMLInputElement>(null);
+  const isToday = selectedDate === today;
+  const [year, month, day] = selectedDate.split('-').map(Number);
+  const dateObj = new Date(year, month - 1, day);
+  const weekdayShort = dateObj.toLocaleDateString('en-US', { weekday: 'short' });
+  const monthShort = dateObj.toLocaleDateString('en-US', { month: 'short' });
+  const dayOfWeek = dateObj.getDay();
+  const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  const mondayDateStr = shiftDate(selectedDate, diffToMonday);
+  const weekDays = [0, 1, 2, 3, 4, 5, 6].map((offset) => {
+    const dateStr = shiftDate(mondayDateStr, offset);
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const dObj = new Date(y, m - 1, d);
+    return {
+      dateStr,
+      dayName: dObj.toLocaleDateString('en-US', { weekday: 'short' }),
+      dayNum: dObj.getDate(),
+      isSelected: dateStr === selectedDate,
+      isDayToday: dateStr === today,
+      hasTasks: store.tasks.some(task => task.date === dateStr),
+    };
+  });
+  const handleOpenDatePicker = () => {
+    try {
+      if (dateInputRef.current && 'showPicker' in dateInputRef.current) dateInputRef.current.showPicker();
+      else { dateInputRef.current?.focus(); dateInputRef.current?.click(); }
+    } catch {
+      dateInputRef.current?.focus();
+      dateInputRef.current?.click();
+    }
+  };
+  const dateTasks = useMemo(() => store.tasks.filter(t => t.date === selectedDate), [store.tasks, selectedDate]);
   const groups = store.categories.map(c => ({category:c,tasks:dateTasks.filter(t=>t.categoryId===c.id)})).filter(g=>g.tasks.length>0);
   const uncategorized = dateTasks.filter(t=>!store.categories.some(c=>c.id===t.categoryId));
-  const completedCount = store.tasks.filter(t=>t.date===selectedDate && t.completed).length;
-  const totalCount = store.tasks.filter(t=>t.date===selectedDate).length;
-  const percent = totalCount ? Math.round(completedCount/totalCount*100) : 0;
 
   const saveTask = () => {
     if (!editing || !editing.title.trim()) return;
@@ -63,40 +88,76 @@ export const WorkView: React.FC<Props> = ({ store, onChange }) => {
   const addCategory = () => { const name=newCategory.trim(); if(!name) return; if(store.categories.some(c=>c.name.toLowerCase()===name.toLowerCase())) { alert('This category already exists.'); return; } onChange({...store,categories:[...store.categories,{id:newId(),name,icon:'work'}]}); setNewCategory(''); };
   const removeCategory = (cat: WorkCategory) => { if(!window.confirm(`Delete category ${cat.name}? Its tasks will move to Uncategorized.`)) return; onChange({...store,categories:store.categories.filter(c=>c.id!==cat.id),tasks:store.tasks.map(t=>t.categoryId===cat.id?{...t,categoryId:''}:t)}); };
   const addReminder = () => { const mins=Number(reminderCustom); if(!mins || mins<1) return; setEditing(e=>e?{...e,remindersEnabled:true,reminderOffsets:[...e.reminderOffsets,mins]}:e); setReminderCustom(''); };
-  const selectedLabel = filter==='day' ? `${fmtDate(selectedDate)}'s Work` : filter==='upcoming'?'Upcoming Work':filter==='overdue'?'Overdue Work':'Completed Work';
 
   return <div className="space-y-3 font-handwriting text-[#1B3A57]" id="work-dashboard">
-    <section className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-xl p-2.5 shadow-sm space-y-2 select-none">
+    <div
+      id="work-date-window-container"
+      className="bg-[#FAF7F0] border border-[#E5DDD0] rounded-xl p-2 sm:p-2.5 shadow-sm space-y-1.5 select-none text-[#1B3A57]"
+    >
       <div className="flex items-center justify-between gap-1.5">
-        <button onClick={()=>setSelectedDate(shiftDate(selectedDate,-7))} className="p-1.5 text-[#9B1B30]" aria-label="Previous week"><ChevronLeft className="w-5 h-5"/></button>
-        <button onClick={()=>setSelectedDate(today)} className="flex-1 flex items-center justify-center gap-2 px-2 py-1.5 rounded-lg border border-[#D6DCE8] bg-[#F1ECE1] text-xs font-bold"><CalendarDays className="w-4 h-4 text-[#9B1B30]"/>{fmtDate(selectedDate)}</button>
-        <button onClick={()=>setSelectedDate(today)} className="px-3 py-1.5 rounded-full bg-[#9B1B30] text-white text-xs font-bold">Today</button>
-        <button onClick={()=>setSelectedDate(shiftDate(selectedDate,7))} className="p-1.5 text-[#9B1B30]" aria-label="Next week"><ChevronRight className="w-5 h-5"/></button>
+        <button type="button" onClick={() => setSelectedDate(shiftDate(selectedDate, -1))}
+          className="p-1.5 rounded-lg text-[#9B1B30] hover:text-[#761523] hover:bg-[#F5E4E7] transition-colors cursor-pointer shrink-0"
+          aria-label="Previous Day">
+          <ChevronLeft className="w-4 h-4 stroke-[2.2]" />
+        </button>
+        <div className="flex-1 flex items-center justify-center gap-1 min-w-0">
+          <button type="button" id="work-date-picker-trigger" onClick={handleOpenDatePicker}
+            title="Click to select date"
+            className="group flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg border border-[#D6DCE8] hover:border-[#9B1B30] bg-[#F1ECE1] hover:bg-[#F5E4E7] transition-all cursor-pointer shadow-xs min-w-0">
+            <CalendarDays className="w-3.5 h-3.5 text-[#9B1B30] shrink-0" />
+            <div className="flex items-center gap-1 min-w-0">
+              <span className="text-[9px] font-bold uppercase tracking-wider px-1 py-0.5 rounded bg-[#1B3A57] text-white">{weekdayShort}</span>
+              <span className="text-xs sm:text-sm font-bold text-[#1B3A57] truncate">{day} {monthShort} {year}</span>
+            </div>
+          </button>
+          <input ref={dateInputRef} type="date" value={selectedDate}
+            onChange={(e) => { if (e.target.value) setSelectedDate(e.target.value); }}
+            className="sr-only" aria-hidden="true" tabIndex={-1} />
+          {isToday ? (
+            <span className="text-[9px] font-bold text-white bg-[#9B1B30] border border-[#9B1B30] px-2 py-0.5 rounded-full shrink-0">Today</span>
+          ) : (
+            <button type="button" onClick={() => setSelectedDate(today)} title="Jump to today"
+              className="flex items-center gap-1 text-[9px] font-bold text-[#1B3A57] bg-[#F1ECE1] hover:bg-[#E8E1D4] border border-[#D6DCE8] px-2 py-0.5 rounded-full transition-all cursor-pointer shrink-0">
+              <RotateCcw className="w-2.5 h-2.5 text-[#9B1B30]" /><span>Today</span>
+            </button>
+          )}
+        </div>
+        <button type="button" onClick={() => setSelectedDate(shiftDate(selectedDate, 1))}
+          className="p-1.5 rounded-lg text-[#9B1B30] hover:text-[#761523] hover:bg-[#F5E4E7] transition-colors cursor-pointer shrink-0"
+          aria-label="Next Day">
+          <ChevronRight className="w-4 h-4 stroke-[2.2]" />
+        </button>
       </div>
-      <div className="grid grid-cols-7 gap-1 pt-2 border-t border-[#EAE2D2]">
-        {week.map(date=>{const dt=new Date(`${date}T12:00:00`);const selected=date===selectedDate;const count=store.tasks.filter(t=>t.date===date&&!t.completed).length;return <button key={date} onClick={()=>{setSelectedDate(date);setFilter('day');}} className={`relative flex flex-col items-center py-2 px-1 rounded-xl border ${selected?'bg-[#1B3A57] text-[#FAF7F0] border-[#1B3A57]':'bg-[#FAF7F0]/70 text-[#5A5347] border-[#E5DFD3]'}`}><span className={`text-[10px] uppercase ${selected?'text-[#D5CCBA]':'text-[#8C8271]'}`}>{dt.toLocaleDateString('en-US',{weekday:'short'})}</span><span className="text-sm font-bold my-0.5">{dt.getDate()}</span><span className={`w-1.5 h-1.5 rounded-full ${count?(selected?'bg-[#E3BE7C]':'bg-[#9B1B30]'):'bg-transparent'}`}/></button>;})}
+      <div className="grid grid-cols-7 gap-0.5 pt-1 border-t border-[#E5DDD0]">
+        {weekDays.map((item) => (
+          <button key={item.dateStr} type="button" onClick={() => setSelectedDate(item.dateStr)}
+            className={`flex flex-col items-center justify-center py-1 sm:py-1.5 rounded-lg transition-all cursor-pointer relative ${
+              item.isSelected ? 'bg-[#1B3A57] text-white shadow-md font-bold scale-[1.01]'
+              : item.isDayToday ? 'bg-[#F5E4E7] text-[#9B1B30] font-bold border border-[#E1B9C0] hover:bg-[#F0DCE0]'
+              : 'hover:bg-[#EFE9DF] text-[#78716C]'
+            }`}>
+            <span className={`text-[8px] sm:text-[9px] uppercase tracking-wider ${
+              item.isSelected ? 'text-white/80 font-semibold' : item.isDayToday ? 'text-[#9B1B30]' : 'text-[#78716C]'
+            }`}>{item.dayName.slice(0, 3)}</span>
+            <span className={`text-xs sm:text-sm font-mono font-bold leading-tight ${
+              item.isSelected ? 'text-white' : item.isDayToday ? 'text-[#9B1B30]' : 'text-[#1B3A57]'
+            }`}>{item.dayNum}</span>
+            <div className="flex items-center gap-0.5 mt-0 h-1">
+              {item.hasTasks ? <span className={`w-1 h-1 rounded-full ${item.isSelected ? 'bg-white' : 'bg-[#9B1B30]'}`} /> : null}
+            </div>
+          </button>
+        ))}
       </div>
-      <div className="flex gap-1 overflow-x-auto pt-1">
-        {([{id:'day',label:'Selected day'},{id:'upcoming',label:'Upcoming'},{id:'overdue',label:'Overdue'},{id:'completed',label:'Completed'}] as const).map(x=><button key={x.id} onClick={()=>setFilter(x.id)} className={`whitespace-nowrap px-3 py-1.5 rounded-full text-[11px] border ${filter===x.id?'bg-[#1B3A57] text-white border-[#1B3A57]':'bg-white text-[#6B6256] border-[#DDD6C8]'}`}>{x.label}</button>)}
-      </div>
-    </section>
+    </div>
 
     <section className="bg-[#FCFAF6] rounded-2xl border border-[#DDD6C8] shadow-sm overflow-hidden">
-      <div className="bg-[#1B3A57] px-4 py-3 flex items-center justify-between"><h2 className="text-base font-bold text-white uppercase">{filter==='day'?'Today’s Work'.replace('Today',new Date(`${selectedDate}T12:00:00`).toLocaleDateString('en-US',{weekday:'long'})):selectedLabel}</h2><span className="text-xs text-white/80">{dateTasks.length} tasks</span></div>
+      <div className="bg-[#1B3A57] px-4 py-3 flex items-center justify-between gap-2"><h2 className="text-base font-bold text-white uppercase tracking-wide">Tasks</h2><button type="button" onClick={()=>setEditing(emptyTask(selectedDate,store.categories[0]?.id||''))} className="inline-flex items-center gap-1.5 text-sm font-bold text-white hover:text-[#F5E4E7]"><Plus className="w-4 h-4"/> Add Task</button></div>
       <div className="p-3 space-y-4">
         {groups.map(({category,tasks})=>{const Icon=iconMap[category.icon]||Briefcase;return <div key={category.id} className="space-y-2"><div className="flex items-center justify-between border-b border-[#EAE2D2] pb-1"><div className="flex items-center gap-2 font-bold text-[#1B3A57]"><Icon className="w-4 h-4 text-[#9B1B30]"/>{category.name}</div><span className="text-[10px] text-[#8C8271]">{tasks.length} tasks</span></div>{tasks.map(task=><TaskRow key={task.id} task={task} onDone={()=>toggleDone(task)} onEdit={()=>setEditing(task)} onDelete={()=>deleteTask(task)} categoryName={category.name}/>)}</div>;})}
         {uncategorized.length>0&&<div className="space-y-2"><div className="font-bold border-b border-[#EAE2D2] pb-1">Uncategorized</div>{uncategorized.map(task=><TaskRow key={task.id} task={task} onDone={()=>toggleDone(task)} onEdit={()=>setEditing(task)} onDelete={()=>deleteTask(task)} categoryName="Uncategorized"/>)}</div>}
         {dateTasks.length===0&&<div className="py-8 text-center space-y-2"><CalendarDays className="w-8 h-8 mx-auto text-[#B8AE9E]"/><p className="font-bold text-[#1B3A57]">No work scheduled</p><p className="text-xs text-[#8C8271]">Add your first task for this date.</p></div>}
       </div>
     </section>
-
-    {filter==='day'&&<section className="bg-[#FCFAF6] border border-[#DDD6C8] rounded-2xl p-3 space-y-2"><div className="flex justify-between items-center"><span className="font-bold text-[#1B3A57]">Daily Work Progress</span><span className="font-bold text-[#9B1B30]">{completedCount}/{totalCount} · {percent}%</span></div><div className="h-2.5 bg-[#EAE2D2] rounded-full overflow-hidden"><div className="h-full bg-[#9B1B30] rounded-full" style={{width:`${percent}%`}}/></div></section>}
-
-    <div className="grid grid-cols-2 gap-2">
-      <button onClick={()=>setEditing(emptyTask(selectedDate,store.categories[0]?.id||''))} className="col-span-2 flex items-center justify-center gap-2 rounded-xl bg-[#9B1B30] text-white py-3 font-bold shadow-sm"><Plus className="w-5 h-5"/> ADD WORK</button>
-      <button onClick={()=>setCategoryManager(true)} className="flex items-center justify-center gap-2 rounded-xl bg-[#FAF7F0] border border-[#DDD6C8] text-[#1B3A57] py-2.5 text-xs font-bold"><Settings2 className="w-4 h-4 text-[#9B1B30]"/> Manage Categories</button>
-      <button onClick={()=>{setFilter('day');setSelectedDate(today);}} className="flex items-center justify-center gap-2 rounded-xl bg-[#FAF7F0] border border-[#DDD6C8] text-[#1B3A57] py-2.5 text-xs font-bold"><RotateCcw className="w-4 h-4 text-[#9B1B30]"/> Back to Today</button>
-    </div>
 
     {editing&&<div className="fixed inset-0 z-[60] bg-black/55 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={()=>setEditing(null)}><form onSubmit={e=>{e.preventDefault();saveTask();}} onClick={e=>e.stopPropagation()} className="w-full max-w-lg max-h-[92dvh] overflow-y-auto bg-[#FCFAF6] rounded-t-2xl sm:rounded-2xl border border-[#DDD6C8] shadow-2xl text-[#1B3A57]">
       <div className="sticky top-0 bg-[#1B3A57] text-white px-4 py-3 flex items-center justify-between"><h3 className="font-bold text-lg">{store.tasks.some(t=>t.id===editing.id)?'Edit Work':'Add New Work'}</h3><button type="button" onClick={()=>setEditing(null)}><X className="w-5 h-5"/></button></div>
