@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, BookOpen, Moon, BarChart2 } from 'lucide-react';
+import { Home, BookOpen, Moon, BarChart2, CalendarCheck } from 'lucide-react';
 import { AndroidNavTab } from './AndroidDrawer';
 import { UserSettings, getGoalTitle } from '../types/daily';
 
@@ -19,6 +19,11 @@ export const AndroidBottomNav: React.FC<AndroidBottomNavProps> = ({
       id: 'home' as AndroidNavTab,
       label: 'Home',
       icon: Home,
+    },
+    {
+      id: 'work' as AndroidNavTab,
+      label: 'Work',
+      icon: CalendarCheck,
     },
     {
       id: 'gate' as AndroidNavTab,
@@ -55,7 +60,7 @@ export const AndroidBottomNav: React.FC<AndroidBottomNavProps> = ({
             type="button"
             id={`bottom-nav-${tab.id}`}
             onClick={() => onSelectTab(tab.id)}
-            className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all cursor-pointer bg-transparent shadow-none ${
+            className={`flex flex-col items-center justify-center py-1.5 px-2 sm:px-3 rounded-xl transition-all cursor-pointer bg-transparent shadow-none ${
               isActive
                 ? 'text-[#9B1B30] font-bold'
                 : 'text-white font-normal'
