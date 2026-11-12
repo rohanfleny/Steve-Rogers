@@ -1,10 +1,12 @@
 import { DailyRecord, UserSettings } from '../types/daily';
 import { GateStoreState } from '../types/gate';
 import { getEmptyDailyGoals } from '../logic/calculations';
+import { WorkStore, DEFAULT_WORK_STORE } from '../types/work';
 
 const RECORDS_STORAGE_KEY = 'gate_productivity_records_v1';
 const SETTINGS_STORAGE_KEY = 'gate_productivity_settings_v1';
 const GATE_STORAGE_KEY = 'gate_data_store_v1';
+const WORK_STORAGE_KEY = 'steve_rogers_work_store_v1';
 
 export const DEFAULT_USER_SETTINGS: UserSettings = {
   sleepTargetHours: 8.0,
@@ -177,6 +179,29 @@ export function saveGateStore(store: GateStoreState): void {
   }
 }
 
+
+export function loadWorkStore(): WorkStore {
+  if (typeof window === 'undefined' || !window.localStorage) return DEFAULT_WORK_STORE;
+  try {
+    const raw = window.localStorage.getItem(WORK_STORAGE_KEY);
+    if (!raw) return DEFAULT_WORK_STORE;
+    const parsed = JSON.parse(raw);
+    return {
+      categories: Array.isArray(parsed.categories) ? parsed.categories : DEFAULT_WORK_STORE.categories,
+      tasks: Array.isArray(parsed.tasks) ? parsed.tasks : [],
+    };
+  } catch (err) {
+    console.error('Failed to load Work data:', err);
+    return DEFAULT_WORK_STORE;
+  }
+}
+
+export function saveWorkStore(store: WorkStore): void {
+  if (typeof window === 'undefined' || !window.localStorage) return;
+  try { window.localStorage.setItem(WORK_STORAGE_KEY, JSON.stringify(store)); }
+  catch (err) { console.error('Failed to save Work data:', err); }
+}
+
 /**
  * Exports all application data into a formatted JSON string.
  */
@@ -184,12 +209,14 @@ export function exportAppDataJSON(): string {
   const records = loadAllDailyRecords();
   const settings = loadUserSettings();
   const gateStore = loadGateStore();
+  const workStore = loadWorkStore();
   const payload = {
-    version: 2,
+    version: 3,
     exportTimestamp: new Date().toISOString(),
     settings,
     records,
     gateStore,
+    workStore,
   };
   return JSON.stringify(payload, null, 2);
 }
@@ -213,6 +240,12 @@ export function importAppDataJSON(jsonString: string): { success: boolean; error
         ...parsed.settings,
       });
     }
+    if (parsed.workStore && typeof parsed.workStore === 'object') {
+      saveWorkStore({
+        categories: Array.isArray(parsed.workStore.categories) ? parsed.workStore.categories : DEFAULT_WORK_STORE.categories,
+        tasks: Array.isArray(parsed.workStore.tasks) ? parsed.workStore.tasks : [],
+      });
+    }
     if (parsed.gateStore && typeof parsed.gateStore === 'object') {
       saveGateStore({
         ...DEFAULT_GATE_STORE,
@@ -234,6 +267,7 @@ export function clearAllAppData(): void {
     window.localStorage.removeItem(RECORDS_STORAGE_KEY);
     window.localStorage.removeItem(SETTINGS_STORAGE_KEY);
     window.localStorage.removeItem(GATE_STORAGE_KEY);
+    window.localStorage.removeItem(WORK_STORAGE_KEY);
   } catch (err) {
     console.error('Failed to reset data:', err);
   }
